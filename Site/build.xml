@@ -1,0 +1,74 @@
+<project name="SiteBuilder" default="deployBuild" basedir=".">
+
+  <!-- set global properties for this build -->
+  <property name="sshKey" location="/Users/alleninteractions/Desktop/499project/id_rsa" />
+  <property name="serverAdd" value="192.168.56.101" />
+
+
+  <target name="deployBuild"> 
+  	<antcall target="stopTomcat" />
+  	<antcall target="cleanWars" />
+  	<antcall target="makeSiteWar" />
+  	<antcall target="deployWar" />
+  	<antcall target="restartTomcat" />
+  </target>
+
+<target name="makeSiteWar" >
+	<war destfile="build/ROOT.war" needxmlfile="false">
+	  <fileset dir="WebContent" includes="**"/>
+	</war>
+</target>	
+	
+  <target name="deployIndex"> 
+	 <exec executable="ssh">
+	    <arg value="-i"/>
+	    <arg value="${sshKey}"/>
+	    <arg value="ubuntu@${serverAdd}"/>
+	    <arg value="sudo rm -rf /var/lib/tomcat7/webapps/ROOT/index.html"/>
+	  </exec>
+  	<exec executable="scp">
+  	    <arg value="-i"/>
+  	    <arg value="${sshKey}"/>
+  	    <arg value="${basedir}\WebContent\index.html"/>
+  	    <arg value="ubuntu@${serverAdd}:/var/lib/tomcat7/webapps/ROOT"/>
+  	 </exec>
+  </target>
+	
+  <target name="deployWar"> 
+  	<exec executable="scp">
+  	    <arg value="-i"/>
+  	    <arg value="${sshKey}"/>
+  	    <arg value="${basedir}/build/ROOT.war"/>
+  	    <arg value="ubuntu@${serverAdd}:/var/lib/tomcat7/webapps"/>
+  	 </exec>
+  </target>
+
+  <target name="restartTomcat">
+  	 <exec executable="ssh">
+  	    <arg value="-i"/>
+  	    <arg value="${sshKey}"/>
+  	    <arg value="ubuntu@${serverAdd}"/>
+  	    <arg value="sudo /etc/init.d/tomcat7 restart"/>
+  	  </exec>
+  </target>
+	
+  <target name="cleanWars">
+  	<echo message="scrubbing war from server" />
+ 	 <exec executable="ssh">
+ 	    <arg value="-i"/>
+ 	    <arg value="${sshKey}"/>
+ 	    <arg value="ubuntu@${serverAdd}"/>
+ 	    <arg value="sudo rm -rf /var/lib/tomcat7/webapps/ROOT*"/>
+ 	  </exec>
+  </target>
+
+  <target name="stopTomcat">
+ 	 <exec executable="ssh">
+ 	    <arg value="-i"/>
+ 	    <arg value="${sshKey}"/>
+ 	    <arg value="ubuntu@${serverAdd}"/>
+ 	    <arg value="sudo /etc/init.d/tomcat7 stop"/>
+ 	  </exec>
+  </target>
+
+</project>
