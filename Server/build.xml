@@ -1,0 +1,68 @@
+<project name="ServerBuilder" default="deployBuild" basedir=".">
+
+  <!-- set global properties for this build -->
+  <property name="sshKey" location="/Users/alleninteractions/Desktop/499project/id_rsa" />
+  <property name="serverAdd" value="192.168.56.101" />
+
+  
+
+
+  <target name="deployBuild"> 
+  	<antcall target="stopTomcat" />
+  	<antcall target="cleanWars" />
+  	<antcall target="deployWar" />
+  	<antcall target="restartTomcat" />
+  </target>
+	
+  <target name="deployWar"> 
+  	<exec executable="scp">
+  	    <arg value="-i"/>
+  	    <arg value="${sshKey}"/>
+  	    <arg value="${basedir}/target/gameserver.war"/>
+  	    <arg value="ubuntu@${serverAdd}:/var/lib/tomcat7/webapps"/>
+  	 </exec>
+  </target>
+
+  <target name="restartTomcat">
+  	 <exec executable="ssh">
+  	    <arg value="-i"/>
+  	    <arg value="${sshKey}"/>
+  	    <arg value="ubuntu@${serverAdd}"/>
+  	    <arg value="sudo /etc/init.d/tomcat7 restart"/>
+  	  </exec>
+  </target>
+	
+  <target name="cleanWars">
+  	<echo message="scrubbing war from server" />
+ 	 <exec executable="ssh">
+ 	    <arg value="-i"/>
+ 	    <arg value="${sshKey}"/>
+ 	    <arg value="ubuntu@${serverAdd}"/>
+ 	    <arg value="sudo rm -rf /var/lib/tomcat7/webapps/gameserver*"/>
+ 	  </exec>
+  </target>
+
+  <target name="stopTomcat">
+ 	 <exec executable="ssh">
+ 	    <arg value="-i"/>
+ 	    <arg value="${sshKey}"/>
+ 	    <arg value="ubuntu@${serverAdd}"/>
+ 	    <arg value="sudo /etc/init.d/tomcat7 stop"/>
+ 	  </exec>
+  </target>
+
+
+    <target name="grabCatalinaOut">
+        <exec executable="scp">
+            <arg value="-i"/>
+            <arg value="${sshKey}"/>
+
+            <arg value="ubuntu@${serverAdd}:/var/log/tomcat7/catalina.out"/>
+            <arg value="${basedir}"/>
+        </exec>
+    </target>
+
+
+
+
+</project>
