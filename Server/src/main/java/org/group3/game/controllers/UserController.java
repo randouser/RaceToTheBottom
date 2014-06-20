@@ -31,38 +31,45 @@ public class UserController {
 		return new UserWrapper(newUser);
 	}
 
+    @RequestMapping(value="/login",method = RequestMethod.GET)
+    public @ResponseBody LoginMessage getUser(@RequestParam String email,@RequestParam String password) {
+
+        logger.info("REGISTER POST!");
+        User user = userService.getUser(email, password);
+
+        String message = "User message";
+
+        return new LoginMessage(message,user);
+    }
 
 
 
-    public class RegisterParams implements Serializable {
-        private String email;
-        private String password;
-        private String name;
+    public class LoginMessage{
+        String message;
+        UserWrapper user;
 
-        public String getEmail() {
-            return email;
+        public LoginMessage(String message, User user) {
+            this.message = message;
+            this.user = new UserWrapper(user);
         }
 
-        public String getPassword() {
-            return password;
+        public String getMessage() {
+            return message;
         }
 
-        public void setPassword(String password) {
-            this.password = password;
+        public void setMessage(String message) {
+            this.message = message;
         }
 
-        public String getName() {
-            return name;
+        public UserWrapper getUser() {
+            return user;
         }
 
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public void setEmail(String email) {
-            this.email = email;
+        public void setUser(UserWrapper user) {
+            this.user = user;
         }
     }
+
 
 
     private class UserWrapper{

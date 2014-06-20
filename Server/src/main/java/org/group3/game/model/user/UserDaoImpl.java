@@ -37,15 +37,21 @@ public class UserDaoImpl implements UserDao {
     public User getUserByEmailToken(String email,String token){
 
         String sql = "SELECT * FROM user" +
-                " WHERE email = ? AND token = ?";
+                     " WHERE email = ? AND token = ?";
         Object[] args = {email,token};
 
         return jdbcTemplate.queryForObject(sql, args, new BeanPropertyRowMapper<User>(User.class));
 
     }
 
+    @Override
+    public User getUserByEmail(String email) {
+        String sql = "SELECT * FROM user" +
+                     " WHERE email = ?";
+        Object[] args = {email};
 
-
+        return jdbcTemplate.queryForObject(sql, args, new BeanPropertyRowMapper<User>(User.class));
+    }
 
 
 }

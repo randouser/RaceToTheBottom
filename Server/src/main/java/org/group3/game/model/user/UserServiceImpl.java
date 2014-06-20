@@ -28,6 +28,20 @@ public class UserServiceImpl implements UserService {
         return userDao.getUserByEmailToken(email,token);
 	}
 
+    @Override
+    public User getUser(String email, String password) {
+
+        User user = userDao.getUserByEmail(email);
+
+        boolean isPassword = HashUtils.isPasswordEqualToHash(password, user.getSalt(),user.getPasswordHash());
+
+        if(isPassword){
+            return user;
+        }else{
+            return null;
+        }
+
+    }
 
 
     private static Timestamp createExpTime(){

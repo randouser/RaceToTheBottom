@@ -21,7 +21,7 @@
     </div>
     <div id="conversationDiv">
         <label>Send a hello message?</label><input type="text" id="name" />
-        <button id="sendName" onclick="sendName();">Send</button>
+        <button id="sendName">Send</button>
         <p id="response"></p>
     </div>
     <div style="border: 1px solid black;background-color:cornsilk">
@@ -37,6 +37,18 @@
         <button id="userFormSubmit">Add User</button>
     </div>
 
+    <div style="border: 1px solid black;background-color:cornflowerblue">
+        <form id="userFormLogin" >
+            <h2>Login as User</h2>
+            <label for="userEmailLogin">Email</label>
+            <input id="userEmailLogin" name="email" type="text"   placeholder="email" />
+            <label for="userPassLogin">Password</label>
+            <input id="userPassLogin" name="password" type="text" placeholder="password" />
+
+        </form>
+        <button id="userFormLoginSubmit">Login</button>
+    </div>
+
 </div>
 
 
@@ -50,14 +62,22 @@
         StompService.disconnect();
     });
 
-    jQuery('#sendName').click(function(){
-        StompService.sendName();
-    });
 
     jQuery('#userFormSubmit').click(function(){
         var formString = jQuery('#userForm').serialize();
         UserProxy.registerUser(formString);
     });
+    jQuery('#userFormLoginSubmit').click(function(){
+        var formString = jQuery('#userFormLogin').serialize();
+        UserProxy.login(formString);
+    });
+
+    jQuery('#sendName').click(function(){
+        var message = jQuery('#name').val();
+        StompService.sendMessage({message:message,email:email;token:token});
+    });
+
+
 
 
 
