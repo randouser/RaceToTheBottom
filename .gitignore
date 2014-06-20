@@ -4,5 +4,5 @@ Site/build.xml
 Server/src/build.xml
 ./Site/build.xml
 /Site/build.xml
-./Server/src/build
+./Server/src/build.xml
 build.xml
