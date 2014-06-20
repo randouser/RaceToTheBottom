@@ -1,5 +1,6 @@
-package org.group3.game.model;
+package org.group3.game.model.stock;
 
+import org.group3.game.model.stock.Stock;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;

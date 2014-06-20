@@ -1,23 +1,13 @@
 package org.group3.game.controllers;
 
-import org.group3.game.model.Stock;
-import org.group3.game.model.StockService;
+import org.group3.game.model.stock.Stock;
+import org.group3.game.model.stock.StockService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.messaging.Message;
-import org.springframework.messaging.MessagingException;
-import org.springframework.messaging.core.MessagePostProcessor;
-import org.springframework.messaging.core.MessageSendingOperations;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
-
-import javax.websocket.server.ServerEndpoint;
-import java.util.Map;
 
 @Controller
 public class WebSocketController {

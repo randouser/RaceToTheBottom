@@ -2,62 +2,14 @@
 <html>
 <head>
     <title>Hello WebSocket</title>
+    <!--1 Libraries-->
     <script src="sockjs-0.3.4.js"></script>
     <script src="stomp.js"></script>
-    <script type="text/javascript">
-        var stompClient = null;
-        
-        function setConnected(connected) {
-            document.getElementById('connect').disabled = connected;
-            document.getElementById('disconnect').disabled = !connected;
-            document.getElementById('conversationDiv').style.visibility = connected ? 'visible' : 'hidden';
-            document.getElementById('response').innerHTML = '';
-        }
-        
-        function connect() {
-           
-        	var connectSuccess = function(frame){
-                setConnected(true);
-                console.log('Connected: ' + frame);
-
-                stompClient.subscribe('/topics/greetings', function(greeting){
-                    showGreeting(JSON.parse(greeting.body));
-                });
-
-                stompClient.subscribe('/queue/foo/12345', function(greeting){
-                    alert(greeting.body);
-                    console.log(greeting);
-                });
-            };
-        	var connectFailure = function(error){
-        		console.log('Connection failure:');
-        		console.log(error);
-        	};
-        	
-        	var socket = new SockJS('/gameserver/connect');
-            stompClient = Stomp.over(socket);       
-           	stompClient.connect({},connectSuccess,connectFailure);
-        }
-        
-        function disconnect() {
-            stompClient.disconnect();
-            setConnected(false);
-            console.log("Disconnected");
-        }
-        
-        function sendName() {
-            var name = document.getElementById('name').value;
-            stompClient.send("/app/hello", {}, JSON.stringify({ 'name': name }));
-        }
-        
-        function showGreeting(message) {
-            var response = document.getElementById('response');
-            var p = document.createElement('p');
-            p.style.wordWrap = 'break-word';
-            p.innerHTML = JSON.stringify(message);
-            response.appendChild(p);
-        }
-    </script>
+    <script src="jquery-2.1.1.min.js"></script>
+    <!--2 Utilities-->
+    <script type="text/javascript" src="stompService.js"></script>
+    <!--3 Main Classes-->
+    <script type="text/javascript" src="userProxy.js"></script>
 </head>
 <body>
 <noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript! Websocket relies on Javascript being enabled. Please enable
@@ -72,6 +24,48 @@
         <button id="sendName" onclick="sendName();">Send</button>
         <p id="response"></p>
     </div>
+    <div style="border: 1px solid black;background-color:cornsilk">
+        <form id="userForm" >
+            <h2>Register User</h2>
+            <label for="userEmail">Email</label>
+            <input id="userEmail" name="email" type="text"   placeholder="email" />
+            <label for="userPass">Password</label>
+            <input id="userPass" name="password" type="text" placeholder="password" />
+            <label for="userName">NickName</label>
+            <input id="userName" name="name" type="text" placeholder="NickName" />
+        </form>
+        <button id="userFormSubmit">Add User</button>
+    </div>
+
 </div>
+
+
+<script>
+
+    jQuery('#connect').click(function(){
+        StompService.connect();
+    });
+
+    jQuery('#disconnect').click(function(){
+        StompService.disconnect();
+    });
+
+    jQuery('#sendName').click(function(){
+        StompService.sendName();
+    });
+
+    jQuery('#userFormSubmit').click(function(){
+        var formString = jQuery('#userForm').serialize();
+        UserProxy.registerUser(formString);
+    });
+
+
+
+
+
+
+
+
+</script>
 </body>
 </html>
