@@ -1,3 +1,4 @@
 .project
 Server/build.xml
 Site/build.xml
+Server/src/build.xml
