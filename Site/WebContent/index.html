@@ -47,7 +47,9 @@
 
         </form>
         <button id="userFormLoginSubmit">Login</button>
+        <div class="loginHide" style="display:none;"><span>&nbsp;</span></div>
     </div>
+
 
 </div>
 
@@ -72,10 +74,10 @@
         UserProxy.login(formString);
     });
 
-    jQuery('#sendName').click(function(){
-        var message = jQuery('#name').val();
-        StompService.sendMessage({message:message,email:email;token:token});
-    });
+//    jQuery('#sendName').click(function(){
+//        var message = jQuery('#name').val();
+//        StompService.sendMessage({message:message,email:email;token:token});
+//    });
 
 
 

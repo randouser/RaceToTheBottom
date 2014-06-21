@@ -21,15 +21,20 @@ UserProxy = {
 
     }
     ,login:function(serializedForm){
+        var that = this;
         var onError = function(detail){
-            alert('error in request');
+            alert('Error in login request');
             console.log(detail);
         };
         var onSuccess = function(data){
             console.log(data);
+             var user = data.user;
 
-            if(data.user){
-                StompService.connect(data.user.token);
+            if(user){
+                var loginMessage = jQuery('.loginHide').fadeOut();
+                StompService.connect(user.token);
+                that.setCookie("user",JSON.stringify(user));
+                loginMessage.fadeIn().children().html('You are now connected to server as:<strong>' + user.email + "</strong> in <i>/queue/"+user.token+"</i>");
             }
 
         };
@@ -44,11 +49,11 @@ UserProxy = {
         });
     }
 
-    ,setPersistentValue:function(key, value){
+    ,setCookie:function(key, value){
         document.cookie = key + '=' +value;
 
     }
-    ,getPersistentValue:function(key) {
+    ,getCookie:function(key) {
         var cookieMatch = document.cookie.match(new RegExp(key + '\\s*=\\s*([^;]+)'));
         if (cookieMatch) {
             return cookieMatch[1];

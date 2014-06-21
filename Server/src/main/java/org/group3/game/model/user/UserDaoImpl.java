@@ -24,7 +24,7 @@ public class UserDaoImpl implements UserDao {
     public void registerUser(String email,String password,String name, String salt, String token, String passwordHash, int wins, int losses, Timestamp tokenExpirationDate) {
 
         String sql = "INSERT INTO user (name, email, passwordHash,salt,token,wins,losses,tokenExpirationDate)" +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         Object[] updateArgs = {name,email,passwordHash,salt,token,0,0,tokenExpirationDate};
 
 
