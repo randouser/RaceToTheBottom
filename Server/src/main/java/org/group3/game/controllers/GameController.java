@@ -1,26 +1,86 @@
 package org.group3.game.controllers;
 
+import org.group3.game.model.user.User;
+import org.group3.game.model.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Controller
-@RequestMapping(value = "/game")
 public class GameController {
+	
 	private static final Logger logger = LoggerFactory.getLogger(GameController.class);
 	
-	/**
-	 * Rest response
-	 */
-	@RequestMapping(method = RequestMethod.POST, produces="text/plain")
-	@ResponseStatus(HttpStatus.OK)
-	public @ResponseBody String gameHello() {
-		logger.info("GameController Triggered");
-		return "You reached the game controller";
-	}
+	@Autowired
+    UserService userService;
+
+      //goes here eventually
+//    @Autowired
+//    GameService gameService;
+
+
+
+    private final SimpMessagingTemplate messagingTemplate;
+    @Autowired
+    public GameController(SimpMessagingTemplate messagingTemplate) {
+        this.messagingTemplate = messagingTemplate;
+    }
+
+
+
+
+    @MessageMapping("/startGame")
+    public void startGame(GameMessage message) throws Exception {
+
+        logger.info("User: " +message.getUserEmail() + " has requested to start a game with: " + message.getEmailToNotify());
+
+        User user = userService.getUserByEmailToken(message.getUserEmail(),message.getUserToken());
+        if(user == null){
+            throw new IllegalArgumentException("There is no user with these credentials");
+        }
+
+        //gameService.createGame(user,message.getGameType(), message.getEmailToNotify);
+
+
+
+    }
+
+
+    @MessageMapping("/takeTurn")
+    public void takeTurn(GameMessage message) throws Exception {
+
+        User user = userService.getUserByEmailToken(message.getUserEmail(),message.getUserToken());
+        if(user == null){
+            throw new IllegalArgumentException("There is no user with these credentials");
+        }
+
+        //note:this should probably be a different message
+        //gameService.takeTurn(user,message);
+    }
+
+
+
+
+    public void sendToUser(User user,GameMessage message) throws Exception {
+
+        messagingTemplate.convertAndSend("/queue/"+user.getToken(),message);
+
+
+    }
+
+
+
+    @SendTo("/topic/greetings")
+    public GameMessage notifyAllUsers(GameMessage message) throws Exception {
+        return message;
+
+    }
+
+
+
+
 }

@@ -29,13 +29,25 @@ public class UserServiceImpl implements UserService {
 	}
 
     @Override
-    public User getUser(String email, String password) {
+    public User getUserByEmailPassword(String email, String password) {
 
         User user = userDao.getUserByEmail(email);
 
         boolean isPassword = HashUtils.isPasswordEqualToHash(password, user.getSalt(),user.getPasswordHash());
 
         if(isPassword){
+            return user;
+        }else{
+            return null;
+        }
+
+    }
+
+    @Override
+    public User getUserByEmailToken(String email, String userToken) {
+        User user = userDao.getUserByEmail(email);
+
+        if(user.getToken().equals(userToken)){
             return user;
         }else{
             return null;
