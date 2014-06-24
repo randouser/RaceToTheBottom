@@ -62,7 +62,7 @@ public class Game {
                  //deal damage //TODO right now just focus on simple damage, worry about complicated stuff later
                  int damage = 0;
                  for(Card card : cards){
-                     damage += card.getDamage();
+                     damage += card.getMaxDamage();
                  }
                  districts.get(districtPointer).setPlayerScore(turnIndex, damage);
                  districts.get(districtPointer).setPlayerScore(otherplayerIndex, (-1 * damage));

@@ -9,16 +9,34 @@ public class Card implements Serializable{
     private String type;
     private String name;
     private String bodyText;
-    private int workerCost;
     private int moneyCost;
-    private int damage;
+    private int workerCost;
+    private int minDamage;
+    private int maxDamage;
+    private int multiplier;
 
-    public int getDamage() {
-        return damage;
+    public int getMinDamage() {
+        return minDamage;
     }
 
-    public void setDamage(int damage) {
-        this.damage = damage;
+    public void setMinDamage(int minDamage) {
+        this.minDamage = minDamage;
+    }
+
+    public int getMaxDamage() {
+        return maxDamage;
+    }
+
+    public void setMaxDamage(int maxDamage) {
+        this.maxDamage = maxDamage;
+    }
+
+    public int getMultiplier() {
+        return multiplier;
+    }
+
+    public void setMultiplier(int multiplier) {
+        this.multiplier = multiplier;
     }
 
     public Integer getId() {

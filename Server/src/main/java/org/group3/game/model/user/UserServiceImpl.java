@@ -61,6 +61,12 @@ public class UserServiceImpl implements UserService {
         return userDao.getUserByEmail(email);
     }
 
+    @Override
+    public User getUserById(Integer id) {
+
+        return userDao.getUserById(id);
+    }
+
 
     private static Timestamp createExpTime(){
 

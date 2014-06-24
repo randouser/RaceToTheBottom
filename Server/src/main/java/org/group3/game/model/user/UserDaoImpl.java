@@ -40,7 +40,7 @@ public class UserDaoImpl implements UserDao {
                      " WHERE email = ? AND token = ?";
         Object[] args = {email,token};
 
-        return jdbcTemplate.queryForObject(sql, args, new BeanPropertyRowMapper<User>(User.class));
+        return jdbcTemplate.queryForObject(sql, args, new BeanPropertyRowMapper<>(User.class));
 
     }
 
@@ -50,7 +50,16 @@ public class UserDaoImpl implements UserDao {
                      " WHERE email = ?";
         Object[] args = {email};
 
-        return jdbcTemplate.queryForObject(sql, args, new BeanPropertyRowMapper<User>(User.class));
+        return jdbcTemplate.queryForObject(sql, args, new BeanPropertyRowMapper<>(User.class));
+    }
+
+    @Override
+    public User getUserById(Integer id) {
+        String sql = "SELECT * FROM user" +
+                " WHERE id = ?";
+        Object[] args = {id};
+
+        return jdbcTemplate.queryForObject(sql, args, new BeanPropertyRowMapper<>(User.class));
     }
 
 

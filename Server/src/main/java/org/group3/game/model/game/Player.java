@@ -13,6 +13,7 @@ public class Player {
     @JsonIgnoreProperties
     private static final int MAX_HAND = 5;
 
+    private Integer id;
     private List<Card> hand;
     private List<Card> deck;
     private int maxMoney;
@@ -21,7 +22,8 @@ public class Player {
 
 
 
-    public Player(List<Card> deck, int maxMoney, int maxWorkers, String email) {
+    public Player(Integer id,List<Card> deck, int maxMoney, int maxWorkers, String email) {
+        this.id = id;
         this.deck = deck;
         this.maxMoney = maxMoney;
         this.maxWorkers = maxWorkers;
@@ -53,6 +55,13 @@ public class Player {
 
     }
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public List<Card> getHand() {
         return hand;

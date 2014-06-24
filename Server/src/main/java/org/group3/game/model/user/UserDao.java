@@ -10,4 +10,5 @@ public interface UserDao {
     User getUserByEmailToken(String email,String token);
 
     User getUserByEmail(String email);
+    User getUserById(Integer id);
 }

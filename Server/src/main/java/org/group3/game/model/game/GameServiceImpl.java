@@ -34,8 +34,8 @@ public class GameServiceImpl implements GameService{
         List<Card> deck2 = cardService.getRandomDeck(60);
 
         //make the 'players'
-        Player playerOne = new Player(deck1,5,5,user.getEmail());
-        Player playerTwo = new Player(deck2,5,5,inviteeEmail);
+        Player playerOne = new Player(user.getId(),deck1,5,5,user.getEmail());
+        Player playerTwo = new Player(null,deck2,5,5,inviteeEmail);
 
         //make the districts
         List<District> districts = new ArrayList<>();
@@ -52,22 +52,33 @@ public class GameServiceImpl implements GameService{
     }
 
     @Override
-    public boolean joinGame(User user, int gameId) {
-        if(activeGames.contains(gameId)){
+    public TurnMessage joinGame(User user, String inviteEmail,int gameId) {
+        //first check if the game exists
+        if(activeGames.containsKey(gameId)){
             Game game = activeGames.get(gameId);
             Player playerTwo = game.getPendingPlayer();
-            if(playerTwo.getEmail().equals(user.getEmail())
-                && !game.isInProgress()){
-                //TODO probably need a way to update email in case new user uses a different email
+
+            //check if this game has started
+
+            if(!game.isInProgress()
+               && playerTwo.getEmail().equals(inviteEmail)){
+
+                playerTwo.setEmail(user.getEmail());
+                playerTwo.setId(user.getId());
                 game.setInProgress(true);
-                return true; //TODO this needs to start the first turn, not return true
+
+                //TODO random turn start?
+                //return message for other player
+                Player curPlayer = game.getCurrentPlayer();
+                User curUser = userService.getUserById(curPlayer.getId());
+                return new TurnMessage(curUser.getToken(),curPlayer.getHand(),curPlayer.getMaxWorkers(),curPlayer.getMaxMoney(),game.getDistricts());
 
             }else{
-                return false;
+                return null;
             }
 
         }else{
-            return false;
+            return null;
         }
 
 
@@ -87,11 +98,11 @@ public class GameServiceImpl implements GameService{
 
                 //return message for other player
                 Player curPlayer = game.getCurrentPlayer();
-                User curUser = userService.getUserByEmail(curPlayer.getEmail());
+                User curUser = userService.getUserById(curPlayer.getId());
                 return new TurnMessage(curUser.getToken(),curPlayer.getHand(),curPlayer.getMaxWorkers(),curPlayer.getMaxMoney(),game.getDistricts());
 
             }else{
-                return null; //what happens when you try to play cards that you can'ts
+                return null; //what happens when you try to play cards that you can't
             }
 
         }else{

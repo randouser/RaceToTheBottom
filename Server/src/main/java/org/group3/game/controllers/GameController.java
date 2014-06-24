@@ -1,6 +1,9 @@
 package org.group3.game.controllers;
 
+import org.group3.game.messageWrappers.JoinGameMessage;
 import org.group3.game.messageWrappers.StartGameMessage;
+import org.group3.game.messageWrappers.TurnMessage;
+import org.group3.game.model.game.GameService;
 import org.group3.game.model.user.User;
 import org.group3.game.model.user.UserService;
 import org.slf4j.Logger;
@@ -19,13 +22,14 @@ public class GameController {
 	@Autowired
     UserService userService;
 
-      //goes here eventually
-//    @Autowired
-//    GameService gameService;
+    @Autowired
+    GameService gameService;
 
 
 
     private final SimpMessagingTemplate messagingTemplate;
+
+    @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     public GameController(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
@@ -46,9 +50,16 @@ public class GameController {
             throw new IllegalArgumentException("There is no user with these credentials");
         }
 
+        //make the game
+        Integer id = gameService.createGame(user,message.getGameType(), message.getEmailToNotify());
 
-        //gameService.createGame(user,message.getGameType(), message.getEmailToNotify);
-        messagingTemplate.convertAndSend("/queue/"+invitee.getToken()+"/invite","Hello from" + user.getEmail());
+
+        //TODO if user, notify, check if online?  If not user, email
+        if(invitee != null){
+            messagingTemplate.convertAndSend("/queue/"+invitee.getToken()+"/invite", new JoinGameMessage(id,message.getEmailToNotify()));
+        }
+
+        messagingTemplate.convertAndSend("/queue/"+user.getToken()+"/message","You started a game with id:" + id);
 
 
     }
@@ -63,9 +74,14 @@ public class GameController {
             throw new IllegalArgumentException("There is no user with these credentials");
         }
 
-        //gameService.joinGame(user,message.getGameId());
+        //join the game
+        TurnMessage turnMessage = gameService.joinGame(user,message.getEmailToNotify(),message.getGameId());
 
+        //start the turn for the player waiting
+        messagingTemplate.convertAndSend("/queue/"+turnMessage.getUserToken()+"/message",turnMessage);
 
+        //tell the joiner that the game has started
+        messagingTemplate.convertAndSend("/queue/"+user.getToken()+"/message",turnMessage);
 
     }
 

@@ -11,4 +11,9 @@ public interface UserService {
     User getUserByEmailToken(String email, String userToken);
 
     User getUserByEmail(String email);
+
+
+    User getUserById(Integer id);
+
+
 }

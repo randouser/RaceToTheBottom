@@ -16,16 +16,29 @@ StompService = {
                 this.showGreeting(JSON.parse(greeting.body));
             });
 
-            that.client.subscribe('/queue/'+token+'/invite', function(greeting){
-                console.log(greeting);
-                var r = confirm(greeting.body + "\nAccept?");
+            that.client.subscribe('/queue/'+token+'/invite', function(payload){
+                var joinInfo = JSON.parse(payload.body);
+                console.log(payload);
+                var r = confirm("You've been invited to a game\nDo you accept?");
                 if (r == true) {
-                    that.sendMessage('joinGame',{});
+                    var user = UserProxy.user;
+                    that.sendMessage('joinGame',{
+                         userEmail:user.email
+                        ,userToken:user.token
+                        ,gameType:'player'
+                        ,gameId:joinInfo.gameId
+                        ,emailToNotify:joinInfo.inviteeEmail
+                    });
                 } else {
                    alert("Invitation Canceled");
                 }
 
 
+            });
+
+            that.client.subscribe('/queue/'+token+'/message', function(greeting){
+                console.log(greeting);
+                alert(greeting);
             });
         };
         var connectFailure = function(error){

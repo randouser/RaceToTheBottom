@@ -9,7 +9,9 @@ import java.util.List;
 public interface GameService {
 
     int createGame(User user, String type, String inviteeEmail);
-    boolean joinGame(User user,int gameId);
+
+    TurnMessage joinGame(User user, String inviteEmail, int gameId);
+
     TurnMessage takeTurn(User user,int gameId,List<Card> cardsPlayed);
 
 }
