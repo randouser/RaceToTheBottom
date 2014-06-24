@@ -12,13 +12,20 @@ StompService = {
             that.setConnected(true);
             console.log('Connected: ' + frame);
 
-            that.client.subscribe('/topics/greetings', function(greeting){
+            that.client.subscribe('/topic/greetings', function(greeting){
                 this.showGreeting(JSON.parse(greeting.body));
             });
 
-            that.client.subscribe('/queue/'+token, function(greeting){
-                alert(greeting.body);
+            that.client.subscribe('/queue/'+token+'/invite', function(greeting){
                 console.log(greeting);
+                var r = confirm(greeting.body + "\nAccept?");
+                if (r == true) {
+                    that.sendMessage('joinGame',{});
+                } else {
+                   alert("Invitation Canceled");
+                }
+
+
             });
         };
         var connectFailure = function(error){
@@ -35,8 +42,8 @@ StompService = {
         this.setConnected(false);
         console.log("Disconnected");
     }
-    ,sendMessage:function(jsonMessage){
-        this.client.send("/app/hello", {}, JSON.stringify(jsonMessage));
+    ,sendMessage:function(destination,jsonMessage){
+        this.client.send('/app/'+destination, {}, JSON.stringify(jsonMessage));
     }
     ,showGreeting:function(message){
         var response = document.getElementById('response');

@@ -1,5 +1,6 @@
 UserProxy = {
-    registerUser:function(serializedForm){
+    user:null
+    ,registerUser:function(serializedForm){
         var onError = function(detail){
             alert('error in request');
             console.log(detail);
@@ -29,12 +30,16 @@ UserProxy = {
         var onSuccess = function(data){
             console.log(data);
              var user = data.user;
+             that.user = user;
 
             if(user){
                 var loginMessage = jQuery('.loginHide').fadeOut();
                 StompService.connect(user.token);
                 that.setCookie("user",JSON.stringify(user));
                 loginMessage.fadeIn().children().html('You are now connected to server as:<strong>' + user.email + "</strong> in <i>/queue/"+user.token+"</i>");
+                jQuery('#startGamePanel').fadeIn();
+            }else{
+                alert(data.message);
             }
 
         };

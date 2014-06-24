@@ -5,6 +5,8 @@ import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.AbstractWebSocketMessageBrokerConfigurer;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
@@ -16,6 +18,7 @@ import java.util.Map;
 
 @Configuration
 @EnableWebSocketMessageBroker
+@EnableAsync
 public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
 
 	@Override

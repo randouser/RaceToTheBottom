@@ -29,10 +29,16 @@ public class UserController {
     @RequestMapping(value="/login",method = RequestMethod.GET)
     public @ResponseBody LoginMessage getUser(@RequestParam String email,@RequestParam String password) {
 
-        logger.info("REGISTER POST!");
-        User user = userService.getUserByEmailToken(email, password);
+        logger.info("LOGIN GET!");
+        User user = userService.getUserByEmailPassword(email, password);
 
-        String message = "User message";
+        String message;
+        if(user == null){
+            message = "You are no logged in";
+        }else{
+            message = "there is no user with those credentials";
+        }
+
 
         return new LoginMessage(message,user);
     }
@@ -67,7 +73,7 @@ public class UserController {
 
 
 
-    private class UserWrapper{
+    public class UserWrapper{
         private String name;
         private String email;
         private String token;

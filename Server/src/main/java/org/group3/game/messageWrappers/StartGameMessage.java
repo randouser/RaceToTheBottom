@@ -1,10 +1,19 @@
-package org.group3.game.controllers;
+package org.group3.game.messageWrappers;
 
-public class GameMessage {
+public class StartGameMessage {
     private String userEmail;
     private String userToken;
     private String gameType;
     private String emailToNotify;
+    private Integer gameId;
+
+    public Integer getGameId() {
+        return gameId;
+    }
+
+    public void setGameId(Integer gameId) {
+        this.gameId = gameId;
+    }
 
     public String getUserEmail() {
         return userEmail;

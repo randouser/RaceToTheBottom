@@ -88,5 +88,16 @@ public class User implements java.io.Serializable {
     public void setTokenExpirationDate(String tokenExpirationDate) {
         this.tokenExpirationDate = tokenExpirationDate;
     }
+
+
+    @Override
+    public boolean equals(Object obj){
+        return (obj instanceof User) && ((User) obj).id.equals(this.id);
+    }
+
+    @Override
+    public int hashCode(){
+        return this.id.hashCode();
+    }
 }
 

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 
 
 @Service
@@ -53,6 +54,11 @@ public class UserServiceImpl implements UserService {
             return null;
         }
 
+    }
+
+    @Override
+    public User getUserByEmail(String email) {
+        return userDao.getUserByEmail(email);
     }
 
 

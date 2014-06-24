@@ -9,4 +9,6 @@ public interface UserService {
     User getUserByEmailPassword(String email, String password);
 
     User getUserByEmailToken(String email, String userToken);
+
+    User getUserByEmail(String email);
 }

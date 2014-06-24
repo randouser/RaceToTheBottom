@@ -1,4 +1,4 @@
-package org.group3.game.controllers;
+package org.group3.game.messageWrappers;
 
 public class Greeting {
     
