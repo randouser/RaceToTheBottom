@@ -6,6 +6,7 @@ GameProxy = {
     }
     ,takeTurn:function(){
         var gameId = jQuery('#gameStageWrapper').data('gameId');
+        jQuery('#waitingScreen').fadeIn();
         var cardsSelected = this.games[gameId].cardsSelected;
         this.games[gameId].clear();
         var user = UserProxy.user;
@@ -27,8 +28,11 @@ GameProxy = {
         if(curGameId === turnMessage.gameId){
             game.displayCards();
             game.displayDistricts();
+            game.displayResources();
+            jQuery('#waitingScreen').fadeOut();
         }
         this.games[game.gameId] = game;
+
 
     }
 
@@ -54,39 +58,44 @@ function CardView(card){
     this.subtextElement = this.element.getElementsByClassName('subtextText')[0];
 
 
-    this.element.addEventListener('click',this.clickHandler,false);
+//    this.element.addEventListener('click',this.clickHandler,false);
     
 }
-// superclass method
-CardView.prototype.clickHandler = function(e,cardView) {
-    this.classList.toggle('cardToggle');
-};
+//// superclass method
+//CardView.prototype.clickHandler = function(e,cardView) {
+//    this.classList.toggle('cardToggle');
+//};
 
 
 // ========== DistrictView Objects
-function DistrictView(district){
+function DistrictView(district,index){
+    this.district = district;
     this.className = district.type;
-    this.bodyText = district.playerOneScore + '<br />' + district.playerTwoScore;
+    this.bodyText = 'p1Score: '+district.playerOneScore + '<br />' + 'p2Score: ' + district.playerTwoScore;
+    this.index = index;
 
 
     this.element = document.createElement('div');
     this.element.className = this.className + ' district';
     
     this.element.innerHTML = 
-    '<div class="name"><span class="nameText">'+district.type+'</span></div>'+
+    '<div class="name"><span class="nameText">'+this.index+' - '+district.type+'</span></div>'+
     '<div class="body"><span class="bodyText">'+this.bodyText+'</span></div>';
 
     this.nameElement = this.element.getElementsByClassName('nameText')[0];
     this.bodyElement = this.element.getElementsByClassName('bodyText')[0];
-    
-    this.element.addEventListener('click',this.clickHandler,false);
 
-    
+
+
+    //TODO clean this up so we have separate elements for each score
+    this.update = function(){
+        this.bodyElement.innerHTML = 'p1Score: Updating'+ '<br />' + 'p2Score: Updating';
+    }
 }
-// superclass method
-DistrictView.prototype.clickHandler = function() {
-    this.classList.toggle('districtToggle');
-};
+//// superclass method
+//DistrictView.prototype.clickHandler = function() {
+//    this.classList.toggle('districtToggle');
+//};
 
 
 
@@ -99,6 +108,13 @@ function Game(turnMessage){
     this.maxWorkers = turnMessage.maxWorkers;
     this.maxMoney = turnMessage.maxMoney;
     this.districts = turnMessage.districts;
+    this.districtPointer = turnMessage.districtPointer;
+    this.playerIndex = turnMessage.playerIndex;
+
+    this.districtViews = [];
+
+    this.money =this.maxMoney;
+    this.workers = this.maxWorkers;
     this.cardsSelected = [];
 
     this.displayDistricts = function(){
@@ -106,8 +122,12 @@ function Game(turnMessage){
         var i = 0;
         this.empty(districtStage);
         for(; i < this.districts.length; ++i){
-            var district = new DistrictView(this.districts[i]);
-            districtStage.appendChild(district.element);
+            var districtV = new DistrictView(this.districts[i],i);
+            if(i === this.districtPointer){
+                districtV.element.classList.add('districtToggle');
+            }
+            this.districtViews.push(districtV);
+            districtStage.appendChild(districtV.element);
         }
     };
 
@@ -123,25 +143,56 @@ function Game(turnMessage){
         }
     };
 
+    this.displayResources = function(){
+        var moneyWrapper = document.getElementById('moneyCount');
+        var workerWrapper = document.getElementById('workerCount');
+        var workTotalWrap = document.getElementById('workerTotal');
+        var moneyTotalWrap = document.getElementById('moneyTotal');
+
+        moneyWrapper.innerHTML = this.money;
+        workerWrapper.innerHTML = this.workers;
+        workTotalWrap.innerHTML = this.maxWorkers;
+        moneyTotalWrap.innerHTML = this.maxMoney;
+
+    };
+
     this.empty = function(element){
         while (element.hasChildNodes()) {
             element.removeChild(element.firstChild);
         }
     };
     this.cardWatcher = function(e,cardView,gameObj){
-        var index = gameObj.cardsSelected.indexOf(cardView.card);
+        var card = cardView.card;
+        var index = gameObj.cardsSelected.indexOf(card);
         if(index < 0){
-            gameObj.cardsSelected.push(cardView.card); //add if it's not there
+            if(((gameObj.money - card.moneyCost) < 0) || ((gameObj.workers - card.workerCost) < 0)){return;}
+            gameObj.cardsSelected.push(card); //add if it's not there
+            gameObj.money -= card.moneyCost;
+            gameObj.workers -= card.workerCost;
+            cardView.element.classList.add('cardToggle');
         }else{
             gameObj.cardsSelected.splice(index,1);  //remove if it's there
+            gameObj.money += card.moneyCost;
+            gameObj.workers += card.workerCost;
+            cardView.element.classList.remove('cardToggle');
         }
+        gameObj.displayResources();
+
     };
     this.clear = function(){
         var cardStage = document.getElementById('cardStage');
         var collection = cardStage.getElementsByClassName('cardToggle');
-        for(var i = 0; i < collection.length; ++i){
-            collection[i].classList.remove('cardToggle');
+        var i = collection.length;
+        while(i > 0){
+            --i;
+            cardStage.removeChild(collection[i]);
         }
+        this.money = this.maxMoney;
+        this.workers = this.maxWorkers;
+
+        this.districtViews[this.districtPointer].update();
+
+
     };
 
 

@@ -13,12 +13,14 @@ public class TurnMessage implements Serializable{
     private int maxWorkers;
     private int maxMoney;
     private boolean isInProgress;
+    private int districtPointer;
+    private int playerIndex;
 
     List<District> districts;
 
     private String userToken;
 
-    public TurnMessage(Integer gameId,String userToken, List<Card> hand, int maxWorkers, int maxMoney,List<District> districts,boolean isInProgress) {
+    public TurnMessage(Integer gameId,String userToken, List<Card> hand, int maxWorkers, int maxMoney,List<District> districts,int districtPointer,int playerIndex,boolean isInProgress) {
         this.gameId = gameId;
         this.hand = hand;
         this.maxWorkers = maxWorkers;
@@ -26,6 +28,24 @@ public class TurnMessage implements Serializable{
         this.districts = districts;
         this.userToken = userToken;
         this.isInProgress = isInProgress;
+        this.districtPointer = districtPointer;
+        this.playerIndex = playerIndex;
+    }
+
+    public int getPlayerIndex() {
+        return playerIndex;
+    }
+
+    public void setPlayerIndex(int playerIndex) {
+        this.playerIndex = playerIndex;
+    }
+
+    public int getDistrictPointer() {
+        return districtPointer;
+    }
+
+    public void setDistrictPointer(int districtPointer) {
+        this.districtPointer = districtPointer;
     }
 
     public boolean isInProgress() {

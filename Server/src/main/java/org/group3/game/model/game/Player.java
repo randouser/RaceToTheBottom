@@ -19,15 +19,17 @@ public class Player {
     private int maxMoney;
     private int maxWorkers;
     private String email;
+    private int playerIndex;
 
 
 
-    public Player(Integer id,List<Card> deck, int maxMoney, int maxWorkers, String email) {
+    public Player(Integer id,List<Card> deck, int maxMoney, int maxWorkers, String email, int playerIndex) {
         this.id = id;
         this.deck = deck;
         this.maxMoney = maxMoney;
         this.maxWorkers = maxWorkers;
         this.email = email;
+        this.playerIndex = playerIndex;
 
         this.hand = new ArrayList<>();
         drawHand();
@@ -53,6 +55,14 @@ public class Player {
         return (moneySpent <= this.maxMoney && workersSpent <= this.maxWorkers && isCardInHand);
 
 
+    }
+
+    public int getPlayerIndex() {
+        return playerIndex;
+    }
+
+    public void setPlayerIndex(int playerIndex) {
+        this.playerIndex = playerIndex;
     }
 
     public Integer getId() {

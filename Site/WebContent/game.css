@@ -1,3 +1,24 @@
+#gameStageWrapper{
+    position:relative;
+}
+
+#waitingScreen{
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 1000;
+    font-size: 30px;
+    color: white;
+    text-shadow: 2px 2px black;
+    text-align: center;
+    padding-top: 10%;
+    transition: all 1s ease;
+    display:none;
+}
+
 #bottomStage > div{
     display:inline-block;
     border:1px solid black;
@@ -90,8 +111,8 @@
 .district {
     border:1px solid black;  
     display:inline-block;
-    width:200px;
-    height:200px;
+    width:150px;
+    height:150px;
     -webkit-user-select: none;  /* Chrome all / Safari all */
        -moz-user-select: none;     /* Firefox all */
         -ms-user-select: none;      /* IE 10+ */

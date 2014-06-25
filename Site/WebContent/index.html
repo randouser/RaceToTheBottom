@@ -63,6 +63,7 @@
     </div>
 
     <div id="gameStageWrapper" style="display:none;">
+        <div id="waitingScreen">Waiting For Next Turn</div>
         <div id="districtStage" >
             <!--Districts generated here-->
         </div>
@@ -75,10 +76,10 @@
             </div>
             <div id="widgetWrapper" style="width:70px">
                 <button id="playCardsButton">Play Cards</button>
-                <button>Burn Turn</button>
+                <button id="burnTurnButton">Burn Turn</button>
                 <div><span>Score:?</span></div>
-                <div><span>Money:?</span></div>
-                <div><span>Workers:?</span></div>
+                <div><span>Money:</span><span id="moneyCount"></span><span>/</span><span id="moneyTotal"></span></div>
+                <div><span>Workers:</span><span id="workerCount"></span><span>/</span><span id="workerTotal"></span></div>
 
             </div>
         </div>
@@ -120,6 +121,7 @@
     jQuery('#playCardsButton').click(function(){
         GameProxy.takeTurn();
     });
+
 
 
 

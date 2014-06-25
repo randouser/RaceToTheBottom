@@ -34,8 +34,8 @@ public class GameServiceImpl implements GameService{
         List<Card> deck2 = cardService.getRandomDeck(60);
 
         //make the 'players'
-        Player playerOne = new Player(user.getId(),deck1,5,5,user.getEmail());
-        Player playerTwo = new Player(null,deck2,5,5,inviteeEmail);
+        Player playerOne = new Player(user.getId(),deck1,5,5,user.getEmail(),0);
+        Player playerTwo = new Player(null,deck2,5,5,inviteeEmail,1);
 
         //make the districts
         List<District> districts = new ArrayList<>();
@@ -71,7 +71,7 @@ public class GameServiceImpl implements GameService{
                 //return message for other player
                 Player curPlayer = game.getCurrentPlayer();
                 User curUser = userService.getUserById(curPlayer.getId());
-                return new TurnMessage(game.getGameId(),curUser.getToken(),curPlayer.getHand(),curPlayer.getMaxWorkers(),curPlayer.getMaxMoney(),game.getDistricts(),true);
+                return new TurnMessage(game.getGameId(),curUser.getToken(),curPlayer.getHand(),curPlayer.getMaxWorkers(),curPlayer.getMaxMoney(),game.getDistricts(),game.getDistrictPointer(),curPlayer.getPlayerIndex(),true);
 
             }else{
                 return null;
@@ -103,7 +103,7 @@ public class GameServiceImpl implements GameService{
                 //return message for other player
                 Player curPlayer = game.getCurrentPlayer();
                 User curUser = userService.getUserById(curPlayer.getId());
-                return new TurnMessage(game.getGameId(),curUser.getToken(),curPlayer.getHand(),curPlayer.getMaxWorkers(),curPlayer.getMaxMoney(),game.getDistricts(),game.isInProgress());
+                return new TurnMessage(game.getGameId(),curUser.getToken(),curPlayer.getHand(),curPlayer.getMaxWorkers(),curPlayer.getMaxMoney(),game.getDistricts(),game.getDistrictPointer(),curPlayer.getPlayerIndex(),game.isInProgress());
 
             }else{
                 return null; //what happens when you try to play cards that you can't
