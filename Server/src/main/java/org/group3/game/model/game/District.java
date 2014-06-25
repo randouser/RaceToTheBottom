@@ -29,6 +29,14 @@ public class District implements Serializable {
         }
     }
 
+    public String getWinnerEmail() {
+        return winnerEmail;
+    }
+
+    public void setWinnerEmail(String winnerEmail) {
+        this.winnerEmail = winnerEmail;
+    }
+
     public int getPlayerOneScore() {
         return playerOneScore;
     }
@@ -60,4 +68,6 @@ public class District implements Serializable {
     public void setType(String type) {
         this.type = type;
     }
+
+
 }

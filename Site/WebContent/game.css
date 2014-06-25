@@ -1,0 +1,104 @@
+#bottomStage > div{
+    display:inline-block;
+    border:1px solid black;
+    height:150px;
+    vertical-align: top;
+    padding:10px;
+}
+#cardStage{
+    border:1px solid purple;
+    display:inline-block;
+    width:80%;
+    position:relative;
+    height:150px;
+/*
+    overflow:scroll;
+    white-space:nowrap;
+    overflow-y: hidden;
+*/
+
+}
+
+.positive{
+    background:url('card1.png');
+}
+.negative{
+    background:url('card1.png');
+}
+
+.card{
+    width:100px;
+    height:140px;
+    background-size:100% 100%;
+    background-repeat:no-repeat;
+    display:inline-block;
+    border:1px solid transparent;
+    margin:-1px;
+}
+.card:hover, .cardToggle{
+    box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.5);
+    border:1px solid black;
+    top:-5px;
+    z-index:20;
+    transition:all .1s;
+
+}
+.cardToggle{
+    border-color:yellow !important;    
+}
+
+
+.card{
+    font-size:12px;
+    font-family:Arial, san-serif;
+    cursor:default;
+    position:relative;
+}
+
+.card .name{
+    height:15%
+
+}
+.card .nameText{
+    font-weight:bold;
+
+}
+.card .body{
+    height:70%;
+
+}
+.card .subtext{
+    height:15%;
+
+}
+
+#wrapper{
+    border:1px solid black;
+    height:480px;
+    text-align:center;
+    vertical-align: text-bottom;
+
+}
+
+#districtStage{
+    height:270px;
+    padding:1em;
+
+}
+
+
+.district {
+    border:1px solid black;  
+    display:inline-block;
+    width:200px;
+    height:200px;
+    -webkit-user-select: none;  /* Chrome all / Safari all */
+       -moz-user-select: none;     /* Firefox all */
+        -ms-user-select: none;      /* IE 10+ */
+            user-select: none;  
+    
+}
+.districtToggle {
+    background-color:rgb(156, 156, 204);
+    
+}

@@ -2,6 +2,8 @@
 <html>
 <head>
     <title>Hello WebSocket</title>
+    <link rel="stylesheet" type="text/css" href="game.css">
+
     <!--1 Libraries-->
     <script src="sockjs-0.3.4.js"></script>
     <script src="stomp.js"></script>
@@ -10,6 +12,9 @@
     <script type="text/javascript" src="stompService.js"></script>
     <!--3 Main Classes-->
     <script type="text/javascript" src="userProxy.js"></script>
+    <script src="gameProxy.js"></script>
+
+
 </head>
 <body>
 <noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript! Websocket relies on Javascript being enabled. Please enable
@@ -57,7 +62,28 @@
         <button id="startGameBtn">Start Game With Player</button>
     </div>
 
+    <div id="gameStageWrapper" style="display:none;">
+        <div id="districtStage" >
+            <!--Districts generated here-->
+        </div>
+        <div id="bottomStage">
+            <div id="deckWrapper">
+                Deck?
+            </div>
+            <div id="cardStage">
+                <!--Cards generated here-->
+            </div>
+            <div id="widgetWrapper" style="width:70px">
+                <button id="playCardsButton">Play Cards</button>
+                <button>Burn Turn</button>
+                <div><span>Score:?</span></div>
+                <div><span>Money:?</span></div>
+                <div><span>Workers:?</span></div>
 
+            </div>
+        </div>
+
+    </div>
 
 
 
@@ -88,8 +114,11 @@
 
     jQuery('#startGameBtn').click(function(){
         var emailToNotify = jQuery('#emailToNotify').val();
-        var user = UserProxy.user;
-        StompService.sendMessage('startGame',{userEmail:user.email,userToken:user.token,emailToNotify:emailToNotify,gameType:'player',gameId:null});
+        GameProxy.startGame(emailToNotify);
+    });
+
+    jQuery('#playCardsButton').click(function(){
+        GameProxy.takeTurn();
     });
 
 

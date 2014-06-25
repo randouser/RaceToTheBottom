@@ -86,4 +86,9 @@ public class Card implements Serializable{
     public void setMoneyCost(int moneyCost) {
         this.moneyCost = moneyCost;
     }
+
+    @Override
+    public boolean equals(Object obj){
+        return (obj instanceof Card) && (this.id.equals(((Card)obj).id));
+    }
 }

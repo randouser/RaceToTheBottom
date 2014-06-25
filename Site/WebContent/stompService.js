@@ -12,13 +12,13 @@ StompService = {
             that.setConnected(true);
             console.log('Connected: ' + frame);
 
-            that.client.subscribe('/topic/greetings', function(greeting){
-                this.showGreeting(JSON.parse(greeting.body));
+            that.client.subscribe('/topic/greetings', function(frame){
+                this.showGreeting(JSON.parse(frame.body));
             });
 
-            that.client.subscribe('/queue/'+token+'/invite', function(payload){
-                var joinInfo = JSON.parse(payload.body);
-                console.log(payload);
+            that.client.subscribe('/queue/'+token+'/invite', function(frame){
+                var joinInfo = JSON.parse(frame.body);
+                console.log(frame);
                 var r = confirm("You've been invited to a game\nDo you accept?");
                 if (r == true) {
                     var user = UserProxy.user;
@@ -36,9 +36,16 @@ StompService = {
 
             });
 
-            that.client.subscribe('/queue/'+token+'/message', function(greeting){
-                console.log(greeting);
-                alert(greeting);
+            that.client.subscribe('/queue/'+token+'/message', function(frame){
+                console.log(frame);
+                alert(frame);
+            });
+
+            that.client.subscribe('/queue/'+token+'/getTurn', function(frame){
+                console.log(frame);
+                var turnMessage = JSON.parse(frame.body);
+                GameProxy.getTurn(turnMessage);
+
             });
         };
         var connectFailure = function(error){

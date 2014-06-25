@@ -50,7 +50,7 @@ public class Player {
             isCardInHand = isCardInHand && this.hand.contains(card);
         }
 
-        return (moneySpent < this.maxMoney && workersSpent < this.maxWorkers && isCardInHand);
+        return (moneySpent <= this.maxMoney && workersSpent <= this.maxWorkers && isCardInHand);
 
 
     }

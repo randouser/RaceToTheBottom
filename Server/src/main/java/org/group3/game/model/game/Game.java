@@ -17,6 +17,7 @@ public class Game {
     private List<GameLog> log;
     private String type;
     private boolean isInProgress;
+    private String winnerEmail;
 
 
     public Game(Integer gameId, Player playerOne, Player playerTwo, List<District> districts, String type) {
@@ -32,6 +33,7 @@ public class Game {
         this.log = log;
         this.type = type;
         this.isInProgress = false;
+        this.winnerEmail = null;
     }
 
     public void toggleTurn(){
@@ -48,6 +50,21 @@ public class Game {
         return players[1];
     }
 
+    public void setWinner(){
+        int p1Score = 0, p2Score = 0;
+
+        for(District district: districts){
+            p1Score += district.getPlayerOneScore();
+            p2Score += district.getPlayerTwoScore();
+        }
+        if(p1Score > p2Score){
+            winnerEmail = players[0].getEmail();
+        }else if (p2Score < p1Score){
+            winnerEmail = players[1].getEmail();
+        }else{ //tie?
+            winnerEmail = "Tie";
+        }
+    }
 
     public boolean playCards(String playerEmail,List<Card> cards) {
         int otherplayerIndex = turnIndex == 0? 1 : 0;
@@ -64,8 +81,30 @@ public class Game {
                  for(Card card : cards){
                      damage += card.getMaxDamage();
                  }
-                 districts.get(districtPointer).setPlayerScore(turnIndex, damage);
-                 districts.get(districtPointer).setPlayerScore(otherplayerIndex, (-1 * damage));
+                 //calculate damage/score for current district
+                 District curDistrict = districts.get(districtPointer);
+                 curDistrict.setPlayerScore(turnIndex, damage);
+                 curDistrict.setPlayerScore(otherplayerIndex, (-1 * damage));
+                 curDistrict.setTurn(curDistrict.getTurn() + 1);
+
+                 //check if the district is out of turns
+                 if(curDistrict.getTurn() == 10){
+                     //set winner for that district
+                     if(curDistrict.getPlayerOneScore() > curDistrict.getPlayerTwoScore()){
+                         curDistrict.setWinnerEmail(players[0].getEmail());
+                     }else if(curDistrict.getPlayerOneScore() < curDistrict.getPlayerTwoScore()){
+                        curDistrict.setWinnerEmail(players[1].getEmail());
+                     }else{
+                         curDistrict.setWinnerEmail("Tie");
+                     }
+                     //move to next district
+                    ++districtPointer;
+
+                     //set final winner if out of districts
+                     if(districtPointer > districts.size()){
+                        this.setWinner();
+                    }
+                 }
 
                  //draw cards
                  curPlayer.drawHand(); //TODO we don't check if you run out of your deck yet
@@ -82,6 +121,14 @@ public class Game {
         }
 
 
+    }
+
+    public String getWinnerEmail() {
+        return winnerEmail;
+    }
+
+    public void setWinnerEmail(String winnerEmail) {
+        this.winnerEmail = winnerEmail;
     }
 
     public boolean isInProgress() {

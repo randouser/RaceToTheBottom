@@ -1,6 +1,7 @@
 package org.group3.game.controllers;
 
 import org.group3.game.messageWrappers.JoinGameMessage;
+import org.group3.game.messageWrappers.RequestTurnMessage;
 import org.group3.game.messageWrappers.StartGameMessage;
 import org.group3.game.messageWrappers.TurnMessage;
 import org.group3.game.model.game.GameService;
@@ -78,35 +79,37 @@ public class GameController {
         TurnMessage turnMessage = gameService.joinGame(user,message.getEmailToNotify(),message.getGameId());
 
         //start the turn for the player waiting
-        messagingTemplate.convertAndSend("/queue/"+turnMessage.getUserToken()+"/message",turnMessage);
+        messagingTemplate.convertAndSend("/queue/"+turnMessage.getUserToken()+"/getTurn",turnMessage);
 
         //tell the joiner that the game has started
-        messagingTemplate.convertAndSend("/queue/"+user.getToken()+"/message",turnMessage);
+        messagingTemplate.convertAndSend("/queue/"+user.getToken()+"/message","gameStart");
 
     }
 
 
     @MessageMapping("/takeTurn")
-    public void takeTurn(StartGameMessage message) throws Exception {
+    public void takeTurn(RequestTurnMessage message) throws Exception {
 
         User user = userService.getUserByEmailToken(message.getUserEmail(),message.getUserToken());
         if(user == null){
             throw new IllegalArgumentException("There is no user with these credentials");
         }
 
-        //note:this should probably be a different message
-        //gameService.takeTurn(user,message);
+
+        TurnMessage turnMessage = gameService.takeTurn(user,message.getGameId(),message.getCardsPlayed());
+
+        //start the turn for the player other player
+        if(turnMessage.isInProgress()) {
+            messagingTemplate.convertAndSend("/queue/"+turnMessage.getUserToken()+"/getTurn",turnMessage);
+        }else{
+            messagingTemplate.convertAndSend("/queue/"+user.getToken()+"/message","gameEnd");
+            messagingTemplate.convertAndSend("/queue/"+turnMessage.getUserToken()+"/message","gameEnd");
+        }
+
     }
 
 
 
-
-    public void sendToUser(User user,StartGameMessage message) throws Exception {
-
-        messagingTemplate.convertAndSend("/queue/"+user.getToken(),message);
-
-
-    }
 
 
 

@@ -71,7 +71,7 @@ public class GameServiceImpl implements GameService{
                 //return message for other player
                 Player curPlayer = game.getCurrentPlayer();
                 User curUser = userService.getUserById(curPlayer.getId());
-                return new TurnMessage(curUser.getToken(),curPlayer.getHand(),curPlayer.getMaxWorkers(),curPlayer.getMaxMoney(),game.getDistricts());
+                return new TurnMessage(game.getGameId(),curUser.getToken(),curPlayer.getHand(),curPlayer.getMaxWorkers(),curPlayer.getMaxMoney(),game.getDistricts(),true);
 
             }else{
                 return null;
@@ -86,20 +86,24 @@ public class GameServiceImpl implements GameService{
 
     @Override
     public TurnMessage takeTurn(User user, int gameId, List<Card> cardsPlayed) {
-        if(activeGames.contains(gameId)){
+        if(activeGames.containsKey(gameId)){
             Game game = activeGames.get(gameId);
 
             //play the cards!
             boolean success = game.playCards(user.getEmail(),cardsPlayed);
 
             if(success){
+                if(game.getWinnerEmail() != null){
+                    game.setInProgress(false);
+                }
+
                 //change the turn
                 game.toggleTurn();
 
                 //return message for other player
                 Player curPlayer = game.getCurrentPlayer();
                 User curUser = userService.getUserById(curPlayer.getId());
-                return new TurnMessage(curUser.getToken(),curPlayer.getHand(),curPlayer.getMaxWorkers(),curPlayer.getMaxMoney(),game.getDistricts());
+                return new TurnMessage(game.getGameId(),curUser.getToken(),curPlayer.getHand(),curPlayer.getMaxWorkers(),curPlayer.getMaxMoney(),game.getDistricts(),game.isInProgress());
 
             }else{
                 return null; //what happens when you try to play cards that you can't
