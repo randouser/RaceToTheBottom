@@ -14,6 +14,7 @@ public class Card implements Serializable{
     private int minDamage;
     private int maxDamage;
     private int multiplier;
+    private int weight;
 
     public int getMinDamage() {
         return minDamage;
@@ -85,6 +86,20 @@ public class Card implements Serializable{
 
     public void setMoneyCost(int moneyCost) {
         this.moneyCost = moneyCost;
+    }
+    
+    public void setWeight(int weight)
+    {
+    	
+    	this.weight = weight;
+    	
+    }
+    
+    public int getWeight()
+    {
+    	
+    	return this.weight;
+    	
     }
 
     @Override
