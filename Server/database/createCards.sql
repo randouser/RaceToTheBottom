@@ -1,4 +1,4 @@
--- cleanup tables
+-- cleanup tabless
 DROP TABLE IF EXISTS card;
 
 -- make the card table
