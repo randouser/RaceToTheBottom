@@ -1,3 +1,79 @@
+
+.gameRow.ready{
+    cursor:pointer;
+}
+
+.gameRow.ready:hover{
+    background-color:deepskyblue;
+    color:white;
+}
+
+.lobbyPanelContent{
+    display: inline-block;
+    text-align: left;
+    width: 100%;
+    max-width: 500px;
+}
+
+
+
+.lobbyPanelContent button, .lobbyPanelContent input{
+    height:30px;
+    margin-bottom:5px;
+}
+
+#loginTop{
+    padding:.5em;
+}
+
+#registerAsNewPlayerButton{
+    display:block;
+    height:40px;
+    width:100%;
+    font-size:20px;
+}
+
+#registerAsNewPlayerButton:hover{
+    color:red;
+}
+
+
+tr:nth-child(even) {
+    background-color: #cccccc;
+}
+h2{
+    margin-top:0;
+}
+
+
+#userFormLoginSubmit{
+    width: 100px;
+    height: 30px;
+    font-size: 15px;
+}
+
+
+#mainContentWrapper{
+    max-width:2000px;
+    padding:2em;
+}
+
+#loginWrapper{
+    padding:1em;
+    font-size:2em;
+}
+
+
+#loginWrapper input,#loginWrapper label{
+    display: inline-block;
+    width: 100%;
+    max-width: 500px;
+    height: 20px;
+    margin-bottom:5px
+
+}
+
+
 #gameStageWrapper{
     position:relative;
 }

@@ -1,9 +1,6 @@
 package org.group3.game.controllers;
 
-import org.group3.game.messageWrappers.JoinGameMessage;
-import org.group3.game.messageWrappers.RequestTurnMessage;
-import org.group3.game.messageWrappers.StartGameMessage;
-import org.group3.game.messageWrappers.TurnMessage;
+import org.group3.game.messageWrappers.*;
 import org.group3.game.model.game.GameService;
 import org.group3.game.model.user.User;
 import org.group3.game.model.user.UserService;
@@ -14,6 +11,8 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+
+import java.util.List;
 
 @Controller
 public class GameController {
@@ -52,15 +51,16 @@ public class GameController {
         }
 
         //make the game
-        Integer id = gameService.createGame(user,message.getGameType(), message.getEmailToNotify());
+        GameMessage gMessage = gameService.createGame(user,message.getGameType(), message.getEmailToNotify(),invitee);
 
 
         //TODO if user, notify, check if online?  If not user, email
         if(invitee != null){
-            messagingTemplate.convertAndSend("/queue/"+invitee.getToken()+"/invite", new JoinGameMessage(id,message.getEmailToNotify()));
+            messagingTemplate.convertAndSend("/queue/"+invitee.getToken()+"/invite", new JoinGameMessage(gMessage.getGameId(),message.getEmailToNotify()));
         }
 
-        messagingTemplate.convertAndSend("/queue/"+user.getToken()+"/message","You started a game with id:" + id);
+        //tell the user that the game has been created
+        messagingTemplate.convertAndSend("/queue/"+user.getToken()+"/message",gMessage);
 
 
     }
@@ -82,7 +82,7 @@ public class GameController {
         messagingTemplate.convertAndSend("/queue/"+turnMessage.getUserToken()+"/getTurn",turnMessage);
 
         //tell the joiner that the game has started
-        messagingTemplate.convertAndSend("/queue/"+user.getToken()+"/message","gameStart");
+        messagingTemplate.convertAndSend("/queue/"+user.getToken()+"/message",new GameMessage(turnMessage.getGameId(),GameMessage.GAME_START,turnMessage.getGameName()));
 
     }
 
@@ -106,6 +106,20 @@ public class GameController {
             messagingTemplate.convertAndSend("/queue/"+turnMessage.getUserToken()+"/message","gameEnd");
         }
 
+    }
+
+    @MessageMapping("/getLobbyInfo")
+    public void getLobbyInfo(LobbyRequest message) throws Exception {
+
+        User user = userService.getUserByEmailToken(message.getUserEmail(),message.getUserToken());
+        if(user == null){
+            throw new IllegalArgumentException("There is no user with these credentials");
+        }
+
+        LobbyMessage gameMessages =  gameService.getActiveGamesForUser(user);
+
+        //TODO The lobby will at some point need more than just active games
+        messagingTemplate.convertAndSend("/queue/"+user.getToken()+"/lobby",gameMessages);
     }
 
 

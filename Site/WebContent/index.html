@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Hello WebSocket</title>
+    <title>Race to the Bottom</title>
     <link rel="stylesheet" type="text/css" href="game.css">
 
     <!--1 Libraries-->
@@ -19,18 +19,32 @@
 <body>
 <noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript! Websocket relies on Javascript being enabled. Please enable
     Javascript and reload this page!</h2></noscript>
-<div style="text-align:center">
-    <div>
-        <button id="connect" onclick="connect();">Connect</button>
-        <button id="disconnect" disabled="disabled" onclick="disconnect();">Disconnect</button>
+<div id="mainContentWrapper" style="text-align:center">
+    <button id="logoutButton" style="position:fixed;top:0;left:0;display:none;">Log Out</button>
+    <div class="loginHide" style="display:none;"><span>&nbsp;</span></div>
+    <div id="loginWrapper">
+        <div id="loginTop" style="border: 1px solid black;background-color:cornflowerblue;">
+            <form id="loginUserForm" >
+                <h2>Login</h2>
+                <label for="userEmailLogin">Email</label>
+                <input id="userEmailLogin" name="email" type="text"   placeholder="email" />
+                <label for="userPassLogin">Password</label>
+                <input id="userPassLogin" name="password" type="text" placeholder="password" />
+
+            </form>
+            <div>
+                <button id="loginSubmitButton" style="width: 100px;height: 30px;font-size: 15px;">Login</button>
+            </div>
+        </div>
+        <div id="loginBottom">
+            <button id="registerAsNewPlayerButton">Register as a new Player</button>
+
+        </div>
     </div>
-    <div id="conversationDiv">
-        <label>Send a hello message?</label><input type="text" id="name" />
-        <button id="sendName">Send</button>
-        <p id="response"></p>
-    </div>
-    <div style="border: 1px solid black;background-color:cornsilk;">
-        <form id="userForm" >
+
+
+    <div id="registerWrapper" style="border: 1px solid black;display:none;background-color:cornsilk;">
+        <form id="registerUserForm" >
             <h2>Register User</h2>
             <label for="userEmail">Email</label>
             <input id="userEmail" name="email" type="text"   placeholder="email" />
@@ -39,28 +53,50 @@
             <label for="userName">NickName</label>
             <input id="userName" name="name" type="text" placeholder="NickName" />
         </form>
-        <button id="userFormSubmit">Add User</button>
+        <button id="registerUserSubmitButton">Add User</button>
     </div>
 
-    <div style="border: 1px solid black;background-color:cornflowerblue;">
-        <form id="userFormLogin" >
-            <h2>Login as User</h2>
-            <label for="userEmailLogin">Email</label>
-            <input id="userEmailLogin" name="email" type="text"   placeholder="email" />
-            <label for="userPassLogin">Password</label>
-            <input id="userPassLogin" name="password" type="text" placeholder="password" />
 
-        </form>
-        <button id="userFormLoginSubmit">Login</button>
-        <div class="loginHide" style="display:none;"><span>&nbsp;</span></div>
+
+
+    <div id="lobbyWrapper" style="display:none;background-color:grey;border:1px solid black;">
+        <div id="gamesInProgressWrapper">
+        <h2>Games In Progress</h2>
+        <table id="gamesInProgressTable" style="width:100%;background-color:white;border:1px solid black;">
+        </table>
+        </div>
+
+        <div id="startAGameWrapper">
+            <div id="startGamePanel" style="border: 1px solid black;background-color:indianred;">
+                <div class="lobbyPanelContent">
+                    <h2>Start a Game</h2>
+                    <div>
+                        <button>VS AI</button>
+                    </div>
+                    <div>
+                        <button id="startGameWithRegisteredButton">Invite a registered Player &gt;</button><input style="width:150px" id="emailToNotify" name="emailToNotify" type="text" placeholder="Registered player email">
+                    </div>
+                    <div>
+                        <button>Invite a new Player &gt;</button><input id="newEmailToNotify" name="newEmailToNotify" type="text" placeholder="New player email">
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+        <div id="leaderBoardWrapper">
+            <h2>LeaderBoard</h2>
+            <table style="width:100%;background-color:white;border:1px solid black;">
+                <tr><td>1</td></tr>
+                <tr><td>2</td></tr>
+                <tr><td>3</td></tr>
+            </table>
+        </div>
+
+
     </div>
 
-    <div id="startGamePanel" style="border: 1px solid black;display:none;background-color:indianred;">
-        <form>
-           <label>Invitee Email<input id="emailToNotify" name="emailToNotify" type="text" /></label>
-        </form>
-        <button id="startGameBtn">Start Game With Player</button>
-    </div>
+
 
     <div id="gameStageWrapper" style="display:none;">
         <div id="waitingScreen">Waiting For Next Turn</div>
@@ -94,6 +130,14 @@
 
 
 <script>
+    //TODO this needs to go somewhere else
+    var lastHash = '';
+
+    //This happens on page load
+    jQuery(function(){
+        UserProxy.loginWithCookie();
+
+    });
 
     jQuery('#connect').click(function(){
         StompService.connect();
@@ -104,16 +148,19 @@
     });
 
 
-    jQuery('#userFormSubmit').click(function(){
-        var formString = jQuery('#userForm').serialize();
+    jQuery('#registerUserSubmitButton').click(function(){
+        var formString = jQuery('#registerUserForm').serialize();
         UserProxy.registerUser(formString);
     });
-    jQuery('#userFormLoginSubmit').click(function(){
-        var formString = jQuery('#userFormLogin').serialize();
+
+    jQuery('#loginSubmitButton').click(function(){
+        var formString = jQuery('#loginUserForm').serialize();
         UserProxy.login(formString);
+
     });
 
-    jQuery('#startGameBtn').click(function(){
+    var startGameButton =
+    jQuery('#startGameWithRegisteredButton').click(function(){
         var emailToNotify = jQuery('#emailToNotify').val();
         GameProxy.startGame(emailToNotify);
     });
@@ -121,7 +168,44 @@
     jQuery('#playCardsButton').click(function(){
         GameProxy.takeTurn();
     });
+    jQuery('#registerAsNewPlayerButton').click(function(){
+        jQuery('#loginWrapper').fadeOut();
+        jQuery('#registerWrapper').fadeIn();
 
+    });
+
+
+    jQuery(window).on('hashchange', function(e) {
+        var hash = window.location.hash.substr(1);
+        if(lastHash === 'game' && hash==='lobby'){
+            jQuery('#gameStageWrapper').hide();
+            jQuery('#lobbyWrapper').fadeIn();
+        }else if(lastHash === 'lobby' && hash==='gamePanel'){
+            jQuery('#lobbyWrapper').hide();
+
+            //TODO may need to trigger display function for game
+            jQuery('#gameStageWrapper').fadeIn();
+        }
+
+        lastHash = hash;
+    });
+
+    jQuery('#logoutButton').click(function(){
+        UserProxy.logout();
+    });
+
+    jQuery('#loginUserForm').find('input').keypress(function(e){
+        if(e.which === 13){
+            jQuery('#loginSubmitButton').click();
+        }
+        console.log('key press');
+    });
+
+    jQuery('#emailToNotify').keypress(function(e){
+        if(e.which === 13){
+            startGameButton.click();
+        }
+    });
 
 
 

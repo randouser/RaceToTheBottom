@@ -37,7 +37,10 @@ UserProxy = {
                 StompService.connect(user.token);
                 that.setCookie("user",JSON.stringify(user));
                 loginMessage.fadeIn().children().html('You are now connected to server as:<strong>' + user.email + "</strong> in <i>/queue/"+user.token+"</i>");
-                jQuery('#startGamePanel').fadeIn();
+                jQuery('#lobbyWrapper').fadeIn();
+                window.location.hash='lobby';
+                jQuery('#loginWrapper').hide();
+                jQuery('#logoutButton').show();
             }else{
                 alert(data.message);
             }
@@ -52,6 +55,26 @@ UserProxy = {
             success: onSuccess,
             error:onError
         });
+    }
+    ,loginWithCookie:function(){
+        var loginMessage = jQuery('.loginHide').fadeOut();
+        var cookieUser = JSON.parse(this.getCookie('user'));
+        if(cookieUser){
+            this.user = cookieUser;
+            StompService.connect(this.user.token);
+            loginMessage.fadeIn().children().html('You are now connected to server as:<strong>' + this.user.email + "</strong> in <i>/queue/"+this.user.token+"</i>");
+            jQuery('#lobbyWrapper').fadeIn();
+            jQuery('#loginWrapper').hide();
+            window.location.hash='lobby';
+            jQuery('#logoutButton').show();
+        }
+    }
+    ,logout:function(){
+        document.cookie = 'user' + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        window.location.hash = '';
+        StompService.disconnect();
+        window.location.reload(true);
+        jQuery('#logoutButton').hide();
     }
 
     ,setCookie:function(key, value){

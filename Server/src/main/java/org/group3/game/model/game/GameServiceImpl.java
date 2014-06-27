@@ -1,5 +1,8 @@
 package org.group3.game.model.game;
 
+import org.group3.game.messageWrappers.GameMessage;
+import org.group3.game.messageWrappers.JoinGameMessage;
+import org.group3.game.messageWrappers.LobbyMessage;
 import org.group3.game.messageWrappers.TurnMessage;
 import org.group3.game.model.card.Card;
 import org.group3.game.model.card.CardService;
@@ -25,17 +28,19 @@ public class GameServiceImpl implements GameService{
     @Autowired
     UserService userService;
 
+
     @Override
-    public int createGame(User user, String type, String inviteeEmail) {
+    public GameMessage createGame(User user, String type, String inviteeEmail, User invitee) {
         //TODO we ignore type for now for the most part
 
         //make the decks
         List<Card> deck1 = cardService.getRandomDeck(60);
         List<Card> deck2 = cardService.getRandomDeck(60);
 
+        Integer inviteeId = (invitee == null) ? null:invitee.getId();
         //make the 'players'
         Player playerOne = new Player(user.getId(),deck1,5,5,user.getEmail(),0);
-        Player playerTwo = new Player(null,deck2,5,5,inviteeEmail,1);
+        Player playerTwo = new Player(inviteeId,deck2,5,5,inviteeEmail,1);
 
         //make the districts
         List<District> districts = new ArrayList<>();
@@ -48,7 +53,7 @@ public class GameServiceImpl implements GameService{
 
         activeGames.put(game.getGameId(),game);
 
-        return game.getGameId();
+        return new GameMessage(game.getGameId(),GameMessage.GAME_START,game.getGameName());
     }
 
     @Override
@@ -71,7 +76,7 @@ public class GameServiceImpl implements GameService{
                 //return message for other player
                 Player curPlayer = game.getCurrentPlayer();
                 User curUser = userService.getUserById(curPlayer.getId());
-                return new TurnMessage(game.getGameId(),curUser.getToken(),curPlayer.getHand(),curPlayer.getMaxWorkers(),curPlayer.getMaxMoney(),game.getDistricts(),game.getDistrictPointer(),curPlayer.getPlayerIndex(),true);
+                return new TurnMessage(curUser,curPlayer,game);
 
             }else{
                 return null;
@@ -103,7 +108,7 @@ public class GameServiceImpl implements GameService{
                 //return message for other player
                 Player curPlayer = game.getCurrentPlayer();
                 User curUser = userService.getUserById(curPlayer.getId());
-                return new TurnMessage(game.getGameId(),curUser.getToken(),curPlayer.getHand(),curPlayer.getMaxWorkers(),curPlayer.getMaxMoney(),game.getDistricts(),game.getDistrictPointer(),curPlayer.getPlayerIndex(),game.isInProgress());
+                return new TurnMessage(curUser,curPlayer,game);
 
             }else{
                 return null; //what happens when you try to play cards that you can't
@@ -112,6 +117,32 @@ public class GameServiceImpl implements GameService{
         }else{
             return null; //you get nothing if you ask for a gameId that doesn't exist
         }
+    }
+
+
+    @Override
+    public LobbyMessage getActiveGamesForUser(User user) {
+        List<TurnMessage> games = new ArrayList<>();
+        List<JoinGameMessage> invites = new ArrayList<>();
+
+        for(Game game : activeGames.values()){
+            for (Player player : game.getPlayers()) {
+
+                //note, player.getId() can return null if the player is not a user
+                if (user.getId().equals(player.getId())) {
+                    if(!game.isInProgress() && player.getPlayerIndex()==1){
+                        invites.add(new JoinGameMessage(game.getGameId(),player.getEmail()));
+                    }else{
+                        games.add(new TurnMessage(user, player, game));
+                    }
+
+
+                    break; //onto next game
+                }
+            }
+        }
+
+        return new LobbyMessage(games,invites);
     }
 
 

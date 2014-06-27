@@ -8,33 +8,99 @@ GameProxy = {
         var gameId = jQuery('#gameStageWrapper').data('gameId');
         jQuery('#waitingScreen').fadeIn();
         var cardsSelected = this.games[gameId].cardsSelected;
-        this.games[gameId].clear();
+        var game = this.games[gameId];
+        game.clear();
+        game.userTurn = false;
+
+        var rowMessage = 'waiting for turn';
+        jQuery('#gamerow_' + gameId).children('td').html(gameId + ': '+ game.gameName + ' - '+rowMessage);
+
         var user = UserProxy.user;
         StompService.sendMessage('takeTurn',{userEmail:user.email,userToken:user.token,gameId:gameId,cardsPlayed:cardsSelected});
     }
+    ,getGameStart:function(gameId,gameName){
+        //we make it null to indicate that it exists without getting the game state.
+        this.games[gameId] = null;
+        var newRow = '<tr id="gamerow_'+gameId+'" class="gameRow pending"><td>'+gameName+' - Waiting for Accept</td></tr>';
+        jQuery('#gamesInProgressTable').append(newRow);
+    }
+    ,displayLobbyGames:function(turnMessages){
+        var i = 0;
+        for(;i < turnMessages.length; ++i){
+            var m = turnMessages[i];
+
+            //update DOM table
+            this.activateGameRow(m.gameId, m.gameName, m.userTurn);
+
+            //update games collection
+            this.games[m.gameId] = new Game(m);
+
+
+        }
+    }
     ,getTurn:function(turnMessage){
+        var that = this;
         var gameStage = jQuery('#gameStageWrapper');
         var curGameId = gameStage.data('gameId');
-
-        if(curGameId === undefined){
-            curGameId = turnMessage.gameId;
-            gameStage.fadeIn();
-            gameStage.data('gameId',curGameId);
-        }
 
         var game = new Game(turnMessage);
 
         //only display game stuff if data is for current displayed game
-        if(curGameId === turnMessage.gameId){
+        if(curGameId === turnMessage.gameId && gameStage.is(':visible')){
             game.displayCards();
             game.displayDistricts();
             game.displayResources();
             jQuery('#waitingScreen').fadeOut();
         }
+        if(this.games[game.gameId] === null){ //new game, note that null is intentional
+            this.activateGameRow(game.gameId,turnMessage.gameName,turnMessage.userTurn);
+        }else{
+            var rowMessage = turnMessage.userTurn? 'turn ready': 'waiting for turn';
+            jQuery('#gamerow_' + game.gameId).children('td').html(game.gameId + ': '+ game.gameName + ' - '+rowMessage);
+        }
+
         this.games[game.gameId] = game;
 
-
     }
+    ,displayGame:function(gameId){
+        var game = this.games[gameId];
+        var gameStage = jQuery('#gameStageWrapper');
+
+
+        gameStage.data('gameId',game.gameId);
+        game.displayCards();
+        game.displayDistricts();
+        game.displayResources();
+
+        jQuery('#waitingScreen').toggle(!game.userTurn);
+
+
+        jQuery('#lobbyWrapper').hide();
+        gameStage.fadeIn();
+    }
+    ,activateGameRow:function(gameId,gameName,isUserTurn){
+        var that = this;
+        var rowMessage = isUserTurn? 'turn ready': 'waiting for turn';
+        var row = jQuery('#gamerow_' + gameId);
+
+        //if it's not there we make a new one
+        if(row.length === 0){
+            var newRow = '<tr id="gamerow_'+ gameId+'" class="gameRow ready"><td>'+ gameName+' - '+rowMessage+'</td></tr>';
+            row = jQuery('#gamesInProgressTable').append(newRow).find('#gamerow_' + gameId);
+        }
+
+        //turn on features/text
+        row
+            .removeClass('pending')
+            .addClass('ready')
+            .click({gameId:gameId},function(e){
+                that.displayGame(e.data.gameId);
+                window.location.hash = 'game';
+            })
+            .children('td')
+            .html(gameId + ': '+ gameName + ' - '+rowMessage);
+    }
+
 
 
 };
@@ -104,12 +170,14 @@ function DistrictView(district,index){
 function Game(turnMessage){
     var that = this;
     this.gameId = turnMessage.gameId;
+    this.gameName = turnMessage.gameName;
     this.hand = turnMessage.hand;
     this.maxWorkers = turnMessage.maxWorkers;
     this.maxMoney = turnMessage.maxMoney;
     this.districts = turnMessage.districts;
     this.districtPointer = turnMessage.districtPointer;
     this.playerIndex = turnMessage.playerIndex;
+    this.userTurn = turnMessage.userTurn;
 
     this.districtViews = [];
 

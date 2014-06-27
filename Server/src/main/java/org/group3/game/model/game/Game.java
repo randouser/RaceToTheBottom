@@ -8,7 +8,7 @@ import java.util.List;
 
 public class Game {
 
-
+    private String gameName;
     private Player[] players;
     private Integer gameId;
     private List<District> districts;
@@ -34,6 +34,7 @@ public class Game {
         this.type = type;
         this.isInProgress = false;
         this.winnerEmail = null;
+        this.gameName = gameId +" - "+ playerOne.getEmail() + " vs " + playerTwo.getEmail();
     }
 
     public void toggleTurn(){
@@ -101,7 +102,7 @@ public class Game {
                     ++districtPointer;
 
                      //set final winner if out of districts
-                     if(districtPointer > districts.size()){
+                     if(districtPointer >= districts.size()){
                         this.setWinner();
                     }
                  }
@@ -182,5 +183,19 @@ public class Game {
         this.log = log;
     }
 
+    public String getGameName() {
+        return gameName;
+    }
 
+    public void setGameName(String gameName) {
+        this.gameName = gameName;
+    }
+
+    public Player[] getPlayers() {
+        return players;
+    }
+
+    public int getTurnIndex() {
+        return turnIndex;
+    }
 }
