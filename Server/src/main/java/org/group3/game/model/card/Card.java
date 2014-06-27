@@ -3,6 +3,8 @@ package org.group3.game.model.card;
 
 import java.io.Serializable;
 
+//Added weight
+
 public class Card implements Serializable{
 
     private Integer id;
