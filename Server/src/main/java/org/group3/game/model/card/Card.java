@@ -102,7 +102,7 @@ public class Card implements Serializable{
     	
     }
 
-    @Override
+    @Override 
     public boolean equals(Object obj){
         return (obj instanceof Card) && (this.id.equals(((Card)obj).id));
     }
