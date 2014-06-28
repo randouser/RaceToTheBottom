@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Random;
 
+
+
 @Service
 public class CardServiceImpl implements CardService {
 
@@ -15,7 +17,7 @@ public class CardServiceImpl implements CardService {
     @Override
     public List<Card> getRandomDeck(int size) {
 
-        //TODO better randomizer/type distribution
+        //TODO better randomizer/type distribution 
     	return cardDao.getRandCards(size, this);
 
 

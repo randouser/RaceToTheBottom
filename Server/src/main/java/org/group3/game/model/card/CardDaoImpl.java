@@ -27,6 +27,8 @@ public class CardDaoImpl implements CardDao {
 
     }
 
+  
+    
     
     @Override
     public List<Card> getRandCards(int size, CardServiceImpl instance) {
