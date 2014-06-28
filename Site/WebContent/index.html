@@ -99,6 +99,7 @@
 
 
     <div id="gameStageWrapper" style="display:none;">
+        <button id="backToLobbyButton">Back to Lobby</button>
         <div id="waitingScreen">Waiting For Next Turn</div>
         <div id="districtStage" >
             <!--Districts generated here-->
@@ -205,6 +206,12 @@
         if(e.which === 13){
             startGameButton.click();
         }
+    });
+
+    jQuery('#backToLobbyButton').click(function(){
+        window.location.hash = 'lobby';
+        jQuery('gameStageWrapper').hide();
+        jQuery('lobbyWrapper').fadeIn();
     });
 
 
