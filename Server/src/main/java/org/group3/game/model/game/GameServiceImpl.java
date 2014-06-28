@@ -39,8 +39,8 @@ public class GameServiceImpl implements GameService{
 
         Integer inviteeId = (invitee == null) ? null:invitee.getId();
         //make the 'players'
-        Player playerOne = new Player(user.getId(),deck1,5,5,user.getEmail(),0);
-        Player playerTwo = new Player(inviteeId,deck2,5,5,inviteeEmail,1);
+        Player playerOne = new Player(user.getId(),deck1,3,3,user.getEmail(),0);
+        Player playerTwo = new Player(inviteeId,deck2,3,3,inviteeEmail,1);
 
         //make the districts
         List<District> districts = new ArrayList<>();
