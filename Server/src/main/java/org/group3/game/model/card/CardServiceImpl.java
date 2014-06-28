@@ -15,7 +15,7 @@ public class CardServiceImpl implements CardService {
     @Override
     public List<Card> getRandomDeck(int size) {
 
-        //TODO better randomizer/type distribution
+        //TODO better randomizer/type distribution 
     	return cardDao.getRandCards(size, this);
 
 
