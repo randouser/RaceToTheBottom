@@ -29,12 +29,16 @@ public class CardDaoImpl implements CardDao {
     }
 
     @Override
-    public List<Card> getRandCards(int size) {
-        String sql = "SELECT * FROM card WHERE weight = ?";
-
-        List<Card> newCard = new ArrayList<>(1);
+    public List<Card> getRandCards(int size, CardServiceImpl instance) {
+        String sql = "SELECT * FROM card ORDER BY weight;";
         
         List<Card> returnCards = new ArrayList<>(size);
+        
+        List<Card> allCards = new ArrayList<>(UNIQUECARDS);
+        
+        Object[] args = {};
+        
+        allCards = jdbcTemplate.query(sql, args, new BeanPropertyRowMapper<>(Card.class));
         
         int counter = 1;
         
@@ -43,14 +47,9 @@ public class CardDaoImpl implements CardDao {
         while (counter <= size)
         {
         	
-        	randomWeight = linearCardGenerator(MAXWEIGHT);
-       
-        	Object[] args = { randomWeight };
-        	
-        	//Would like a way to get a single Card instead of a List of them from query
-        	newCard = jdbcTemplate.query(sql,args,new BeanPropertyRowMapper<>(Card.class));
+        	randomWeight = instance.weightedRandomNumber(MAXWEIGHT);
         
-        	returnCards.addAll(newCard);
+        	returnCards.add(allCards.get(randomWeight - 1));
         	
         	counter++;
         	
@@ -58,32 +57,6 @@ public class CardDaoImpl implements CardDao {
 
         return returnCards;
 
-    }
-
-
-    @Override
-    public int linearCardGenerator(int maxWeight)
-    {
-    	
-    	int randomMult = maxWeight * (maxWeight + 1) / 2;
-    	
-    	Random newRandom = new Random();
-    	
-    	int randomInt = newRandom.nextInt(randomMult);
-    	
-    	int linearRandom = 0;
-    	
-    	for (int i = maxWeight; randomInt >= 0; i--)
-    	{
-    		
-    		randomInt -= i;
-    		
-    		linearRandom++;
-    		
-    	}
-    	
-    	return linearRandom;
-    	
     }
     
     

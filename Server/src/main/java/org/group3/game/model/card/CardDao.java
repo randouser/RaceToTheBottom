@@ -7,10 +7,9 @@ public interface CardDao {
 
 	
     List<Card> getCardsOfType(String type);
-    List<Card> getRandCards(int size);
-    int linearCardGenerator(int maxWeight);
-    
+    List<Card> getRandCards(int size, CardServiceImpl instance);
 
 	public static final int MAXWEIGHT = 10;
+	public static final int UNIQUECARDS = 10;
     
 }

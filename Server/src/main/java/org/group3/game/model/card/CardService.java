@@ -8,4 +8,6 @@ import java.util.List;
 public interface CardService {
 
     List<Card> getRandomDeck(int size);
+    int weightedRandomNumber(int maxWeight);
+    
 }
