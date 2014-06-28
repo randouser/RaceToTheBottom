@@ -27,6 +27,7 @@ public class CardDaoImpl implements CardDao {
 
     }
 
+    
     @Override
     public List<Card> getRandCards(int size, CardServiceImpl instance) {
         String sql = "SELECT * FROM card ORDER BY weight;";

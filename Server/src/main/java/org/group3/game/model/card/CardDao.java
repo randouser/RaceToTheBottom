@@ -1,5 +1,6 @@
 package org.group3.game.model.card;
 
+
 import java.util.List;
 
 public interface CardDao {
