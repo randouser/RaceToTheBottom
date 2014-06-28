@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.ArrayList;
 
+
 @Repository
 public class CardDaoImpl implements CardDao {
 
