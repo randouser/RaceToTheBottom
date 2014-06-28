@@ -5,4 +5,10 @@ Server/src/build.xml
 ./Site/build.xml
 /Site/build.xml
 ./Server/src/build.xml
+/Server/target
+Server/target
+/Server/Target
+Server/Target
+./Server/target
+./Server/Target
 build.xml
