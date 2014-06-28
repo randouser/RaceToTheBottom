@@ -100,7 +100,7 @@ public class Card implements Serializable{
     public int getWeight()
     {
     	
-    	return this.weight;
+    	return weight;
     	
     }
 
