@@ -1,10 +1,10 @@
 package org.group3.game.model.game;
 
-
 import org.group3.game.model.card.Card;
 import org.group3.game.model.user.User;
 
 import java.util.List;
+import java.util.Random;
 
 public class Game {
 
@@ -38,8 +38,8 @@ public class Game {
     }
 
     public void toggleTurn(){
-        //we could do a binary flip, but might as well keep it more flexible
-        turnIndex = (turnIndex == 0) ? 1 : 0;
+        //Flip all bits, mask all bits except the one in first position
+        turnIndex = ~turnIndex & 0x00000001;
     }
 
 
@@ -67,8 +67,9 @@ public class Game {
         }
     }
 
-    public boolean playCards(String playerEmail,List<Card> cards) {
-        int otherplayerIndex = turnIndex == 0? 1 : 0;
+    public boolean playCards(String playerEmail,List<Card> cards, boolean burnTurn) {
+    	//Flip turnindex and mask all the bits except first
+    	int otherplayerIndex = (~turnIndex & 0x00000001);
         Player curPlayer = players[turnIndex];
         Player otherPlayer = players[otherplayerIndex];
 
@@ -76,12 +77,28 @@ public class Game {
         if(curPlayer.getEmail().equals(playerEmail)){
 
             //check if cards can be played
-             if(curPlayer.canPlayCards(cards)){
+             if(curPlayer.canPlayCards(cards) || burnTurn){
                  //deal damage //TODO right now just focus on simple damage, worry about complicated stuff later
                  int damage = 0;
-                 for(Card card : cards){
-                     damage += card.getMaxDamage();
+                 
+                 if (!burnTurn)
+                	 for(Card card : cards) damage += card.getMaxDamage();
+                 else
+                 {
+                	 
+                	 Random rand = new Random();
+                	 int addWorkers = 0;
+                	 int addMoney = 0;
+                	 
+                	 //Give player random amount of workers and money, max 3
+                	 addWorkers = rand.nextInt(3) + 1;
+                	 addMoney = rand.nextInt(3) + 1;
+                	 
+                	 curPlayer.setMaxWorkers(curPlayer.getMaxWorkers() + addWorkers);
+                	 curPlayer.setMaxMoney(curPlayer.getMaxMoney() + addMoney);
+                	 
                  }
+                 
                  //calculate damage/score for current district
                  District curDistrict = districts.get(districtPointer);
                  curDistrict.setPlayerScore(turnIndex, damage);

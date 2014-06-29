@@ -11,10 +11,12 @@ import java.util.Random;
 import java.util.ArrayList;
 
 @Repository
-public class CardDaoImpl implements CardDao {
+public class CardDaoImpl implements CardDao, CardConstants {
 
     @Autowired
     JdbcTemplate jdbcTemplate;
+    
+    CardConstants cardConstants;
 
 
     @Override
@@ -36,7 +38,7 @@ public class CardDaoImpl implements CardDao {
         
         List<Card> returnCards = new ArrayList<>(size);
         
-        List<Card> allCards = new ArrayList<>(UNIQUECARDS);
+        List<Card> allCards = new ArrayList<>(UNIQUE_CARDS);
         
         Object[] args = {};
         
@@ -49,7 +51,7 @@ public class CardDaoImpl implements CardDao {
         while (counter <= size)
         {
         	
-        	randomWeight = instance.weightedRandomNumber(MAXWEIGHT);
+        	randomWeight = instance.weightedRandomNumber(MAX_WEIGHT);
         
         	returnCards.add(allCards.get(randomWeight - 1));
         	

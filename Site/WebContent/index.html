@@ -169,6 +169,12 @@
     jQuery('#playCardsButton').click(function(){
         GameProxy.takeTurn();
     });
+    
+    jQuery('#burnTurnButton').click(function()
+    {
+    	GameProxy.burnTurn();
+    });
+    
     jQuery('#registerAsNewPlayerButton').click(function(){
         jQuery('#loginWrapper').fadeOut();
         jQuery('#registerWrapper').fadeIn();

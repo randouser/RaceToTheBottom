@@ -14,6 +14,7 @@ public class RequestTurnMessage {
     private String userToken;
     private Integer gameId;
     private List<Card> cardsPlayed; //probably just list of card ids, could include general actions?
+    private boolean burnTurn;
 
 
     public String getUserEmail() {
@@ -47,6 +48,21 @@ public class RequestTurnMessage {
     public void setCardsPlayed(List<Card> cardsPlayed) {
         this.cardsPlayed = cardsPlayed;
     }
+    
+    public boolean getBurnTurn()
+    {
+    	
+    	return burnTurn;
+    	
+    }
+    
+    public void setBurnTurn(boolean burnTurn)
+    {
+    	
+    	this.burnTurn = burnTurn;
+    	
+    }
+    
 }
 
 

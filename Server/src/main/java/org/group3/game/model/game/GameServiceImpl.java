@@ -90,12 +90,12 @@ public class GameServiceImpl implements GameService{
     }
 
     @Override
-    public TurnMessage takeTurn(User user, int gameId, List<Card> cardsPlayed) {
+    public TurnMessage takeTurn(User user, int gameId, List<Card> cardsPlayed, boolean burnTurn) {
         if(activeGames.containsKey(gameId)){
             Game game = activeGames.get(gameId);
 
             //play the cards!
-            boolean success = game.playCards(user.getEmail(),cardsPlayed);
+            boolean success = game.playCards(user.getEmail(),cardsPlayed, burnTurn);
 
             if(success){
                 if(game.getWinnerEmail() != null){

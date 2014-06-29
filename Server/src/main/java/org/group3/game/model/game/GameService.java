@@ -14,7 +14,7 @@ public interface GameService {
 
     TurnMessage joinGame(User user, String inviteEmail, int gameId);
 
-    TurnMessage takeTurn(User user,int gameId,List<Card> cardsPlayed);
+    TurnMessage takeTurn(User user,int gameId,List<Card> cardsPlayed, boolean burnTurn);
 
     LobbyMessage getActiveGamesForUser(User user);
 

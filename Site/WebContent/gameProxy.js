@@ -11,12 +11,32 @@ GameProxy = {
         var game = this.games[gameId];
         game.clear();
         game.userTurn = false;
+        var burnTurn = false;
 
         var rowMessage = 'waiting for turn';
         jQuery('#gamerow_' + gameId).children('td').html(gameId + ': '+ game.gameName + ' - '+rowMessage);
+        
+        if(cardsSelected.length == 0) {burnTurn = true;}
 
         var user = UserProxy.user;
-        StompService.sendMessage('takeTurn',{userEmail:user.email,userToken:user.token,gameId:gameId,cardsPlayed:cardsSelected});
+        StompService.sendMessage('takeTurn',{userEmail:user.email,userToken:user.token,gameId:gameId,cardsPlayed:cardsSelected, burnTurn:burnTurn});
+    }
+    ,burnTurn:function(){
+    	var gameId = jQuery('#gameStageWrapper').data('gameId');
+        jQuery('#waitingScreen').fadeIn();
+        var cardsSelected = [];
+        var game = this.games[gameId];
+        game.clear();
+        game.userTurn = false;
+        var burnTurn = true;
+        
+        
+        var rowMessage = 'waiting for turn';
+        jQuery('#gamerow_' + gameId).children('td').html(gameId + ': '+ game.gameName + ' - '+rowMessage);
+    	
+    	var user = UserProxy.user;
+    	StompService.sendMessage('burnTurn',{userEmail:user.email,userToken:user.token,gameId:gameId,cardsPlayed:cardsSelected, burnTurn:burnTurn});
+    	
     }
     ,getGameStart:function(gameId,gameName){
         //we make it null to indicate that it exists without getting the game state.
