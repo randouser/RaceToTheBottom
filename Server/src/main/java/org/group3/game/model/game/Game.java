@@ -115,6 +115,14 @@ public class Game {
                      }else{
                          curDistrict.setWinnerEmail("Tie");
                      }
+                     
+                     //Reset players money and workers to base
+                     curPlayer.setMaxMoney(3);
+                     otherPlayer.setMaxMoney(3);
+                     curPlayer.setMaxWorkers(3);
+                     otherPlayer.setMaxWorkers(3);
+                     
+                     
                      //move to next district
                     ++districtPointer;
 
