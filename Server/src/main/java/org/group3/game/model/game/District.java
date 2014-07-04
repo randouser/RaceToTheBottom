@@ -1,9 +1,9 @@
 package org.group3.game.model.game;
 
 
-import java.io.Serializable;
 
-public class District implements Serializable {
+
+public class District {
 
     private int playerOneScore;
     private int playerTwoScore;
@@ -11,6 +11,7 @@ public class District implements Serializable {
     private String type;
     private String winnerEmail;
 
+    public District(){}
 
     public District(String type, int playerTwoScore, int playerOneScore) {
         this.type = type;

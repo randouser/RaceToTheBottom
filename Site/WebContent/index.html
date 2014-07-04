@@ -100,24 +100,23 @@
 
     <div id="gameStageWrapper" style="display:none;">
         <button id="backToLobbyButton">Back to Lobby</button>
-        <div id="waitingScreen">Waiting For Next Turn</div>
-        <div id="districtStage" >
-            <!--Districts generated here-->
-        </div>
-        <div id="bottomStage">
-            <div id="deckWrapper">
-                Deck?
+        <div id="gameStageMain">
+            <div id="waitingScreen">Waiting For Next Turn</div>
+            <div id="districtStage" >
+                <!--Districts generated here-->
             </div>
-            <div id="cardStage">
-                <!--Cards generated here-->
-            </div>
-            <div id="widgetWrapper" style="width:70px">
-                <button id="playCardsButton">Play Cards</button>
-                <button id="burnTurnButton">Burn Turn</button>
-                <div><span>Score:?</span></div>
-                <div><span>Money:</span><span id="moneyCount"></span><span>/</span><span id="moneyTotal"></span></div>
-                <div><span>Workers:</span><span id="workerCount"></span><span>/</span><span id="workerTotal"></span></div>
+            <div id="bottomStage">
+                <div id="cardStage">
+                    <!--Cards generated here-->
+                </div>
+                <div id="widgetWrapper" style="width:70px">
+                    <button id="playCardsButton">Play Cards</button>
+                    <button id="burnTurnButton">Burn Turn</button>
+                    <div><span>Score:?</span></div>
+                    <div><span>Money:</span><span id="moneyCount"></span><span>/</span><span id="moneyTotal"></span></div>
+                    <div><span>Workers:</span><span id="workerCount"></span><span>/</span><span id="workerTotal"></span></div>
 
+                </div>
             </div>
         </div>
 
@@ -176,8 +175,9 @@
     });
     
     jQuery('#registerAsNewPlayerButton').click(function(){
-        jQuery('#loginWrapper').fadeOut();
+        jQuery('#loginWrapper').hide();
         jQuery('#registerWrapper').fadeIn();
+        window.location.hash = 'register';
 
     });
 

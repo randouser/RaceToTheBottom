@@ -33,7 +33,7 @@ UserProxy = {
              that.user = user;
 
             if(user){
-                var loginMessage = jQuery('.loginHide').fadeOut();
+                var loginMessage = jQuery('.loginHide').hide();
                 StompService.connect(user.token);
                 that.setCookie("user",JSON.stringify(user));
                 loginMessage.fadeIn().children().html('You are now connected to server as:<strong>' + user.email + "</strong> in <i>/queue/"+user.token+"</i>");

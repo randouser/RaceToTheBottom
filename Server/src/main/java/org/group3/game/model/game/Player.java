@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.group3.game.model.card.Card;
 import org.group3.game.model.user.User;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class Player {
     private String email;
     private int playerIndex;
 
-
+    public Player(){}
 
     public Player(Integer id,List<Card> deck, int maxMoney, int maxWorkers, String email, int playerIndex) {
         this.id = id;

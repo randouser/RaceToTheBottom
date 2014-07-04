@@ -35,6 +35,10 @@
         <exec executable="${ssh}" failonerror="true">
             <arg line="-i ${privateKeyLoc} ubuntu@${serverAdd} 'mysql --user=${databaseUser} --password=${databasePass} --database=${schema} &lt; ~/database/createCards.sql'"/>
         </exec>
+        <echo message="Run createGameStore.sql" />
+        <exec executable="${ssh}" failonerror="true">
+            <arg line="-i ${privateKeyLoc} ubuntu@${serverAdd} 'mysql --user=${databaseUser} --password=${databasePass} --database=${schema} &lt; ~/database/createGameStore.sql'"/>
+        </exec>
 
     </target>
 

@@ -18,15 +18,16 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class GameServiceImpl implements GameService{
 
-    //TODO better data structure?
     private static ConcurrentHashMap<Integer,Game> activeGames = new ConcurrentHashMap<>();
-    private static int gameCount = 0;
 
     @Autowired
     CardService cardService;
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    GameDao gameDao;
 
 
     @Override
@@ -48,9 +49,15 @@ public class GameServiceImpl implements GameService{
             districts.add(new District("neutral",50,50));
         }
 
+        //create initial game
+        Game game = new Game(playerOne,playerTwo,districts,type);
 
-        Game game = new Game(getGameCount(),playerOne,playerTwo,districts,type);
+        //save it to the database
+        int gameId = gameDao.save(game);
+        //set the ID that we generate from the database column.
+        game.setGameId(gameId);
 
+        //add to the live list
         activeGames.put(game.getGameId(),game);
 
         return new GameMessage(game.getGameId(),GameMessage.GAME_START,game.getGameName());
@@ -59,64 +66,65 @@ public class GameServiceImpl implements GameService{
     @Override
     public TurnMessage joinGame(User user, String inviteEmail,int gameId) {
         //first check if the game exists
-        if(activeGames.containsKey(gameId)){
-            Game game = activeGames.get(gameId);
-            Player playerTwo = game.getPendingPlayer();
 
-            //check if this game has started
+        Game game = loadGame(gameId);
+        Player playerTwo = game.getPendingPlayer();
 
-            if(!game.isInProgress()
-               && playerTwo.getEmail().equals(inviteEmail)){
+        //check if this game has started
 
-                playerTwo.setEmail(user.getEmail());
-                playerTwo.setId(user.getId());
-                game.setInProgress(true);
+        if(!game.isInProgress()
+           && playerTwo.getEmail().equals(inviteEmail)){
 
-                //TODO random turn start?
-                //return message for other player
-                Player curPlayer = game.getCurrentPlayer();
-                User curUser = userService.getUserById(curPlayer.getId());
-                return new TurnMessage(curUser,curPlayer,game);
+            playerTwo.setEmail(user.getEmail());
+            playerTwo.setId(user.getId());
+            game.setInProgress(true);
 
-            }else{
-                return null;
-            }
+            //TODO random turn start?
+            //return message for other player
+            Player curPlayer = game.getCurrentPlayer();
+            User curUser = userService.getUserById(curPlayer.getId());
+
+            saveGame(game);
+
+            return new TurnMessage(curUser,curPlayer,game);
 
         }else{
             return null;
         }
 
 
+
+
     }
 
     @Override
     public TurnMessage takeTurn(User user, int gameId, List<Card> cardsPlayed, boolean burnTurn) {
-        if(activeGames.containsKey(gameId)){
-            Game game = activeGames.get(gameId);
 
-            //play the cards!
-            boolean success = game.playCards(user.getEmail(),cardsPlayed, burnTurn);
+        Game game = loadGame(gameId);
 
-            if(success){
-                if(game.getWinnerEmail() != null){
-                    game.setInProgress(false);
-                }
+        //play the cards!
+        boolean success = game.playCards(user.getEmail(),cardsPlayed, burnTurn);
 
-                //change the turn
-                game.toggleTurn();
-
-                //return message for other player
-                Player curPlayer = game.getCurrentPlayer();
-                User curUser = userService.getUserById(curPlayer.getId());
-                return new TurnMessage(curUser,curPlayer,game);
-
-            }else{
-                return null; //what happens when you try to play cards that you can't
+        if(success){
+            if(game.getWinnerEmail() != null){
+                game.setInProgress(false);
             }
 
+            //change the turn
+            game.toggleTurn();
+
+            //return message for other player
+            Player curPlayer = game.getCurrentPlayer();
+            User curUser = userService.getUserById(curPlayer.getId());
+
+            saveGame(game);
+            return new TurnMessage(curUser,curPlayer,game);
+
         }else{
-            return null; //you get nothing if you ask for a gameId that doesn't exist
+            return null; //what happens when you try to play cards that you can't
         }
+
+
     }
 
 
@@ -125,7 +133,9 @@ public class GameServiceImpl implements GameService{
         List<TurnMessage> games = new ArrayList<>();
         List<JoinGameMessage> invites = new ArrayList<>();
 
-        for(Game game : activeGames.values()){
+        List<Game> gameList = gameDao.getSavedGamesForUser(user);
+
+        for(Game game : gameList){
             for (Player player : game.getPlayers()) {
 
                 //note, player.getId() can return null if the player is not a user
@@ -146,7 +156,42 @@ public class GameServiceImpl implements GameService{
     }
 
 
-    private synchronized int getGameCount() {
-        return gameCount++;
+
+    /**
+     * Loads the game from the database or the activeGamesCache.
+     * Will place the game in the cache if it's not there.
+     *
+     */
+    private Game loadGame(int id){
+        if(activeGames.containsKey(id)){
+            return activeGames.get(id);
+        }else{
+            Game game = gameDao.getGameById(id);
+            if(game != null){
+                //dat cache
+                activeGames.put(game.getGameId(),game);
+                return game;
+            }else{
+                throw new IllegalArgumentException("Attempted to load Game for id '" + id +"' but it does not exist");
+            }
+        }
     }
+
+
+    /**
+     * Persists the game to the database and ensures the cache is updated.
+     */
+    private void saveGame(final Game game){
+        activeGames.put(game.getGameId(),game);
+
+        //save to disk without blocking
+        new Thread(){
+            @Override
+            public void run(){
+                gameDao.update(game);
+            }
+        }.start();
+    }
+
+
 }

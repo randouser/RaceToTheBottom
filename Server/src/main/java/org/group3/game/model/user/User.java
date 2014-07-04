@@ -2,7 +2,7 @@ package org.group3.game.model.user;
 
  
 
-public class User implements java.io.Serializable {
+public class User{
  
 	private Integer id;
 	private Integer wins;

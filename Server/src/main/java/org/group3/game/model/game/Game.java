@@ -1,12 +1,15 @@
 package org.group3.game.model.game;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.group3.game.model.card.Card;
 import org.group3.game.model.user.User;
 
 import java.util.List;
 import java.util.Random;
-
-public class Game {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Game{
 
     private String gameName;
     private Player[] players;
@@ -19,14 +22,15 @@ public class Game {
     private boolean isInProgress;
     private String winnerEmail;
 
+    public Game(){}
 
-    public Game(Integer gameId, Player playerOne, Player playerTwo, List<District> districts, String type) {
+    public Game(Player playerOne, Player playerTwo, List<District> districts, String type) {
         this.players = new Player[2];
         this.players[0] = playerOne;
         this.players[1] = playerTwo;
         this.turnIndex = 0;
 
-        this.gameId = gameId;
+        this.gameId = -1;
         this.districts = districts;
 
         this.districtPointer = 0;
@@ -34,7 +38,7 @@ public class Game {
         this.type = type;
         this.isInProgress = false;
         this.winnerEmail = null;
-        this.gameName = gameId +" - "+ playerOne.getEmail() + " vs " + playerTwo.getEmail();
+        this.gameName = playerOne.getEmail() + " vs " + playerTwo.getEmail();
     }
 
     public void toggleTurn(){

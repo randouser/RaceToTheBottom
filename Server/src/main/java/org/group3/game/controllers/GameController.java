@@ -4,6 +4,7 @@ import org.group3.game.messageWrappers.*;
 import org.group3.game.model.game.GameService;
 import org.group3.game.model.user.User;
 import org.group3.game.model.user.UserService;
+import org.group3.game.services.EmailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,9 @@ public class GameController {
     @Autowired
     GameService gameService;
 
+    @Autowired
+    EmailService emailService;
+
 
 
     private final SimpMessagingTemplate messagingTemplate;
@@ -40,6 +44,7 @@ public class GameController {
 
     @MessageMapping("/startGame")
     public void startGame(StartGameMessage message) throws Exception {
+
 
         logger.info("User: " +message.getUserEmail() + " has requested to start a game with: " + message.getEmailToNotify());
 
