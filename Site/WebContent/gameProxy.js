@@ -1,8 +1,8 @@
 GameProxy = {
      games:{}
-    ,startGame: function(emailToNotify){
+    ,startGame: function(emailToNotify,gameType){
         var user = UserProxy.user;
-        StompService.sendMessage('startGame',{userEmail:user.email,userToken:user.token,emailToNotify:emailToNotify,gameType:'player',gameId:null});
+        StompService.sendMessage('startGame',{userEmail:user.email,userToken:user.token,emailToNotify:emailToNotify,gameType:gameType,gameId:null});
     }
     ,takeTurn:function(){
         var gameId = jQuery('#gameStageWrapper').data('gameId');
@@ -39,9 +39,13 @@ GameProxy = {
     	
     }
     ,getGameStart:function(gameId,gameName){
+
+        //set during when game is accepted from invite
+        var rowMessage = this.games.hasOwnProperty(gameId) ? "Waiting for turn" : "Waiting for Accept";
+
         //we make it null to indicate that it exists without getting the game state.
         this.games[gameId] = null;
-        var newRow = '<tr id="gamerow_'+gameId+'" class="gameRow pending"><td>'+gameName+' - Waiting for Accept</td></tr>';
+        var newRow = '<tr id="gamerow_'+gameId+'" class="gameRow pending"><td>'+gameName+' - '+rowMessage+'</td></tr>';
         jQuery('#gamesInProgressTable').append(newRow);
     }
     ,displayLobbyGames:function(turnMessages){
@@ -50,7 +54,7 @@ GameProxy = {
             var m = turnMessages[i];
 
             //update DOM table
-            this.activateGameRow(m.gameId, m.gameName, m.userTurn);
+            this.activateGameRow(m.gameId, m.gameName, m.userTurn, m.inProgress);
 
             //update games collection
             this.games[m.gameId] = new Game(m);
@@ -73,7 +77,7 @@ GameProxy = {
             jQuery('#waitingScreen').fadeOut();
         }
         if(this.games[game.gameId] === null){ //new game, note that null is intentional
-            this.activateGameRow(game.gameId,turnMessage.gameName,turnMessage.userTurn);
+            this.activateGameRow(game.gameId,turnMessage.gameName,turnMessage.userTurn,turnMessage.inProgress);
         }else{
             var rowMessage = turnMessage.userTurn? 'turn ready': 'waiting for turn';
             jQuery('#gamerow_' + game.gameId).children('td').html(game.gameId + ': '+ game.gameName + ' - '+rowMessage);
@@ -98,9 +102,9 @@ GameProxy = {
         jQuery('#lobbyWrapper').hide();
         gameStage.fadeIn();
     }
-    ,activateGameRow:function(gameId,gameName,isUserTurn){
+    ,activateGameRow:function(gameId,gameName,isUserTurn,isInProgress){
         var that = this;
-        var rowMessage = isUserTurn? 'turn ready': 'waiting for turn';
+        var rowMessage = !isInProgress? 'waiting for accept': isUserTurn? 'turn ready': 'waiting for turn';
         var row = jQuery('#gamerow_' + gameId);
 
         //if it's not there we make a new one
@@ -108,17 +112,22 @@ GameProxy = {
             var newRow = '<tr id="gamerow_'+ gameId+'" class="gameRow ready"><td>'+ gameName+' - '+rowMessage+'</td></tr>';
             row = jQuery('#gamesInProgressTable').append(newRow).find('#gamerow_' + gameId);
         }
+        if(isInProgress){
+            //turn on features
+            row
+                .removeClass('pending')
+                .addClass('ready')
+                .click({gameId:gameId},function(e){
+                    that.displayGame(e.data.gameId);
+                    window.location.hash = 'game';
+                })
 
-        //turn on features/text
-        row
-            .removeClass('pending')
-            .addClass('ready')
-            .click({gameId:gameId},function(e){
-                that.displayGame(e.data.gameId);
-                window.location.hash = 'game';
-            })
-            .children('td')
-            .html(gameId + ': '+ gameName + ' - '+rowMessage);
+        } else{
+            row.addClass('pending');
+        }
+
+        row.children('td').html(gameId + ': '+ gameName + ' - '+rowMessage);
+
     }
 
 

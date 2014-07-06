@@ -42,10 +42,14 @@ public class GameDao{
                     throws SQLException {
                 PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
-                int playerOneId = newGame.getPlayers()[0].getId();
-                int playerTwoId = newGame.getPlayers()[1].getId();
+                Integer playerOneId = newGame.getPlayers()[0].getId();
+                Integer playerTwoId = newGame.getPlayers()[1].getId();
                 ps.setInt(1, playerOneId);
-                ps.setInt(2, playerTwoId);
+                if(playerTwoId == null){
+                    ps.setNull(2, java.sql.Types.INTEGER);
+                }else{
+                    ps.setInt(2, playerTwoId);
+                }
                 ps.setString(3,stringifyGame(newGame));
                 return ps;
             }
@@ -56,12 +60,12 @@ public class GameDao{
     }
 
     public void update(final Game existingGame){
-        final String sql = "UPDATE gamestore SET serializedGame=? WHERE id=?";
+        final String sql = "UPDATE gamestore SET playerOneId=?,playerTwoId=?,serializedGame=? WHERE id=?";
 
-        Object[] updateArgs = {stringifyGame(existingGame), existingGame.getGameId()};
+        Player[] players = existingGame.getPlayers();
+        Object[] updateArgs = {players[0].getId(),players[1].getId(),stringifyGame(existingGame), existingGame.getGameId()};
 
         this.jdbcTemplate.update(sql, updateArgs);
-
 
     }
 

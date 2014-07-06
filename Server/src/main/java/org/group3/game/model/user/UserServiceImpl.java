@@ -48,7 +48,8 @@ public class UserServiceImpl implements UserService {
     public User getUserByEmailToken(String email, String userToken) {
         User user = userDao.getUserByEmail(email);
 
-        if(user.getToken().equals(userToken)){
+
+        if(user != null && user.getToken().equals(userToken)){
             return user;
         }else{
             return null;

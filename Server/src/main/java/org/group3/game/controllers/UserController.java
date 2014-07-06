@@ -18,12 +18,12 @@ public class UserController {
 
 
 	@RequestMapping(value="/register",method = RequestMethod.POST)
-	public @ResponseBody UserWrapper registerUser(@RequestParam String name,@RequestParam String email,@RequestParam String password) {
+	public @ResponseBody LoginMessage registerUser(@RequestParam String name,@RequestParam String email,@RequestParam String password) {
 
         logger.info("REGISTER POST!");
         User newUser = userService.registerUser(email,password,name);
 
-		return new UserWrapper(newUser);
+		return new LoginMessage("Successful Register",newUser);
 	}
 
     @RequestMapping(value="/login",method = RequestMethod.GET)

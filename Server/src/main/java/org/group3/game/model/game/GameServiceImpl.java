@@ -137,7 +137,6 @@ public class GameServiceImpl implements GameService{
 
         for(Game game : gameList){
             for (Player player : game.getPlayers()) {
-
                 //note, player.getId() can return null if the player is not a user
                 if (user.getId().equals(player.getId())) {
                     if(!game.isInProgress() && player.getPlayerIndex()==1){
@@ -145,7 +144,6 @@ public class GameServiceImpl implements GameService{
                     }else{
                         games.add(new TurnMessage(user, player, game));
                     }
-
 
                     break; //onto next game
                 }

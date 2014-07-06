@@ -1,13 +1,25 @@
 UserProxy = {
     user:null
+    ,inviteeCreds:{gameId:null,inviteeEmail:null}
     ,registerUser:function(serializedForm){
+       var that = this;
         var onError = function(detail){
             alert('error in request');
             console.log(detail);
         };
         var onSuccess = function(data){
-            alert('success in request');
-            console.log(data);
+            var user = data.user;
+            that.user = user;
+            //TODO this code and login code probably need to be merged/refactored
+            var loginMessage = jQuery('.loginHide').hide();
+            StompService.connect(user.token,that.inviteeCreds.gameId,that.inviteeCreds.inviteeEmail);
+            that.setCookie("user",JSON.stringify(user));
+            loginMessage.fadeIn().children().html('You are now connected to server as:<strong>' + user.email + "</strong> in <i>/queue/"+user.token+"</i>");
+            window.location.hash='lobby';
+            jQuery('#loginWrapper').hide();
+            jQuery('#registerWrapper').hide();
+            jQuery('#lobbyWrapper').fadeIn();
+            jQuery('#logoutButton').show();
         };
 
         jQuery.ajax({
@@ -56,17 +68,14 @@ UserProxy = {
             error:onError
         });
     }
-    ,loginWithCookie:function(){
-        var loginMessage = jQuery('.loginHide').fadeOut();
+    ,loadUserCookie:function(){
+
         var cookieUser = JSON.parse(this.getCookie('user'));
         if(cookieUser){
             this.user = cookieUser;
-            StompService.connect(this.user.token);
-            loginMessage.fadeIn().children().html('You are now connected to server as:<strong>' + this.user.email + "</strong> in <i>/queue/"+this.user.token+"</i>");
-            jQuery('#lobbyWrapper').fadeIn();
-            jQuery('#loginWrapper').hide();
-            window.location.hash='lobby';
-            jQuery('#logoutButton').show();
+            return true;
+        }else{
+            return false;
         }
     }
     ,logout:function(){

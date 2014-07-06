@@ -4,6 +4,7 @@ package org.group3.game.model.user;
 import org.group3.game.utils.HashUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -50,7 +51,12 @@ public class UserDaoImpl implements UserDao {
                      " WHERE email = ?";
         Object[] args = {email};
 
-        return jdbcTemplate.queryForObject(sql, args, new BeanPropertyRowMapper<>(User.class));
+        try{
+            return jdbcTemplate.queryForObject(sql, args, new BeanPropertyRowMapper<>(User.class));
+        }catch(EmptyResultDataAccessException e){
+            //if the user doesn't exist, return null instead of throwing exception
+            return null;
+        }
     }
 
     @Override

@@ -29,7 +29,7 @@
                 <label for="userEmailLogin">Email</label>
                 <input id="userEmailLogin" name="email" type="text"   placeholder="email" />
                 <label for="userPassLogin">Password</label>
-                <input id="userPassLogin" name="password" type="text" placeholder="password" />
+                <input id="userPassLogin" name="password" type="password" placeholder="password" />
 
             </form>
             <div>
@@ -44,16 +44,17 @@
 
 
     <div id="registerWrapper" style="border: 1px solid black;display:none;background-color:cornsilk;">
+        <button id="backToLoginButton">Back to Login Screen</button>
         <form id="registerUserForm" >
             <h2>Register User</h2>
             <label for="userEmail">Email</label>
             <input id="userEmail" name="email" type="text"   placeholder="email" />
             <label for="userPass">Password</label>
-            <input id="userPass" name="password" type="text" placeholder="password" />
+            <input id="userPass" name="password" type="password" placeholder="password" />
             <label for="userName">NickName</label>
             <input id="userName" name="name" type="text" placeholder="NickName" />
         </form>
-        <button id="registerUserSubmitButton">Add User</button>
+        <button id="registerUserSubmitButton">Send Info</button>
     </div>
 
 
@@ -74,10 +75,10 @@
                         <button>VS AI</button>
                     </div>
                     <div>
-                        <button id="startGameWithRegisteredButton">Invite a registered Player &gt;</button><input style="width:150px" id="emailToNotify" name="emailToNotify" type="text" placeholder="Registered player email">
+                        <button id="startGameButton">Invite a Player &gt;</button><input style="width:150px" id="emailToNotifyInput" name="emailToNotify" type="text" placeholder="Player email">
                     </div>
                     <div>
-                        <button>Invite a new Player &gt;</button><input id="newEmailToNotify" name="newEmailToNotify" type="text" placeholder="New player email">
+                        <button id="startGameNewPlayerButton">Invite a new Player &gt;</button><input id="newEmailToNotifyInput" name="newEmailToNotify" type="text" placeholder="New player email">
                     </div>
 
                 </div>
@@ -130,14 +131,9 @@
 
 
 <script>
-    //TODO this needs to go somewhere else
+    //TODO this needs to go somewhere else, part of hashchange
     var lastHash = '';
 
-    //This happens on page load
-    jQuery(function(){
-        UserProxy.loginWithCookie();
-
-    });
 
     jQuery('#connect').click(function(){
         StompService.connect();
@@ -160,10 +156,17 @@
     });
 
     var startGameButton =
-    jQuery('#startGameWithRegisteredButton').click(function(){
-        var emailToNotify = jQuery('#emailToNotify').val();
-        GameProxy.startGame(emailToNotify);
+    jQuery('#startGameButton').click(function(){
+        var emailToNotify = jQuery('#emailToNotifyInput').val();
+        GameProxy.startGame(emailToNotify,"player");
     });
+
+    var startGameNewPlayerButton =
+    jQuery('#startGameNewPlayerButton').click(function(){
+        var emailToNotify = jQuery('#newEmailToNotifyInput').val();
+        GameProxy.startGame(emailToNotify,"newPlayer");
+    });
+
 
     jQuery('#playCardsButton').click(function(){
         GameProxy.takeTurn();
@@ -182,6 +185,13 @@
     });
 
 
+
+
+    //TODO this probably needs to be decoupled from here, and refactored with other things that determine the page layout
+    /**
+     * On hashchange Listener.  Watches the url hash for certain events
+     * and allows the user to utilize the browser's 'back' button
+     */
     jQuery(window).on('hashchange', function(e) {
         var hash = window.location.hash.substr(1);
         if(lastHash === 'game' && hash==='lobby'){
@@ -194,8 +204,49 @@
             jQuery('#gameStageWrapper').fadeIn();
         }
 
+
+
         lastHash = hash;
     });
+
+
+    //for capturing new registrant links.  group1 is game id, group2 is encoded invitee email
+    var registerRegex =/register(?:\?gameId=(\d+)&invitee=(.+))?/;
+    //TODO this should be decoupled as well
+    /**
+     * This runs anything in it on page load (technically 'on page ready').
+     */
+    jQuery(function(){
+
+        var isCookie = UserProxy.loadUserCookie();
+        var hash = window.location.hash.substr(1);
+        var registerMatch = hash.match(registerRegex);
+
+        //Check if a cookie exists, load the lobby if it does.
+        if(isCookie){
+            var loginMessage = jQuery('.loginHide').fadeOut();
+            StompService.connect(UserProxy.user.token);
+            loginMessage.fadeIn().children().html('You are now connected to server as:<strong>' + UserProxy.user.email + "</strong> in <i>/queue/"+UserProxy.user.token+"</i>");
+            jQuery('#lobbyWrapper').fadeIn();
+            jQuery('#loginWrapper').hide();
+            window.location.hash='lobby';
+            jQuery('#logoutButton').show();
+
+         //Check if someone came via a join link
+        }else if(registerMatch && registerMatch[1] && registerMatch[2]){
+            UserProxy.inviteeCreds.gameId = registerMatch[1];
+            UserProxy.inviteeCreds.inviteeEmail = registerMatch[2];
+            jQuery('#loginWrapper').hide();
+            jQuery('#registerWrapper').fadeIn();
+        }
+
+
+
+    });
+
+
+
+
 
     jQuery('#logoutButton').click(function(){
         UserProxy.logout();
@@ -205,14 +256,9 @@
         if(e.which === 13){
             jQuery('#loginSubmitButton').click();
         }
-        console.log('key press');
     });
 
-    jQuery('#emailToNotify').keypress(function(e){
-        if(e.which === 13){
-            startGameButton.click();
-        }
-    });
+
 
     jQuery('#backToLobbyButton').click(function(){
         window.location.hash = 'lobby';
@@ -221,8 +267,11 @@
     });
 
 
-
-
+    jQuery('#backToLoginButton').click(function(){
+        window.location.hash = '';
+        jQuery('registerWrapper').hide();
+        jQuery('lobbyWrapper').fadeIn();
+    });
 
 
 

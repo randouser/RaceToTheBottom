@@ -3,7 +3,7 @@ StompService = {
     ,setConnected:function(connected){
 
     }
-    ,connect:function(token){
+    ,connect:function(token,gameId,inviteeEmail){
         var that = this;
         var connectSuccess = function(frame){
             that.setConnected(true);
@@ -20,6 +20,7 @@ StompService = {
                 console.log(frame);
                 var r = confirm("You've been invited to a game\nDo you accept?");
                 if (r == true) {
+                    GameProxy.games[joinInfo.gameId] = null;
                     var user = UserProxy.user;
                     that.sendMessage('joinGame',{
                          userEmail:user.email
@@ -41,6 +42,9 @@ StompService = {
                     case 'gameStart':
                         GameProxy.getGameStart(gameMessage.gameId,gameMessage.message);
                         break;
+                    case 'error':
+                        alert(gameMessage.message);
+                        break;
                 }
                 console.log(frame);
 
@@ -54,6 +58,7 @@ StompService = {
                 for(;i<invites.length; ++i){
                     var r = confirm("You've been invited to a game\nDo you accept?");
                     if (r == true) {
+                        GameProxy.games[invites[i].gameId] = null;
                         var user = UserProxy.user;
                         that.sendMessage('joinGame',{
                             userEmail:user.email
@@ -79,8 +84,9 @@ StompService = {
 
             });
 
+            //Request Lobby Info
             var user = UserProxy.user;
-            that.sendMessage('getLobbyInfo',{userEmail:user.email,userToken:user.token});
+            that.sendMessage('getLobbyInfo',{userEmail:user.email,userToken:user.token,gameId:gameId,inviteeEmail:inviteeEmail});
         };
         var connectFailure = function(error){
             console.log('Connection failure:');
