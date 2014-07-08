@@ -69,7 +69,7 @@ public class UserService{
 
     
     public void deleteUserByEmail(String email){
-        userDao.deleteUserByEmail(email);
+//        userDao.deleteUserByEmail(email);
 
     }
 
