@@ -78,12 +78,14 @@ public class UserController {
         private String email;
         private String token;
         private String tokenExpirationDate;
+        private boolean isAdmin;
 
-        private UserWrapper(User user) {
+        public UserWrapper(User user) {
             this.name = user.getName();
             this.email = user.getEmail();
             this.token = user.getToken();
             this.tokenExpirationDate = user.getTokenExpirationDate();
+            this.isAdmin = user.isAdmin();
         }
 
         public String getName() {
@@ -116,6 +118,14 @@ public class UserController {
 
         public void setTokenExpirationDate(String tokenExpirationDate) {
             this.tokenExpirationDate = tokenExpirationDate;
+        }
+
+        public boolean isAdmin() {
+            return isAdmin;
+        }
+
+        public void setAdmin(boolean isAdmin) {
+            this.isAdmin = isAdmin;
         }
     }
 }

@@ -13,9 +13,19 @@ public class User{
     private String passwordHash;
 	private String token;
 	private String tokenExpirationDate;
+    boolean isAdmin;
 
 	public User() {
 	}
+
+
+    public boolean isAdmin() {
+        return isAdmin;
+    }
+
+    public void setAdmin(boolean isAdmin) {
+        this.isAdmin = isAdmin;
+    }
 
     public String getPasswordHash() {
         return passwordHash;

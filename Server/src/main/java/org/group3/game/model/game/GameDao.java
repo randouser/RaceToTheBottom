@@ -78,6 +78,19 @@ public class GameDao{
     }
 
 
+    public void delete(final int gameId){
+        final String sql = "DELETE FROM gamestore where id=?";
+        jdbcTemplate.update(new PreparedStatementCreator() {
+
+            public PreparedStatement createPreparedStatement(Connection connection)throws SQLException {
+                PreparedStatement ps = connection.prepareStatement(sql);
+                ps.setInt(1, gameId);
+                return ps;
+            }
+        });
+    }
+
+
     public Game getGameById(final int id){
         String sql = "SELECT serializedGame FROM gamestore" +
                 " WHERE id = ?";

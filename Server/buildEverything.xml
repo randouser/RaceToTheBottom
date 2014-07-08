@@ -16,31 +16,7 @@
         <antcall target="restartTomcat" />
     </target>
 
-    <target name="deployDatabase">
-        <!--copy database files to home directory-->
-        <echo message="Copying database files" />
-        <exec executable="${scp}">
-            <arg value="-r"/>
-            <arg value="-i"/>
-            <arg file="${privateKeyLoc}"/>
-            <arg file="${basedir}/database"/>
-            <arg value="ubuntu@${serverAdd}:/home/ubuntu"/>
-        </exec>
 
-        <echo message="Run createUser.sql" />
-        <exec executable="${ssh}" failonerror="true">
-            <arg line="-i ${privateKeyLoc} ubuntu@${serverAdd} 'mysql --user=${databaseUser} --password=${databasePass} --database=${schema} &lt; ~/database/createUser.sql'"/>
-        </exec>
-        <echo message="Run createCards.sql" />
-        <exec executable="${ssh}" failonerror="true">
-            <arg line="-i ${privateKeyLoc} ubuntu@${serverAdd} 'mysql --user=${databaseUser} --password=${databasePass} --database=${schema} &lt; ~/database/createCards.sql'"/>
-        </exec>
-        <echo message="Run createGameStore.sql" />
-        <exec executable="${ssh}" failonerror="true">
-            <arg line="-i ${privateKeyLoc} ubuntu@${serverAdd} 'mysql --user=${databaseUser} --password=${databasePass} --database=${schema} &lt; ~/database/createGameStore.sql'"/>
-        </exec>
-
-    </target>
 
     <target name="stopTomcat">
         <exec executable="${ssh}">
@@ -59,6 +35,63 @@
             <arg value="ubuntu@${serverAdd}"/>
             <arg value="sudo /etc/init.d/tomcat7 restart"/>
         </exec>
+    </target>
+
+
+
+    <target name="deployDatabase">
+        <antcall target="x_deployDatabaseFiles" />
+        <antcall target="x_buildDatabaseTables" />
+    </target>
+
+
+
+    <target name="resetDatabase">
+        <antcall target="x_deployDatabaseFiles" />
+        <antcall target="x_runDatabaseReset" />
+        <antcall target="x_buildDatabaseTables" />
+    </target>
+
+
+
+
+<!-- Database helper methods -->
+    <target name="x_buildDatabaseTables">
+        <echo message="Run createUser.sql" />
+        <exec executable="${ssh}" failonerror="true">
+            <arg line="-i ${privateKeyLoc} ubuntu@${serverAdd} 'mysql --user=${databaseUser} --password=${databasePass} --database=${schema} &lt; ~/database/createUser.sql'"/>
+        </exec>
+        <echo message="Run createCards.sql" />
+        <exec executable="${ssh}" failonerror="true">
+            <arg line="-i ${privateKeyLoc} ubuntu@${serverAdd} 'mysql --user=${databaseUser} --password=${databasePass} --database=${schema} &lt; ~/database/createCards.sql'"/>
+        </exec>
+        <echo message="Run createGameStore.sql" />
+        <exec executable="${ssh}" failonerror="true">
+            <arg line="-i ${privateKeyLoc} ubuntu@${serverAdd} 'mysql --user=${databaseUser} --password=${databasePass} --database=${schema} &lt; ~/database/createGameStore.sql'"/>
+        </exec>
+    </target>
+
+
+
+    <target name="x_runDatabaseReset">
+        <echo message="Run dropAllTables.sql" />
+        <exec executable="${ssh}" failonerror="true">
+            <arg line="-i ${privateKeyLoc} ubuntu@${serverAdd} 'mysql --user=${databaseUser} --password=${databasePass} --database=${schema} &lt; ~/database/dropAllTables.sql'"/>
+        </exec>
+    </target>
+
+
+    <target name="x_deployDatabaseFiles">
+        <!--copy database files to home directory-->
+        <echo message="Copying database files" />
+        <exec executable="${scp}">
+            <arg value="-r"/>
+            <arg value="-i"/>
+            <arg file="${privateKeyLoc}"/>
+            <arg file="${basedir}/database"/>
+            <arg value="ubuntu@${serverAdd}:/home/ubuntu"/>
+        </exec>
+
     </target>
 
 

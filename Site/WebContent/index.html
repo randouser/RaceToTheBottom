@@ -123,9 +123,31 @@
 
     </div>
 
+    <div id="adminPanelWrapper" style="position:fixed;top:0;left:100px;display:none;text-align: left;">
+
+        <button id="adminButton" >Admin Panel</button>
+        <div id="adminPanel" style="display:none;background-color: rgb(139, 147, 255);border: 1px solid grey;padding: 1em;box-shadow: 4px 4px 5px rgba(0, 0, 0, 0.5);">
+           <h2>Admin Panel</h2>
+            <fieldset>
+                <legend>Remove User by Email</legend>
+                <label>
+                    User Email:
+                    <input id="adminRemoveUserByEmailInput" type="text" />
+                </label>
+                <button id="adminRemoveUserByEmailButton">submit</button>
+            </fieldset>
+            <fieldset style="margin-top:1em;">
+                <legend>Remove Game by ID</legend>
+                <label>
+                    Game ID:
+                    <input id="adminRemoveGameByIdInput" type="text" />
+                </label>
+                <button id="adminRemoveGameByIdButton">submit</button>
+            </fieldset>
 
 
-
+        </div>
+    </div>
 
 </div>
 
@@ -231,6 +253,9 @@
             jQuery('#loginWrapper').hide();
             window.location.hash='lobby';
             jQuery('#logoutButton').show();
+            if(UserProxy.user.admin){
+                jQuery('#adminPanelWrapper').show();
+            }
 
          //Check if someone came via a join link
         }else if(registerMatch && registerMatch[1] && registerMatch[2]){
@@ -272,6 +297,24 @@
         jQuery('registerWrapper').hide();
         jQuery('lobbyWrapper').fadeIn();
     });
+
+    jQuery('#adminButton').click(function(){
+        jQuery('#adminPanel').toggle();
+    });
+
+
+    jQuery('#adminRemoveUserByEmailButton').click(function(){
+        var value = jQuery('#adminRemoveUserByEmailInput').val();
+        var user = UserProxy.user;
+        StompService.sendMessage('admin_removeUserByEmail',{value:value,userEmail:user.email,userToken:user.token});
+    });
+    jQuery('#adminRemoveGameByIdButton').click(function(){
+        var value = jQuery('#adminRemoveGameByIdInput').val();
+        var user = UserProxy.user;
+        StompService.sendMessage('admin_removeGameById',{value:value,userEmail:user.email,userToken:user.token});
+    });
+
+
 
 
 

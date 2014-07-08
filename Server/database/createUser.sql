@@ -12,5 +12,6 @@ CREATE TABLE IF NOT EXISTS user(
   wins int(11) NOT NULL,
   losses int(11) NOT NULL,
   tokenExpirationDate date DEFAULT NULL,
+  admin boolean DEFAULT FALSE,
   PRIMARY KEY (id)
 );

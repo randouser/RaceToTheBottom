@@ -154,6 +154,16 @@ public class GameServiceImpl implements GameService{
     }
 
 
+    @Override
+    public void deleteGameById(int gameId){
+        if(activeGames.containsKey(gameId)){
+            activeGames.remove(gameId);
+        }
+
+        gameDao.delete(gameId);
+    }
+
+
 
     /**
      * Loads the game from the database or the activeGamesCache.

@@ -45,8 +45,11 @@ UserProxy = {
              that.user = user;
 
             if(user){
+                if(user.admin === true){
+                    jQuery('#adminPanelWrapper').show();
+                }
                 var loginMessage = jQuery('.loginHide').hide();
-                StompService.connect(user.token);
+                StompService.connect(user.token,null,null,user.admin);
                 that.setCookie("user",JSON.stringify(user));
                 loginMessage.fadeIn().children().html('You are now connected to server as:<strong>' + user.email + "</strong> in <i>/queue/"+user.token+"</i>");
                 jQuery('#lobbyWrapper').fadeIn();
@@ -56,6 +59,8 @@ UserProxy = {
             }else{
                 alert(data.message);
             }
+
+
 
         };
 

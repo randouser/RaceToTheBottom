@@ -18,4 +18,5 @@ public interface GameService {
 
     LobbyMessage getActiveGamesForUser(User user);
 
+    void deleteGameById(int gameId);
 }

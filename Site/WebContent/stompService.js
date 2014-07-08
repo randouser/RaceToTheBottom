@@ -3,7 +3,7 @@ StompService = {
     ,setConnected:function(connected){
 
     }
-    ,connect:function(token,gameId,inviteeEmail){
+    ,connect:function(token,gameId,inviteeEmail,isAdmin){
         var that = this;
         var connectSuccess = function(frame){
             that.setConnected(true);
@@ -83,6 +83,13 @@ StompService = {
                 GameProxy.getTurn(turnMessage);
 
             });
+
+            if(isAdmin){
+                that.client.subscribe('/queue/'+token+'/admin', function(frame){
+                    var adminMessage = JSON.parse(frame.body);
+                    alert(adminMessage);
+                });
+            }
 
             //Request Lobby Info
             var user = UserProxy.user;
