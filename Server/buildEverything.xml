@@ -52,7 +52,14 @@
         <antcall target="x_buildDatabaseTables" />
     </target>
 
-
+    <target name="grabCatalinaOut">
+        <exec executable="${scp}">
+            <arg value="-i"/>
+            <arg file="${privateKeyLoc}"/>
+            <arg value="ubuntu@${serverAdd}:/var/log/tomcat7/catalina.out"/>
+            <arg file="${basedir}"/>
+        </exec>
+    </target>
 
 
 <!-- Database helper methods -->
