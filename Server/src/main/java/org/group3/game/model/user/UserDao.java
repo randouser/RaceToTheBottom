@@ -83,4 +83,27 @@ public class UserDao {
     }
 
 
+    public void updateUserToken(User user,String token, Timestamp timestamp){
+        String sql = "UPDATE user SET token=?,tokenExpirationDate=? where id = ?";
+
+        Object[] updateArgs = {token,timestamp,user.getId()};
+
+        this.jdbcTemplate.update(sql, updateArgs);
+    }
+
+
+    public User getUserByToken(String token){
+        String sql = "SELECT * FROM user" +
+                " WHERE token = ?";
+        Object[] args = {token};
+
+        try{
+            return jdbcTemplate.queryForObject(sql, args, new BeanPropertyRowMapper<>(User.class));
+        }catch(EmptyResultDataAccessException e){
+            //if the user doesn't exist, return null instead of throwing exception
+            return null;
+        }
+    }
+
+
 }

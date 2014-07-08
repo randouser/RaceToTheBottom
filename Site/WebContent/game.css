@@ -78,6 +78,15 @@ h2{
     position:relative;
 }
 
+#adminPanelWrapper{
+    position:fixed;
+    top:0;
+    left:100px;
+    display:none;
+    text-align:left;
+    z-index:1000;
+}
+
 #waitingScreen{
     position: absolute;
     left: 0;
@@ -85,7 +94,7 @@ h2{
     bottom: 0;
     top: 0;
     background-color: rgba(0,0,0,0.5);
-    z-index: 1000;
+    z-index: 500;
     font-size: 30px;
     color: white;
     text-shadow: 2px 2px black;

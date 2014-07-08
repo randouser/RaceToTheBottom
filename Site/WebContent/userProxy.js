@@ -83,12 +83,51 @@ UserProxy = {
             return false;
         }
     }
+    //assumes cookie exists and is loaded
+    ,loginWithCookie:function(){
+
+        var that = this;
+        var onError = function(detail){
+            alert('error in request: '+detail);
+            console.log(detail);
+        };
+        var onSuccess = function(data){
+            var user = data.user;
+            that.user = user;
+            if(user){
+                if(user.admin === true){
+                    jQuery('#adminPanelWrapper').show();
+                }
+                var loginMessage = jQuery('.loginHide').hide();
+                StompService.connect(user.token,null,null,user.admin);
+                that.setCookie("user",JSON.stringify(user));
+                loginMessage.fadeIn().children().html('You are now connected to server as:<strong>' + user.email + "</strong> in <i>/queue/"+user.token+"</i>");
+                jQuery('#lobbyWrapper').fadeIn();
+                window.location.hash='lobby';
+                jQuery('#loginWrapper').hide();
+                jQuery('#logoutButton').show();
+            }else{
+                alert(data.message);
+                that.logout();
+            }
+
+        };
+
+        jQuery.ajax({
+            type: "GET",
+            url: '/gameserver/user/loginWithToken',
+            data: 'email='+encodeURIComponent(UserProxy.user.email)+'&token='+UserProxy.user.token,
+            success: onSuccess,
+            error:onError
+        });
+
+    }
     ,logout:function(){
         document.cookie = 'user' + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
         window.location.hash = '';
         StompService.disconnect();
-        window.location.reload(true);
         jQuery('#logoutButton').hide();
+        window.location.reload(true);
     }
 
     ,setCookie:function(key, value){

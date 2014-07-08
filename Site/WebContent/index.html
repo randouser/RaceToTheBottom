@@ -123,7 +123,7 @@
 
     </div>
 
-    <div id="adminPanelWrapper" style="position:fixed;top:0;left:100px;display:none;text-align: left;">
+    <div id="adminPanelWrapper">
 
         <button id="adminButton" >Admin Panel</button>
         <div id="adminPanel" style="display:none;background-color: rgb(139, 147, 255);border: 1px solid grey;padding: 1em;box-shadow: 4px 4px 5px rgba(0, 0, 0, 0.5);">
@@ -244,18 +244,9 @@
         var hash = window.location.hash.substr(1);
         var registerMatch = hash.match(registerRegex);
 
-        //Check if a cookie exists, load the lobby if it does.
+        //Check if a cookie exists, attempt to login with it.
         if(isCookie){
-            var loginMessage = jQuery('.loginHide').fadeOut();
-            StompService.connect(UserProxy.user.token);
-            loginMessage.fadeIn().children().html('You are now connected to server as:<strong>' + UserProxy.user.email + "</strong> in <i>/queue/"+UserProxy.user.token+"</i>");
-            jQuery('#lobbyWrapper').fadeIn();
-            jQuery('#loginWrapper').hide();
-            window.location.hash='lobby';
-            jQuery('#logoutButton').show();
-            if(UserProxy.user.admin){
-                jQuery('#adminPanelWrapper').show();
-            }
+            UserProxy.loginWithCookie();
 
          //Check if someone came via a join link
         }else if(registerMatch && registerMatch[1] && registerMatch[2]){
@@ -313,6 +304,12 @@
         var user = UserProxy.user;
         StompService.sendMessage('admin_removeGameById',{value:value,userEmail:user.email,userToken:user.token});
     });
+
+
+    //attempt to cleanly close websocket port when window closes
+    window.onbeforeunload = function(e) {
+        StompService.disconnect();
+    };
 
 
 

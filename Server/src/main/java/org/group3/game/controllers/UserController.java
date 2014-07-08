@@ -17,6 +17,29 @@ public class UserController {
     UserService userService;
 
 
+    @RequestMapping(value="/loginWithToken",method = RequestMethod.GET)
+    public @ResponseBody LoginMessage registerUser(@RequestParam String email,@RequestParam String token) {
+        User user = userService.getUserByEmailToken(email, token);
+
+
+        String message;
+        if(user == null){
+            message = "There is no user with those credentials";
+        }else{
+            boolean isValid = userService.assertTokenValid(user);
+
+            if(isValid){
+                message = "Successful login";
+            }else{
+                message="Token has expired, Please log in again.";
+                user = null;
+            }
+
+        }
+        return new LoginMessage(message,user);
+    }
+
+
 	@RequestMapping(value="/register",method = RequestMethod.POST)
 	public @ResponseBody LoginMessage registerUser(@RequestParam String name,@RequestParam String email,@RequestParam String password) {
 
@@ -29,14 +52,14 @@ public class UserController {
     @RequestMapping(value="/login",method = RequestMethod.GET)
     public @ResponseBody LoginMessage getUser(@RequestParam String email,@RequestParam String password) {
 
-        logger.info("LOGIN GET!");
+        logger.info("Attempt to login for: " + email);
         User user = userService.getUserByEmailPassword(email, password);
 
         String message;
         if(user == null){
-            message = "You are no logged in";
+            message = "There is no user with those credentials";
         }else{
-            message = "there is no user with those credentials";
+            message = "Successful Login";
         }
 
 
@@ -51,7 +74,7 @@ public class UserController {
 
         public LoginMessage(String message, User user) {
             this.message = message;
-            this.user = new UserWrapper(user);
+            this.user = user == null? null : new UserWrapper(user);
         }
 
         public String getMessage() {
@@ -84,7 +107,7 @@ public class UserController {
             this.name = user.getName();
             this.email = user.getEmail();
             this.token = user.getToken();
-            this.tokenExpirationDate = user.getTokenExpirationDate();
+            this.tokenExpirationDate = user.getTokenExpirationDate().toString();
             this.isAdmin = user.isAdmin();
         }
 

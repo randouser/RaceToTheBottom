@@ -1,6 +1,7 @@
 package org.group3.game.model.user;
 
- 
+
+import java.sql.Timestamp;
 
 public class User{
  
@@ -12,7 +13,7 @@ public class User{
 	private String salt;
     private String passwordHash;
 	private String token;
-	private String tokenExpirationDate;
+	private Timestamp tokenExpirationDate;
     boolean isAdmin;
 
 	public User() {
@@ -91,11 +92,11 @@ public class User{
         this.token = token;
     }
 
-    public String getTokenExpirationDate() {
+    public Timestamp getTokenExpirationDate() {
         return tokenExpirationDate;
     }
 
-    public void setTokenExpirationDate(String tokenExpirationDate) {
+    public void setTokenExpirationDate(Timestamp tokenExpirationDate) {
         this.tokenExpirationDate = tokenExpirationDate;
     }
 

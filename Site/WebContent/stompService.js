@@ -107,7 +107,7 @@ StompService = {
 
     }
     ,disconnect:function(){
-        this.client.disconnect();
+        if(this.client){this.client.disconnect();}
     }
     ,sendMessage:function(destination,jsonMessage){
         this.client.send('/app/'+destination, {}, JSON.stringify(jsonMessage));

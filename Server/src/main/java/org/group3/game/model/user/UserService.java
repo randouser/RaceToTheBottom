@@ -28,14 +28,24 @@ public class UserService{
         return userDao.getUserByEmailToken(email,token);
 	}
 
-    
+
+    /**
+     * This method gets the user by email and password.
+     * As the user's full credentials are used, it also resets the user's token .
+     *
+     */
     public User getUserByEmailPassword(String email, String password) {
 
         User user = userDao.getUserByEmail(email);
 
-        boolean isPassword = HashUtils.isPasswordEqualToHash(password, user.getSalt(),user.getPasswordHash());
+        if(user != null && HashUtils.isPasswordEqualToHash(password, user.getSalt(),user.getPasswordHash())){
+            Timestamp newExpTime = createExpTime();
+            String newToken = HashUtils.generateToken(email,password,newExpTime.toString());
 
-        if(isPassword){
+            userDao.updateUserToken(user, newToken, newExpTime);
+            user.setToken(newToken);
+            user.setTokenExpirationDate(newExpTime);
+
             return user;
         }else{
             return null;
@@ -71,6 +81,11 @@ public class UserService{
     public void deleteUserByEmail(String email){
         userDao.deleteUserByEmail(email);
 
+    }
+
+
+    public boolean assertTokenValid(User user){
+        return user != null && (new DateTime(user.getTokenExpirationDate()).isAfterNow());
     }
 
     private static Timestamp createExpTime(){
