@@ -127,10 +127,10 @@ h2{
 }
 
 .positive{
-    background:url('card1.png');
+    background:url('../images/card1.png');
 }
 .negative{
-    background:url('card1.png');
+    background:url('../images/card1.png');
 }
 
 .card{
