@@ -1,0 +1,102 @@
+
+/* ================ Card Styles ================ */
+.card{
+    display:inline-block;
+    width:100px;
+    height:141px;
+    border:1px solid #AFAFAF;
+    color:#f7f5f1;
+    text-align:center;
+    font-family:arial,sans-serif;
+    font-weight:bold;
+    cursor:default;
+    position:relative;
+}
+
+.card:hover, .cardToggle{
+    box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.5);
+    border:1px solid black;
+    top:-5px;
+    z-index:20;
+    transition:all .1s;
+
+}
+.cardToggle{
+    border-color:yellow !important;
+}
+
+
+.cardTitle {
+    font-size: 10px;
+    height: 26px;
+    margin: 5px 5px 2px 5px;
+
+}
+
+.cardImgContain{
+    display:table;
+    width:90px;
+    height:60px;
+    margin:0 5px 2px 5px;
+}
+.cardBody{
+    font-size:10px;
+    height:14px;
+    margin:0 5px 2px 5px;
+}
+
+.cardCost{
+    font-size:10px;
+    height:14px;
+    margin:0 5px 2px 5px;
+    line-height:13px;
+}
+
+.cardSubtext{
+    font-size:7px;
+    color:black;
+
+}
+
+.cardImgContain span{
+    display:table-cell;
+    vertical-align:middle;
+}
+
+/****** Positive Colors ******/
+.positive{
+    background-color:#f7f5f1;
+}
+.positive .cardTitle{
+    background-color:#112c79;
+}
+
+.positive .cardImgContain{
+    background-color:#C21F31;
+}
+
+.positive .cardBody{
+    background-color:#112c79;
+}
+.positive .cardCost{
+    background-color:#C21F31;
+}
+
+/****** Negative Colors ******/
+.negative{
+    background-color:#cccccc;
+}
+.negative .cardTitle{
+    background-color:#C21F31;
+}
+
+.negative .cardImgContain{
+    background-color:#112c79;
+}
+
+.negative .cardBody{
+    background-color:#C21F31;
+}
+.negative .cardCost{
+    background-color:#112c79;
+}

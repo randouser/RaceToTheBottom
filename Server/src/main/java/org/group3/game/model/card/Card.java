@@ -9,12 +9,21 @@ public class Card {
     private String type;
     private String name;
     private String bodyText;
+    private String subtext;
     private int moneyCost;
     private int workerCost;
     private int minDamage;
     private int maxDamage;
     private int multiplier;
     private int weight;
+
+    public String getSubtext() {
+        return subtext;
+    }
+
+    public void setSubtext(String subtext) {
+        this.subtext = subtext;
+    }
 
     public int getMinDamage() {
         return minDamage;

@@ -141,16 +141,15 @@ function CardView(card){
     this.card = card;
 
     this.element = document.createElement('div');
-    this.element.className = card.type + ' card';
-    
-    this.element.innerHTML = 
-    '<div class="name"><span class="nameText">'+card.name+'</span></div>'+
-    '<div class="body"><span class="bodyText">'+card.bodyText+'</span></div>'+
-    '<div class="subtext"><span class="subtextText">'+'subtext?'+'</span></div>';
+    this.element.className = 'card ' + card.type;
 
-    this.nameElement = this.element.getElementsByClassName('nameText')[0];
-    this.bodyElement = this.element.getElementsByClassName('bodyText')[0];
-    this.subtextElement = this.element.getElementsByClassName('subtextText')[0];
+    //TODO dynamically change icon based on cardId
+    this.element.innerHTML =
+    '<div class="cardTitle"><span class="cardTitleText">'+card.name+'</span></div>'+
+    '<div class="cardImgContain"><span class="imgCell"><img src="../images/star.png" /></span></div>'+
+    '<div class="cardBody"><span>&#9733;</span><span class="damageText">'+card.bodyText+'</span><span>&#9733;</span></div>'+
+    '<div class="cardCost"><span>$'+card.moneyCost+'</span>&nbsp;<span>'+card.workerCost+'W</span></div>'+
+    '<div class="cardSubtext"><span>'+card.subtext+'</span></div>';
 
 
 //    this.element.addEventListener('click',this.clickHandler,false);
