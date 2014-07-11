@@ -8,6 +8,8 @@ import org.group3.game.model.user.User;
 
 import java.util.List;
 import java.util.Random;
+import java.util.ArrayList;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Game{
 
@@ -34,7 +36,7 @@ public class Game{
         this.districts = districts;
 
         this.districtPointer = 0;
-        this.log = log;
+        this.log = new ArrayList<GameLog>(50);
         this.type = type;
         this.isInProgress = false;
         this.winnerEmail = null;
@@ -107,6 +109,10 @@ public class Game{
                  District curDistrict = districts.get(districtPointer);
                  curDistrict.setPlayerScore(turnIndex, damage);
                  curDistrict.setPlayerScore(otherplayerIndex, (-1 * damage));
+                 
+                 //Add new GameLog entry in list
+                 log.add(new GameLog(cards, curPlayer, otherPlayer, districtPointer, curDistrict, damage));
+                 
                  curDistrict.setTurn(curDistrict.getTurn() + 1);
 
                  //check if the district is out of turns
