@@ -133,24 +133,11 @@ h2{
 }
 
 #districtStage{
-    height:270px;
+    position:relative;
     padding:1em;
+    height: 328px;
 
 }
 
 
-.district {
-    border:1px solid black;  
-    display:inline-block;
-    width:150px;
-    height:150px;
-    -webkit-user-select: none;  /* Chrome all / Safari all */
-       -moz-user-select: none;     /* Firefox all */
-        -ms-user-select: none;      /* IE 10+ */
-            user-select: none;  
-    
-}
-.districtToggle {
-    background-color:rgb(156, 156, 204);
-    
-}
+
