@@ -170,12 +170,14 @@ function DistrictView(district,index){
 
 
     this.element = document.createElement('div');
-    this.element.className = this.className + ' district';
-    
-    this.element.innerHTML = 
+    this.element.className = 'district';
+    var imgIndex = index + 1;
+    this.element.innerHTML =
+    '<div class="districtTextWrapper d'+imgIndex+'">'+
     '<div class="name"><span class="nameText">'+this.index+' - '+district.type+'</span></div>'+
-    '<div class="body"><span class="bodyText">'+this.bodyText+'</span></div>';
-
+    '<div class="body"><span class="bodyText">'+this.bodyText+'</span></div>'+
+    '</div>'+
+    '<img src="images/d'+imgIndex+'.png" />';
     this.nameElement = this.element.getElementsByClassName('nameText')[0];
     this.bodyElement = this.element.getElementsByClassName('bodyText')[0];
 
@@ -217,14 +219,20 @@ function Game(turnMessage){
         var districtStage = document.getElementById('districtStage');
         var i = 0;
         this.empty(districtStage);
+        var curDistrict;
         for(; i < this.districts.length; ++i){
             var districtV = new DistrictView(this.districts[i],i);
             if(i === this.districtPointer){
-                districtV.element.classList.add('districtToggle');
+                curDistrict = districtV.element;
             }
             this.districtViews.push(districtV);
             districtStage.appendChild(districtV.element);
         }
+        //delay the animation
+        setTimeout(function(){
+            curDistrict.classList.add('districtToggle','animated','flash');
+        },700);
+
     };
 
     this.displayCards = function(){
