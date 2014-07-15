@@ -140,4 +140,85 @@ h2{
 }
 
 
+/* =========== DebateGame ============ */
 
+#scrollWrapper{
+    background-color:lightgrey;
+    text-align:center;
+    display:table;
+    height:346px;
+    width:787px;
+    position: absolute;
+    z-index: 100;
+    left: 50%;
+    margin: 0 0 0 -393.5px;
+}
+
+#scrollStage{
+    position:relative;
+    background-color:grey;
+    height: 200px;
+    width: 700px;
+    display: inline-block;
+    border-bottom:1px solid black;
+    cursor:pointer;
+
+}
+#scrollCell{
+    display:table-cell;
+    vertical-align:middle;
+
+}
+
+
+
+#debater{
+
+    display:inline-block;
+    position:absolute;
+
+    bottom:0;
+    left:50px;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.obstacle{
+    position:absolute;
+    bottom:0;
+    right:0;
+    width:10px;
+    background-color:green;
+    display: inline-block;
+    height: 10px;
+}
+
+.obstacle span{
+    display:inline-block;
+    margin-top:12px;
+    background-color:white;
+}
+
+#scoreField{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+
+#scrollOverlay{
+    background-color:rgba(0, 0, 0, 0.72);
+    position:absolute;
+    z-index:3000;
+    top:0;
+    bottom:0;
+    right:0;
+    left:0;
+    color:white;
+    cursor:pointer;
+
+}

@@ -30,6 +30,16 @@ public class District {
         }
     }
 
+    public void increaseScoreForPlayer(int playerIndex,int scoreDelta){
+        if(playerIndex == 0){
+            playerOneScore += scoreDelta;
+            playerTwoScore -= scoreDelta;
+        }else if(playerIndex == 1){
+            playerTwoScore += scoreDelta;
+            playerOneScore -= scoreDelta;
+        }
+    }
+
     public String getWinnerEmail() {
         return winnerEmail;
     }

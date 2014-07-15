@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Game{
+    private static final int DEBATE_BONUS = 2;
 
     private String gameName;
     private Player[] players;
@@ -23,6 +24,7 @@ public class Game{
     private String type;
     private boolean isInProgress;
     private String winnerEmail;
+    private boolean isDebate;
 
     public Game(){}
 
@@ -30,6 +32,9 @@ public class Game{
         this.players = new Player[2];
         this.players[0] = playerOne;
         this.players[1] = playerTwo;
+        playerOne.setPlayerIndex(0);
+        playerTwo.setDebateScore(1);
+
         this.turnIndex = 0;
 
         this.gameId = -1;
@@ -41,6 +46,7 @@ public class Game{
         this.isInProgress = false;
         this.winnerEmail = null;
         this.gameName = playerOne.getEmail() + " vs " + playerTwo.getEmail();
+        this.isDebate = false;
     }
 
     public void toggleTurn(){
@@ -73,91 +79,137 @@ public class Game{
         }
     }
 
-    public boolean playCards(String playerEmail,List<Card> cards, boolean burnTurn) {
-    	//Flip turnindex and mask all the bits except first
-    	int otherplayerIndex = (~turnIndex & 0x00000001);
-        Player curPlayer = players[turnIndex];
-        Player otherPlayer = players[otherplayerIndex];
+    public void playCards(Integer playerId,List<Card> cards, boolean burnTurn) {
+    	Player curPlayer = assertCurrentPlayer(playerId);
+    	Player otherPlayer = getNonCurrentPlayer();
 
-        //check if right turn
-        if(curPlayer.getEmail().equals(playerEmail)){
 
-            //check if cards can be played
-             if(curPlayer.canPlayCards(cards) || burnTurn){
-                 //deal damage //TODO right now just focus on simple damage, worry about complicated stuff later
-                 int damage = 0;
-                 
-                 if (!burnTurn)
-                	 for(Card card : cards) damage += card.getMaxDamage();
-                 else
-                 {
-                	 
-                	 Random rand = new Random();
-                	 int addWorkers = 0;
-                	 int addMoney = 0;
-                	 
-                	 //Give player random amount of workers and money, max 3
-                	 addWorkers = rand.nextInt(3) + 1;
-                	 addMoney = rand.nextInt(3) + 1;
-                	 
-                	 curPlayer.setMaxWorkers(curPlayer.getMaxWorkers() + addWorkers);
-                	 curPlayer.setMaxMoney(curPlayer.getMaxMoney() + addMoney);
-                	 
-                 }
-                 
-                 //calculate damage/score for current district
-                 District curDistrict = districts.get(districtPointer);
-                 curDistrict.setPlayerScore(turnIndex, damage);
-                 curDistrict.setPlayerScore(otherplayerIndex, (-1 * damage));
-                 
-                 //Add new GameLog entry in list
-                 log.add(new GameLog(cards, curPlayer, otherPlayer, districtPointer, curDistrict, damage));
-                 
-                 curDistrict.setTurn(curDistrict.getTurn() + 1);
+        curPlayer.setDebating(false);
 
-                 //check if the district is out of turns
-                 if(curDistrict.getTurn() == 10){
-                     //set winner for that district
-                     if(curDistrict.getPlayerOneScore() > curDistrict.getPlayerTwoScore()){
-                         curDistrict.setWinnerEmail(players[0].getEmail());
-                     }else if(curDistrict.getPlayerOneScore() < curDistrict.getPlayerTwoScore()){
-                        curDistrict.setWinnerEmail(players[1].getEmail());
-                     }else{
-                         curDistrict.setWinnerEmail("Tie");
-                     }
-                     
-                     //Reset players money and workers to base
-                     curPlayer.setMaxMoney(3);
-                     otherPlayer.setMaxMoney(3);
-                     curPlayer.setMaxWorkers(3);
-                     otherPlayer.setMaxWorkers(3);
-                     
-                     
-                     //move to next district
-                    ++districtPointer;
+        //check if cards can be played
+         if(curPlayer.canPlayCards(cards) || burnTurn){
+             //deal damage //TODO right now just focus on simple damage, worry about complicated stuff later
+             int damage = 0;
 
-                     //set final winner if out of districts
-                     if(districtPointer >= districts.size()){
-                        this.setWinner();
-                    }
-                 }
+             if (!burnTurn){
+                 for(Card card : cards) damage += card.getMaxDamage();
+             }
+             else{
 
-                 //draw cards
-                 curPlayer.drawHand(); //TODO we don't check if you run out of your deck yet
+                 Random rand = new Random();
+                 int addWorkers = 0;
+                 int addMoney = 0;
 
-                 return true;
+                 //Give player random amount of workers and money, max 3
+                 addWorkers = rand.nextInt(3) + 1;
+                 addMoney = rand.nextInt(3) + 1;
 
-             }else{
-                return false;
+                 curPlayer.setMaxWorkers(curPlayer.getMaxWorkers() + addWorkers);
+                 curPlayer.setMaxMoney(curPlayer.getMaxMoney() + addMoney);
+
              }
 
+             //calculate damage/score for current district
+             District curDistrict = districts.get(districtPointer);
+             curDistrict.increaseScoreForPlayer(curPlayer.getPlayerIndex(), damage);
 
-        }else{
-            return false;
-        }
+
+             //Add new GameLog entry in list
+             log.add(new GameLog(cards, curPlayer, otherPlayer, districtPointer, curDistrict, damage));
+
+             curDistrict.setTurn(curDistrict.getTurn() + 1);
+
+             //check if the district is out of turns
+             if(curDistrict.getTurn() == 10){
+                 //SET Debate Mode
+                 for(Player p : players){
+                    p.setDebating(true);
+                 }
+                 isDebate = true;
+             }
+
+             //draw cards
+             curPlayer.drawHand();
+
+
+         }else{
+            throw new RuntimeException("This player cannot play the given cards!");
+         }
+
+
+
 
 
     }
+
+    public void finishDebate(Integer playerId,int debateScore){
+        Player curPlayer = assertCurrentPlayer(playerId);
+        Player otherPlayer = getNonCurrentPlayer();
+        District curDistrict;
+
+        curPlayer.setDebating(false);
+        curPlayer.setDebateScore(debateScore);
+
+        if(otherPlayer.isDebating()){
+            return;
+        }
+
+        this.isDebate = false;
+        curDistrict = districts.get(districtPointer);
+
+        //debate logic, gives small bonus to person with lower score, we don't apply bonus if they happen to tie
+        if(curPlayer.getDebateScore() < otherPlayer.getDebateScore()){
+            curDistrict.increaseScoreForPlayer(curPlayer.getPlayerIndex(),DEBATE_BONUS);
+        }else if (curPlayer.getDebateScore() > otherPlayer.getDebateScore()){
+            curDistrict.increaseScoreForPlayer(otherPlayer.getPlayerIndex(),DEBATE_BONUS);
+        }
+
+        //set winner for that district
+        if(curDistrict.getPlayerOneScore() > curDistrict.getPlayerTwoScore()){
+            curDistrict.setWinnerEmail(players[0].getEmail());
+        }else if(curDistrict.getPlayerOneScore() < curDistrict.getPlayerTwoScore()){
+            curDistrict.setWinnerEmail(players[1].getEmail());
+        }else{
+            curDistrict.setWinnerEmail("Tie");
+        }
+
+        //Reset players money and workers to base
+        curPlayer.setMaxMoney(3);
+        otherPlayer.setMaxMoney(3);
+        curPlayer.setMaxWorkers(3);
+        otherPlayer.setMaxWorkers(3);
+
+
+        //move to next district
+        ++districtPointer;
+
+        //set final winner if out of districts
+        if(districtPointer >= districts.size()){
+            this.setWinner();
+        }
+
+    }
+
+    public Player getNonCurrentPlayer(){
+        return players[~turnIndex & 0x00000001];
+    }
+
+    /**
+     * Determines if the given id matches the current player.
+     *
+     * @throws  RuntimeException if this is not the matching players turn
+     */
+    public Player assertCurrentPlayer(Integer playerId){
+        Player currentPlayer = getCurrentPlayer();
+
+        boolean isCurPlayer = (playerId != null && playerId.equals(currentPlayer.getId()));
+        if(!isCurPlayer){
+            throw new RuntimeException("This player cannot take this turn!");
+        }
+        return currentPlayer;
+    }
+
+
 
     public String getWinnerEmail() {
         return winnerEmail;
@@ -232,5 +284,13 @@ public class Game{
 
     public int getTurnIndex() {
         return turnIndex;
+    }
+
+    public boolean isDebate() {
+        return isDebate;
+    }
+
+    public void setDebate(boolean isDebate) {
+        this.isDebate = isDebate;
     }
 }

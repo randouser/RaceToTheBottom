@@ -112,7 +112,7 @@ public class GameController {
         }
 
 
-        TurnMessage turnMessage = gameService.takeTurn(user,message.getGameId(),message.getCardsPlayed(), message.getBurnTurn());
+        TurnMessage turnMessage = gameService.takeTurn(user,message.getGameId(),message.getCardsPlayed(), message.getBurnTurn(),message.getDebateScore());
 
         //start the turn for the player other player
         if(turnMessage.isInProgress()) {
@@ -131,7 +131,7 @@ public class GameController {
     	if (user == null)
     		throw new IllegalArgumentException("There is no user with these credentials");
     	
-    	TurnMessage turnMessage = gameService.takeTurn(user,message.getGameId(),message.getCardsPlayed(),message.getBurnTurn());
+    	TurnMessage turnMessage = gameService.takeTurn(user,message.getGameId(),message.getCardsPlayed(),message.getBurnTurn(),message.getDebateScore());
     	
     	//start the turn for the player other player
     	if(turnMessage.isInProgress()) {
