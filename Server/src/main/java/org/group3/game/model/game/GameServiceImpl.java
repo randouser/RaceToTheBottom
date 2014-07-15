@@ -98,11 +98,14 @@ public class GameServiceImpl implements GameService{
     }
 
     @Override
-    public TurnMessage takeTurn(User user, int gameId, List<Card> cardsPlayed, boolean burnTurn,int debateScore) {
+    public TurnMessage takeTurn(User user, int gameId, List<Card> cardsPlayed, boolean burnTurn,int debateScore,boolean surrender) {
 
         Game game = loadGame(gameId);
 
-        if(game.isDebate()){
+        if(surrender){
+            game.surrender(user.getId());
+        }
+        else if(game.isDebate()){
             game.finishDebate(user.getId(),debateScore);
         }else{
             //play the cards!

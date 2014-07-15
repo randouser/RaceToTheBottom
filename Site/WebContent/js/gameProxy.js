@@ -5,43 +5,27 @@ GameProxy = {
         StompService.sendMessage('startGame',{userEmail:user.email,userToken:user.token,emailToNotify:emailToNotify,gameType:gameType,gameId:null});
     }
 
-    ,takeTurn:function(){
-        var gameId = jQuery('#gameStageWrapper').data('gameId');
+    ,takeTurn:function(turnType){
         jQuery('#waitingScreen').fadeIn();
-        var cardsSelected = this.games[gameId].cardsSelected;
+
+        var gameId = jQuery('#gameStageWrapper').data('gameId');
         var game = this.games[gameId];
+        var cardsSelected = game.cardsSelected;
+
+        var burnTurn = (turnType === 'burnTurnButton') || (cardsSelected.length == 0 && !game.debate);
+        var surrender = (turnType === 'surrenderButton');
+
+
         game.clear();
         game.userTurn = false;
-        var burnTurn = false;
 
         var rowMessage = 'waiting for turn';
         jQuery('#gamerow_' + gameId).children('td').html(gameId + ': '+ game.gameName + ' - '+rowMessage);
-        
-        if(cardsSelected.length == 0 && !game.debate) {burnTurn = true;}
+
 
         var user = UserProxy.user;
-        StompService.sendMessage('takeTurn',{userEmail:user.email,userToken:user.token,gameId:gameId,cardsPlayed:cardsSelected, burnTurn:burnTurn,debateScore:game.debateScore});
+        StompService.sendMessage('takeTurn',{userEmail:user.email,userToken:user.token,gameId:gameId,cardsPlayed:cardsSelected, burnTurn:burnTurn,debateScore:game.debateScore,surrender:surrender});
     }
-
-
-    ,burnTurn:function(){
-    	var gameId = jQuery('#gameStageWrapper').data('gameId');
-        jQuery('#waitingScreen').fadeIn();
-        var cardsSelected = [];
-        var game = this.games[gameId];
-        game.clear();
-        game.userTurn = false;
-        var burnTurn = true;
-        
-        
-        var rowMessage = 'waiting for turn';
-        jQuery('#gamerow_' + gameId).children('td').html(gameId + ': '+ game.gameName + ' - '+rowMessage);
-    	
-    	var user = UserProxy.user;
-    	StompService.sendMessage('burnTurn',{userEmail:user.email,userToken:user.token,gameId:gameId,cardsPlayed:cardsSelected, burnTurn:burnTurn});
-    	
-    }
-
 
     ,getGameStart:function(gameId,gameName){
 
@@ -155,24 +139,26 @@ GameProxy = {
         var gameId = jQuery('#gameStageWrapper').data('gameId');
         this.games[gameId].debate = false;
         this.games[gameId].debateScore = score;
-        this.takeTurn();
+        this.takeTurn('debate');
 
 
     }
 
-    ,toggleButtonsHandlers:function(enabled){
-        if(enabled){
-            jQuery('#playCardsButton').off('click').prop('disabled',false).click(function(){
-                GameProxy.takeTurn();
-            });
 
-            jQuery('#burnTurnButton').off('click').prop('disabled',false).click(function(){
-                GameProxy.burnTurn();
-            });
-        }
-        else{
-            jQuery('#playCardsButton').off('click').prop('disabled',true);
-            jQuery('#burnTurnButton').off('click').prop('disabled',true);
+    ,toggleButtonsHandlers:function(enabled){
+        var buttons = jQuery('#widgetWrapper').find('.turnButton');
+        buttons.off('click').prop('disabled',true);
+
+        if(enabled){
+            buttons
+                .prop('disabled',false)
+                .click(function(){
+                    if(this.id === 'surrenderButton'){
+                        var accept = window.confirm("Are you sure you wish to surrender?");
+                        if(!accept){return;}
+                    }
+                    GameProxy.takeTurn(this.id);
+                });
         }
 
     }

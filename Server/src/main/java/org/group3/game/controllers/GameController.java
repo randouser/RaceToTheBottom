@@ -112,7 +112,7 @@ public class GameController {
         }
 
 
-        TurnMessage turnMessage = gameService.takeTurn(user,message.getGameId(),message.getCardsPlayed(), message.getBurnTurn(),message.getDebateScore());
+        TurnMessage turnMessage = gameService.takeTurn(user,message.getGameId(),message.getCardsPlayed(), message.getBurnTurn(),message.getDebateScore(),message.isSurrender());
 
         //start the turn for the player other player
         if(turnMessage.isInProgress()) {
@@ -123,25 +123,7 @@ public class GameController {
         }
 
     }
-    
-    @MessageMapping("/burnTurn")
-    public void burnTurn(RequestTurnMessage message) throws Exception {
-    	
-    	User user = userService.getUserByEmailToken(message.getUserEmail(), message.getUserToken());
-    	if (user == null)
-    		throw new IllegalArgumentException("There is no user with these credentials");
-    	
-    	TurnMessage turnMessage = gameService.takeTurn(user,message.getGameId(),message.getCardsPlayed(),message.getBurnTurn(),message.getDebateScore());
-    	
-    	//start the turn for the player other player
-    	if(turnMessage.isInProgress()) {
-    		messagingTemplate.convertAndSend("/queue/"+turnMessage.getUserToken()+"/getTurn",turnMessage);
-    	}else{
-    		messagingTemplate.convertAndSend("/queue/"+user.getToken()+"/message","gameEnd");
-    		messagingTemplate.convertAndSend("/queue/"+turnMessage.getUserToken()+"/message","gameEnd");
-   		}
-    	
-    }
+
 
     @MessageMapping("/getLobbyInfo")
     public void getLobbyInfo(LobbyRequest message) throws Exception {

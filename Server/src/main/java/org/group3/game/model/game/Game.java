@@ -54,6 +54,11 @@ public class Game{
         turnIndex = ~turnIndex & 0x00000001;
     }
 
+    public void surrender(Integer userId) {
+        Player curPlayer = assertCurrentPlayer(userId);
+        winnerEmail = getNonCurrentPlayer().getEmail();
+        this.setInProgress(false);
+    }
 
     public Player getCurrentPlayer(){
         return players[turnIndex];
@@ -62,6 +67,7 @@ public class Game{
     public Player getPendingPlayer(){
         return players[1];
     }
+
 
     public void setWinner(){
         int p1Score = 0, p2Score = 0;
