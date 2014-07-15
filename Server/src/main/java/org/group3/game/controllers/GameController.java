@@ -156,6 +156,18 @@ public class GameController {
         if(message.getGameId() != null && message.getInviteeEmail() != null){
             String inviteeEmailDecoded = URLDecoder.decode(message.getInviteeEmail(), "UTF-8");
             TurnMessage turnMessage = gameService.joinGame(user, inviteeEmailDecoded,message.getGameId());
+            
+            //Show list of games and leaderboard to newly registered user accepting game invite
+            LobbyMessage gameMessages = gameService.getActiveGamesForUser(user);
+            
+            
+            
+            //Set leaderboard
+            gameMessages.setLeaderBoard(userService.getTopPlayers(5));
+            
+            //Send leaderboard and game list
+            messagingTemplate.convertAndSend("/queue/"+user.getToken()+"/lobby", gameMessages);
+            
 
             //start turn for current player
             messagingTemplate.convertAndSend("/queue/"+turnMessage.getUserToken()+"/getTurn",turnMessage);
@@ -166,6 +178,9 @@ public class GameController {
         //else, it's a normal user and we grab existing games
         else{
             LobbyMessage gameMessages =  gameService.getActiveGamesForUser(user);
+            
+            gameMessages.setLeaderBoard(userService.getTopPlayers(5));
+            
             messagingTemplate.convertAndSend("/queue/"+user.getToken()+"/lobby",gameMessages);
         }
 

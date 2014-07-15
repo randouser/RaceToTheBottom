@@ -62,6 +62,27 @@ GameProxy = {
 
         }
     }
+    ,displayLeaderBoard:function(leaderBoardUsers)
+    {
+    	
+    	var i = 0;
+    	for(;i < leaderBoardUsers.length; i++){
+    		
+    		var boardUser = leaderBoardUsers[i];
+    		
+    		this.activateLeaderBoardRow(boardUser.name, boardUser.email, boardUser.wins, boardUser.losses);
+    		
+    	}
+    	
+    	
+    }
+    ,activateLeaderBoardRow:function(userName, userEmail, userWins, userLosses)
+    {
+    	//TODO:Implement leaderboard
+    	
+    	
+    	
+    }
     ,getTurn:function(turnMessage){
         var that = this;
         var gameStage = jQuery('#gameStageWrapper');
@@ -129,6 +150,7 @@ GameProxy = {
         row.children('td').html(gameId + ': '+ gameName + ' - '+rowMessage);
 
     }
+   // ,activateLeaderBoardRow:function()
 
 
 

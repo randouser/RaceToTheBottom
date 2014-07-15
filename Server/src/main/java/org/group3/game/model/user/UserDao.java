@@ -12,6 +12,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.List;
+import java.util.ArrayList;
 
 
 @Repository
@@ -103,6 +105,23 @@ public class UserDao {
             //if the user doesn't exist, return null instead of throwing exception
             return null;
         }
+    }
+    
+    public List<User> getTopPlayer(int howMany)
+    {
+    	
+    	String sql = "SELECT * FROM user ORDER BY wins LIMIT ?";
+    	
+    	Object[] args = {howMany};
+    	
+    	List<User> leaderBoardUsers = new ArrayList<User>(howMany);
+    	
+
+    	leaderBoardUsers = jdbcTemplate.query(sql, args, new BeanPropertyRowMapper<>(User.class));
+    	
+    	return leaderBoardUsers;
+
+    	
     }
 
 
