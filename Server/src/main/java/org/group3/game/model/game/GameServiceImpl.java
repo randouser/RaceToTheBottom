@@ -98,32 +98,34 @@ public class GameServiceImpl implements GameService{
     }
 
     @Override
-    public TurnMessage takeTurn(User user, int gameId, List<Card> cardsPlayed, boolean burnTurn) {
+    public TurnMessage takeTurn(User user, int gameId, List<Card> cardsPlayed, boolean burnTurn,int debateScore,boolean surrender) {
 
         Game game = loadGame(gameId);
 
-        //play the cards!
-        boolean success = game.playCards(user.getEmail(),cardsPlayed, burnTurn);
+        if(surrender){
+            game.surrender(user.getId());
+        }
+        else if(game.isDebate()){
+            game.finishDebate(user.getId(),debateScore);
+        }else{
+            //play the cards!
+            game.playCards(user.getId(),cardsPlayed, burnTurn);
 
-        if(success){
             if(game.getWinnerEmail() != null){
                 game.setInProgress(false);
             }
 
-            //change the turn
-            game.toggleTurn();
-
-            //return message for other player
-            Player curPlayer = game.getCurrentPlayer();
-            User curUser = userService.getUserById(curPlayer.getId());
-
-            saveGame(game);
-            return new TurnMessage(curUser,curPlayer,game);
-
-        }else{
-            return null; //what happens when you try to play cards that you can't
         }
 
+        //change the turn
+        game.toggleTurn();
+
+        //return message for other player
+        Player curPlayer = game.getCurrentPlayer();
+        User curUser = userService.getUserById(curPlayer.getId());
+
+        saveGame(game);
+        return new TurnMessage(curUser,curPlayer,game);
 
     }
 

@@ -21,6 +21,8 @@ public class Player {
     private int maxWorkers;
     private String email;
     private int playerIndex;
+    private boolean isDebating;
+    private int debateScore;
 
     public Player(){}
 
@@ -56,6 +58,14 @@ public class Player {
         return (moneySpent <= this.maxMoney && workersSpent <= this.maxWorkers && isCardInHand);
 
 
+    }
+
+    public boolean isDebating() {
+        return isDebating;
+    }
+
+    public void setDebating(boolean isDebating) {
+        this.isDebating = isDebating;
     }
 
     public int getPlayerIndex() {
@@ -115,5 +125,11 @@ public class Player {
         this.email = email;
     }
 
+    public int getDebateScore() {
+        return debateScore;
+    }
 
+    public void setDebateScore(int debateScore) {
+        this.debateScore = debateScore;
+    }
 }

@@ -7,10 +7,11 @@ import org.group3.game.model.game.Player;
 import org.group3.game.model.user.User;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 
-public class TurnMessage implements Serializable{
+public class TurnMessage{
     private Integer gameId;
     private String gameName;
     private List<Card> hand;
@@ -22,27 +23,20 @@ public class TurnMessage implements Serializable{
     private boolean isUserTurn;
     private boolean needsUserConfirmation;
 
+    private boolean isDebate;
+
+
     List<District> districts;
 
     private String userToken;
 
-//    public TurnMessage(Integer gameId,String gameName,String userToken, List<Card> hand, int maxWorkers, int maxMoney,List<District> districts,int districtPointer,int playerIndex,boolean isInProgress) {
-//        this.gameId = gameId;
-//        this.gameName = gameName;
-//        this.hand = hand;
-//        this.maxWorkers = maxWorkers;
-//        this.maxMoney = maxMoney;
-//        this.districts = districts;
-//        this.userToken = userToken;
-//        this.isInProgress = isInProgress;
-//        this.districtPointer = districtPointer;
-//        this.playerIndex = playerIndex;
-//    }
+
+
+
 
     public TurnMessage(User user,Player player, Game game){
         this.gameId = game.getGameId();
         this.gameName = game.getGameName();
-        this.hand = player.getHand();
         this.maxWorkers = player.getMaxWorkers();
         this.maxMoney = player.getMaxMoney();
         this.districts = game.getDistricts();
@@ -52,8 +46,21 @@ public class TurnMessage implements Serializable{
         this.playerIndex = player.getPlayerIndex();
         this.isUserTurn = player == game.getCurrentPlayer();
 
+        this.hand = player.isDebating() ? new ArrayList<Card>() :player.getHand();
+
+        this.isDebate = player.isDebating();
+
         //implicitly true provided that the invitee is always the second player (index 1)
         this.needsUserConfirmation = (!this.isInProgress) && (player.getPlayerIndex() == 1);
+    }
+
+
+    public boolean isDebate() {
+        return isDebate;
+    }
+
+    public void setDebate(boolean isDebate) {
+        this.isDebate = isDebate;
     }
 
     public boolean isUserTurn() {

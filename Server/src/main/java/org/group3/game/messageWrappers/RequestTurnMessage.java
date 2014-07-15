@@ -15,7 +15,24 @@ public class RequestTurnMessage {
     private Integer gameId;
     private List<Card> cardsPlayed; //probably just list of card ids, could include general actions?
     private boolean burnTurn;
+    private int debateScore;
+    private boolean surrender;
 
+    public boolean isSurrender() {
+        return surrender;
+    }
+
+    public void setSurrender(boolean surrender) {
+        this.surrender = surrender;
+    }
+
+    public int getDebateScore() {
+        return debateScore;
+    }
+
+    public void setDebateScore(int debateScore) {
+        this.debateScore = debateScore;
+    }
 
     public String getUserEmail() {
         return userEmail;

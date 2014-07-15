@@ -4,40 +4,29 @@ GameProxy = {
         var user = UserProxy.user;
         StompService.sendMessage('startGame',{userEmail:user.email,userToken:user.token,emailToNotify:emailToNotify,gameType:gameType,gameId:null});
     }
-    ,takeTurn:function(){
-        var gameId = jQuery('#gameStageWrapper').data('gameId');
+
+    ,takeTurn:function(turnType){
         jQuery('#waitingScreen').fadeIn();
-        var cardsSelected = this.games[gameId].cardsSelected;
+
+        var gameId = jQuery('#gameStageWrapper').data('gameId');
         var game = this.games[gameId];
+        var cardsSelected = game.cardsSelected;
+
+        var burnTurn = (turnType === 'burnTurnButton') || (cardsSelected.length == 0 && !game.debate);
+        var surrender = (turnType === 'surrenderButton');
+
+
         game.clear();
         game.userTurn = false;
-        var burnTurn = false;
 
         var rowMessage = 'waiting for turn';
         jQuery('#gamerow_' + gameId).children('td').html(gameId + ': '+ game.gameName + ' - '+rowMessage);
-        
-        if(cardsSelected.length == 0) {burnTurn = true;}
+
 
         var user = UserProxy.user;
-        StompService.sendMessage('takeTurn',{userEmail:user.email,userToken:user.token,gameId:gameId,cardsPlayed:cardsSelected, burnTurn:burnTurn});
+        StompService.sendMessage('takeTurn',{userEmail:user.email,userToken:user.token,gameId:gameId,cardsPlayed:cardsSelected, burnTurn:burnTurn,debateScore:game.debateScore,surrender:surrender});
     }
-    ,burnTurn:function(){
-    	var gameId = jQuery('#gameStageWrapper').data('gameId');
-        jQuery('#waitingScreen').fadeIn();
-        var cardsSelected = [];
-        var game = this.games[gameId];
-        game.clear();
-        game.userTurn = false;
-        var burnTurn = true;
-        
-        
-        var rowMessage = 'waiting for turn';
-        jQuery('#gamerow_' + gameId).children('td').html(gameId + ': '+ game.gameName + ' - '+rowMessage);
-    	
-    	var user = UserProxy.user;
-    	StompService.sendMessage('burnTurn',{userEmail:user.email,userToken:user.token,gameId:gameId,cardsPlayed:cardsSelected, burnTurn:burnTurn});
-    	
-    }
+
     ,getGameStart:function(gameId,gameName){
 
         //set during when game is accepted from invite
@@ -48,6 +37,8 @@ GameProxy = {
         var newRow = '<tr id="gamerow_'+gameId+'" class="gameRow pending"><td>'+gameName+' - '+rowMessage+'</td></tr>';
         jQuery('#gamesInProgressTable').append(newRow);
     }
+
+
     ,displayLobbyGames:function(turnMessages){
         var i = 0;
         for(;i < turnMessages.length; ++i){
@@ -62,27 +53,8 @@ GameProxy = {
 
         }
     }
-    ,displayLeaderBoard:function(leaderBoardUsers)
-    {
-    	
-    	var i = 0;
-    	for(;i < leaderBoardUsers.length; i++){
-    		
-    		var boardUser = leaderBoardUsers[i];
-    		
-    		this.activateLeaderBoardRow(boardUser.name, boardUser.email, boardUser.wins, boardUser.losses);
-    		
-    	}
-    	
-    	
-    }
-    ,activateLeaderBoardRow:function(userName, userEmail, userWins, userLosses)
-    {
-    	//TODO:Implement leaderboard
-    	
-    	
-    	
-    }
+
+
     ,getTurn:function(turnMessage){
         var that = this;
         var gameStage = jQuery('#gameStageWrapper');
@@ -90,13 +62,6 @@ GameProxy = {
 
         var game = new Game(turnMessage);
 
-        //only display game stuff if data is for current displayed game
-        if(curGameId === turnMessage.gameId && gameStage.is(':visible')){
-            game.displayCards();
-            game.displayDistricts();
-            game.displayResources();
-            jQuery('#waitingScreen').fadeOut();
-        }
         if(this.games[game.gameId] === null){ //new game, note that null is intentional
             this.activateGameRow(game.gameId,turnMessage.gameName,turnMessage.userTurn,turnMessage.inProgress);
         }else{
@@ -104,7 +69,21 @@ GameProxy = {
             jQuery('#gamerow_' + game.gameId).children('td').html(game.gameId + ': '+ game.gameName + ' - '+rowMessage);
         }
 
+        //only display game stuff if data is for current displayed game
+        if(curGameId === turnMessage.gameId && gameStage.is(':visible')){
+            game.displayCards();
+            game.displayDistricts();
+            game.displayResources();
+            jQuery('#waitingScreen').hide();
+            if(turnMessage.debate){
+                this.toggleButtonsHandlers(false);
+                DebateGame.startDebate();
+            }
+
+        }
+
         this.games[game.gameId] = game;
+
 
     }
     ,displayGame:function(gameId){
@@ -118,6 +97,10 @@ GameProxy = {
         game.displayResources();
 
         jQuery('#waitingScreen').toggle(!game.userTurn);
+        if(game.debate){
+            this.toggleButtonsHandlers(false);
+            DebateGame.startDebate();
+        }
 
 
         jQuery('#lobbyWrapper').hide();
@@ -150,7 +133,35 @@ GameProxy = {
         row.children('td').html(gameId + ': '+ gameName + ' - '+rowMessage);
 
     }
-   // ,activateLeaderBoardRow:function()
+
+    ,endDebate:function(score){
+        this.toggleButtonsHandlers(true);
+        var gameId = jQuery('#gameStageWrapper').data('gameId');
+        this.games[gameId].debate = false;
+        this.games[gameId].debateScore = score;
+        this.takeTurn('debate');
+
+
+    }
+
+
+    ,toggleButtonsHandlers:function(enabled){
+        var buttons = jQuery('#widgetWrapper').find('.turnButton');
+        buttons.off('click').prop('disabled',true);
+
+        if(enabled){
+            buttons
+                .prop('disabled',false)
+                .click(function(){
+                    if(this.id === 'surrenderButton'){
+                        var accept = window.confirm("Are you sure you wish to surrender?");
+                        if(!accept){return;}
+                    }
+                    GameProxy.takeTurn(this.id);
+                });
+        }
+
+    }
 
 
 
@@ -174,13 +185,10 @@ function CardView(card){
     '<div class="cardSubtext"><span>'+card.subtext+'</span></div>';
 
 
-//    this.element.addEventListener('click',this.clickHandler,false);
+
     
 }
-//// superclass method
-//CardView.prototype.clickHandler = function(e,cardView) {
-//    this.classList.toggle('cardToggle');
-//};
+
 
 
 // ========== DistrictView Objects
@@ -210,10 +218,7 @@ function DistrictView(district,index){
         this.bodyElement.innerHTML = 'p1Score: Updating'+ '<br />' + 'p2Score: Updating';
     }
 }
-//// superclass method
-//DistrictView.prototype.clickHandler = function() {
-//    this.classList.toggle('districtToggle');
-//};
+
 
 
 
@@ -230,6 +235,8 @@ function Game(turnMessage){
     this.districtPointer = turnMessage.districtPointer;
     this.playerIndex = turnMessage.playerIndex;
     this.userTurn = turnMessage.userTurn;
+    this.debate = turnMessage.debate;
+    this.debateScore = 0;
 
     this.districtViews = [];
 
@@ -250,10 +257,15 @@ function Game(turnMessage){
             this.districtViews.push(districtV);
             districtStage.appendChild(districtV.element);
         }
-        //delay the animation
-        setTimeout(function(){
-            curDistrict.classList.add('districtToggle','animated','flash');
-        },700);
+        if(turnMessage.debate){
+            curDistrict.classList.add('districtToggle');
+        }else{
+            //delay the animation
+            setTimeout(function(){
+                curDistrict.classList.add('districtToggle','animated','flash');
+            },700);
+        }
+
 
     };
 
@@ -323,36 +335,7 @@ function Game(turnMessage){
 
 
 }
-// superclass method
-//Game.prototype.clickHandler = function() {
-//    this.classList.toggle('districtToggle');
-//};
 
-
-
-//function main(){
-//    var cardStage = document.getElementById('cardStage');
-//    var districtStage = document.getElementById('districtStage');
-//
-//    var i = 0;
-//    for(; i < 5; ++i){
-//        var card = new CardView1();
-//        cardList.push(card);
-//        cardStage.appendChild(card.element);
-//
-//    }
-//
-//    i = 0;
-//    for(; i < 5; ++i){
-//        var district = new DistrictView1();
-//        districtList.push(district);
-//        districtStage.appendChild(district.element);
-//    }
-//
-//}
-//
-//
-//main();
 
 
 

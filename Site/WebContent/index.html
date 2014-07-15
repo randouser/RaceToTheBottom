@@ -15,6 +15,7 @@
     <!--3 Main Classes-->
     <script type="text/javascript" src="js/userProxy.js"></script>
     <script src="js/gameProxy.js"></script>
+    <script src="js/debateGame.js"></script>
 
 
 </head>
@@ -104,18 +105,41 @@
     <div id="gameStageWrapper" style="display:none;">
         <button id="backToLobbyButton">Back to Lobby</button>
         <div id="gameStageMain">
+            <!---->
             <div id="waitingScreen">Waiting For Next Turn</div>
-            <div id="districtStage" >
-                <!--Districts generated here-->
+
+            <div id="districtWrapper">
+                <!--Debate Game Overlay-->
+                <div id="scrollWrapper" class="animated bounceInRight" style="display:none;">
+                    <div id="scrollOverlay">
+                        <h2>Debate!</h2>
+                        <h3>Avoid what you can!</h3>
+                        <h4>Click to start</h4>
+                    </div>
+                    <div id="scrollCell">
+                        <div id="scrollStage">
+                            <div id="debater"><img src="images/debater.png" style="width:50px;vertical-align:bottom;"></div>
+                        </div>
+
+                    </div>
+                    <div id="scoreField">
+                        0
+                    </div>
+
+                </div>
+                <div id="districtStage" >
+                    <!--Districts generated here-->
+                </div>
             </div>
+
             <div id="bottomStage">
                 <div id="cardStage">
                     <!--Cards generated here-->
                 </div>
                 <div id="widgetWrapper" style="width:70px">
-                    <button id="playCardsButton">Play Cards</button>
-                    <button id="burnTurnButton">Burn Turn</button>
-                    <div><span>Score:?</span></div>
+                    <button id="playCardsButton" class="turnButton">Play Cards</button>
+                    <button id="burnTurnButton" class="turnButton">Burn Turn</button>
+                    <button id="surrenderButton" class="turnButton" style="background-color:red;">Concede Defeat</button>
                     <div><span>Money:</span><span id="moneyCount"></span><span>/</span><span id="moneyTotal"></span></div>
                     <div><span>Workers:</span><span id="workerCount"></span><span>/</span><span id="workerTotal"></span></div>
 
@@ -152,6 +176,9 @@
     </div>
 
 </div>
+
+
+
 
 
 <script>
@@ -192,14 +219,7 @@
     });
 
 
-    jQuery('#playCardsButton').click(function(){
-        GameProxy.takeTurn();
-    });
-    
-    jQuery('#burnTurnButton').click(function()
-    {
-    	GameProxy.burnTurn();
-    });
+    GameProxy.toggleButtonsHandlers(true);
     
     jQuery('#registerAsNewPlayerButton').click(function(){
         jQuery('#loginWrapper').hide();

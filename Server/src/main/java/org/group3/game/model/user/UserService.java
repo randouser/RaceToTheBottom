@@ -42,12 +42,16 @@ public class UserService{
         User user = userDao.getUserByEmail(email);
 
         if(user != null && HashUtils.isPasswordEqualToHash(password, user.getSalt(),user.getPasswordHash())){
-            Timestamp newExpTime = createExpTime();
-            String newToken = HashUtils.generateToken(email,password,newExpTime.toString());
 
-            userDao.updateUserToken(user, newToken, newExpTime);
-            user.setToken(newToken);
-            user.setTokenExpirationDate(newExpTime);
+            //only update token if it's expired
+            if(!assertTokenValid(user)){
+                Timestamp newExpTime = createExpTime();
+                String newToken = HashUtils.generateToken(email,password,newExpTime.toString());
+
+                userDao.updateUserToken(user, newToken, newExpTime);
+                user.setToken(newToken);
+                user.setTokenExpirationDate(newExpTime);
+            }
 
             return user;
         }else{
