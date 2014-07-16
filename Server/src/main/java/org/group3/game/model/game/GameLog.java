@@ -9,23 +9,14 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class GameLog {
-	
-	/*	Note: The ObjectMapper throws an error when stringifying game to store in db
-	 *  when gamelog was implemented b/c the string gets too big. In order to cut down on each GameLog's size, I
-	 *  pass the two Player objects, the District object, and the List<Card> cardsPlayed
-	 *  object directly to the methods that generate the message/effect strings instead of
-	 *  storing them as fields in the gamelog instance. Testing to see if it reduces
-	 *  the size enough so stringifying doesn't throw an error.
-	 */
     	
-    //	private List<Card> cardsPlayed;
-    	private String message;
-        private String effect;
-   //   private Player curPlayer;
-   //   private Player oppPlayer;
+    	private List<Card> cardsPlayed;
+    	private String logMessage;
+    	private Player curPlayer;
+    	private Player oppPlayer;
         private int cardsDamage;
-   // 	private District curDistrict;
     	private int districtIndex;
+    	private int curTurn;
 
 		public GameLog(){}
     	
@@ -34,18 +25,20 @@ public class GameLog {
     		
     		this.districtIndex = districtIndex;
     		this.cardsDamage = cardsDamage;
+    		this.cardsPlayed = cardsPlayed;
+    		this.curPlayer = curPlayer;
+    		this.oppPlayer = oppPlayer;
+    		this.districtIndex = districtIndex;
+    		this.curTurn = curDistrict.getTurn();
     		
-    		String districtTurnPrefix = "District " + (districtIndex + 1) + " Turn " + curDistrict.getTurn() + ": ";
+    		String districtTurnPrefix = "District " + (districtIndex + 1) + " Turn " + curTurn + ": ";
     		
     		//Generate message in form of: Player x played y card for z damage
-    		message =districtTurnPrefix + generateMessage(curPlayer, oppPlayer, cardsPlayed);
-    		
-    		//Generate effect string in form of: Player x score +y: z \n Player a score -y: c
-    		effect =districtTurnPrefix + generateEffect(curDistrict, curPlayer, oppPlayer);
+    		this.logMessage =districtTurnPrefix + generateMessage();
     		
     	}
     	
-    	private String generateMessage(Player curPlayer, Player oppPlayer, List<Card> cardsPlayed)
+    	private String generateMessage()
     	{
     		
     		//check if they burned a turn, if so return a message saying so
@@ -110,57 +103,36 @@ public class GameLog {
     		
     	}
 
-    	
-    	private String generateEffect(District curDistrict, Player curPlayer, Player oppPlayer)
-    	{
-    		
-    		//Figure out if curPlayer is Player 1 or Player 2
-    		int playerIndex = curDistrict.getTurn() % 2 == 0 ? 0 : 1;
-    		
-    		String curPlayerScore, oppPlayerScore;
-    		
-    		
-    		if (playerIndex == 0)
-    		{
-    			//curPlayer = Player 1
-    			curPlayerScore = "Player " + curPlayer.getEmail() + " +" + cardsDamage + '%' + " :" + " Standing = " + curDistrict.getPlayerOneScore() + "%\n";
-    			oppPlayerScore = "Player " + oppPlayer.getEmail() + " -" + cardsDamage + "%" + " :" + " Standing = " + curDistrict.getPlayerTwoScore() + "%"; 
-    			
-    		}
-    		else
-    		{
-    			//curPlayer = Player 2
-    			curPlayerScore = "Player " + curPlayer.getEmail() + " +" + cardsDamage + '%' + " :" + " Standing = " + curDistrict.getPlayerTwoScore() + "%\n";
-    			oppPlayerScore = "Player " + oppPlayer.getEmail() + " -" + cardsDamage + "%" + " :" + " Standing = " + curDistrict.getPlayerOneScore() + "%"; 
-    			
-    		}
-    		
-    		return curPlayerScore + oppPlayerScore;
-    		
-    	}
-
-		public String getMessage() {
-			return message;
+		public List<Card> getCardsPlayed() {
+			return cardsPlayed;
 		}
 
-		public void setMessage(String message) {
-			this.message = message;
+		public void setCardsPlayed(List<Card> cardsPlayed) {
+			this.cardsPlayed = cardsPlayed;
 		}
 
-		public String getEffect() {
-			return effect;
+		public String getLogMessage() {
+			return logMessage;
 		}
 
-		public void setEffect(String effect) {
-			this.effect = effect;
-		}
-		
-    	public int getDistrictIndex() {
-			return districtIndex;
+		public void setLogMessage(String logMessage) {
+			this.logMessage = logMessage;
 		}
 
-		public void setDistrictIndex(int districtIndex) {
-			this.districtIndex = districtIndex;
+		public Player getCurPlayer() {
+			return curPlayer;
+		}
+
+		public void setCurPlayer(Player curPlayer) {
+			this.curPlayer = curPlayer;
+		}
+
+		public Player getOppPlayer() {
+			return oppPlayer;
+		}
+
+		public void setOppPlayer(Player oppPlayer) {
+			this.oppPlayer = oppPlayer;
 		}
 
 		public int getCardsDamage() {
@@ -169,6 +141,22 @@ public class GameLog {
 
 		public void setCardsDamage(int cardsDamage) {
 			this.cardsDamage = cardsDamage;
+		}
+
+		public int getDistrictIndex() {
+			return districtIndex;
+		}
+
+		public void setDistrictIndex(int districtIndex) {
+			this.districtIndex = districtIndex;
+		}
+
+		public int getCurTurn() {
+			return curTurn;
+		}
+
+		public void setCurTurn(int curTurn) {
+			this.curTurn = curTurn;
 		}
 
 
