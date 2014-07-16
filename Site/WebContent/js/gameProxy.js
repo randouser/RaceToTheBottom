@@ -37,8 +37,23 @@ GameProxy = {
         var newRow = '<tr id="gamerow_'+gameId+'" class="gameRow pending"><td>'+gameName+' - '+rowMessage+'</td></tr>';
         jQuery('#gamesInProgressTable').append(newRow);
     }
-
-
+    
+    ,displayLeaderBoard:function(leaderBoardUsers)
+    {
+    
+    	var i = 0;
+    	
+    	for (; i < leaderBoardUsers.length; i++){
+    		
+    		var leadUser = leaderBoardUsers[i];
+    		
+    		this.activateLeaderboardRow(leadUser.id, leadUser.name, leadUser.email, leadUser.wins)
+    		
+    	}
+    	
+    	
+    }
+    
     ,displayLobbyGames:function(turnMessages){
         var i = 0;
         for(;i < turnMessages.length; ++i){
@@ -53,8 +68,7 @@ GameProxy = {
 
         }
     }
-
-
+    
     ,getTurn:function(turnMessage){
         var that = this;
         var gameStage = jQuery('#gameStageWrapper');
@@ -106,6 +120,33 @@ GameProxy = {
         jQuery('#lobbyWrapper').hide();
         gameStage.fadeIn();
     }
+
+    ,endDebate:function(score){
+        this.toggleButtonsHandlers(true);
+        var gameId = jQuery('#gameStageWrapper').data('gameId');
+        this.games[gameId].debate = false;
+        this.games[gameId].debateScore = score;
+        this.takeTurn('debate');
+
+
+    }
+    
+    ,activateLeaderboardRow:function(userId, userName, userEmail, wins){
+    	 
+    	var that = this;
+    	
+    	var row = jQuery('#leadrow_' + userId);
+    	
+    	//check if user isn't listed
+    	if (row.length == 0){
+    		
+    		var newRow = '<tr id="leadrow_'+ userId+'" class ="leadShown"><td>'+ 'ID: ' + userId+' UserName: ' + userName + ' Email: ' + userEmail + ' Wins: ' + wins+'</td></tr>';
+    		row = jQuery('#leaderBoardTable').append(newRow).find('#leadrow_' + userId);
+    		
+    	}
+    	
+    }
+
     ,activateGameRow:function(gameId,gameName,isUserTurn,isInProgress){
         var that = this;
         var rowMessage = !isInProgress? 'waiting for accept': isUserTurn? 'turn ready': 'waiting for turn';
@@ -133,16 +174,7 @@ GameProxy = {
         row.children('td').html(gameId + ': '+ gameName + ' - '+rowMessage);
 
     }
-
-    ,endDebate:function(score){
-        this.toggleButtonsHandlers(true);
-        var gameId = jQuery('#gameStageWrapper').data('gameId');
-        this.games[gameId].debate = false;
-        this.games[gameId].debateScore = score;
-        this.takeTurn('debate');
-
-
-    }
+    
 
 
     ,toggleButtonsHandlers:function(enabled){

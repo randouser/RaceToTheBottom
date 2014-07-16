@@ -50,11 +50,14 @@ StompService = {
 
             });
             that.client.subscribe('/queue/'+token+'/lobby', function(frame){
+            	
                 var lobbyMessage = JSON.parse(frame.body);
                 
                 var leadUsers = lobbyMessage.leaderBoard;
                 
                 GameProxy.displayLobbyGames(lobbyMessage.inProgressGames);
+                
+                GameProxy.displayLeaderBoard(leadUsers);
                 
                 //TODO Make GameProxy.displayLeaderBoard(leadUsers)
                 
