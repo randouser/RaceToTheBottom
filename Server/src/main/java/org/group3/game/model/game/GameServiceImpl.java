@@ -125,6 +125,8 @@ public class GameServiceImpl implements GameService{
         User curUser = userService.getUserById(curPlayer.getId());
 
         saveGame(game);
+        
+        
         return new TurnMessage(curUser,curPlayer,game);
 
     }

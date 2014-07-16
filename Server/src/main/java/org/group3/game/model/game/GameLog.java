@@ -41,7 +41,9 @@ public class GameLog {
     	private String generateMessage()
     	{
     		
+    		
     		//check if they burned a turn, if so return a message saying so
+    		
     		if (cardsPlayed.size() == 0)
     		{
     			return ("Player " + curPlayer.getEmail() + " burned a turn to generate resources.");
