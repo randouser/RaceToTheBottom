@@ -75,7 +75,7 @@
                 <div class="lobbyPanelContent">
                     <h2>Start a Game</h2>
                     <div>
-                        <button>VS AI</button>
+                        <button id="startGameSoloButton">Single Player</button>
                     </div>
                     <div>
                         <button id="startGameButton">Invite a Player &gt;</button><input style="width:150px" id="emailToNotifyInput" name="emailToNotify" type="text" placeholder="Player email">
@@ -203,6 +203,12 @@
 
     });
 
+    var startGameSoloButton =
+    jQuery('#startGameSoloButton').click(function(){
+    	var emailToNotify = "solo"//something better later . . .
+    	GameProxy.startGame(emailToNotify,"single");
+    });
+    
     var startGameButton =
     jQuery('#startGameButton').click(function(){
         var emailToNotify = jQuery('#emailToNotifyInput').val();
