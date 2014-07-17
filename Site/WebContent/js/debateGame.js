@@ -55,6 +55,14 @@ var DebateGame = {
     }
 
     /**
+     * For turning the game screen off between switching games.
+     */
+    ,deactivate: function(){
+        jQuery('#scrollWrapper').hide();
+        jQuery('#scrollOverlay').show();
+    }
+
+    /**
      * Game loop, makes the obstacles at random intervals
      */
     ,generateObstacles: function(number){

@@ -94,7 +94,7 @@ GameProxy = {
             game.displayResources();
             jQuery('#waitingScreen').hide();
             if(turnMessage.debate){
-                this.toggleButtonsHandlers(false);
+                this.toggleButtonHandlers(false);
                 DebateGame.startDebate();
             }
 
@@ -115,9 +115,13 @@ GameProxy = {
         game.displayResources();
 
         jQuery('#waitingScreen').toggle(!game.userTurn);
+
         if(game.debate){
-            this.toggleButtonsHandlers(false);
+            this.toggleButtonHandlers(false);
             DebateGame.startDebate();
+        }else{
+            DebateGame.deactivate();
+            this.toggleButtonHandlers(true);
         }
 
 
@@ -137,7 +141,7 @@ GameProxy = {
     }
 
     ,endDebate:function(score){
-        this.toggleButtonsHandlers(true);
+        this.toggleButtonHandlers(true);
         var gameId = jQuery('#gameStageWrapper').data('gameId');
         this.games[gameId].debate = false;
         this.games[gameId].debateScore = score;
@@ -192,7 +196,7 @@ GameProxy = {
     
 
 
-    ,toggleButtonsHandlers:function(enabled){
+    ,toggleButtonHandlers:function(enabled){
         var buttons = jQuery('#widgetWrapper').find('.turnButton');
         buttons.off('click').prop('disabled',true);
 
