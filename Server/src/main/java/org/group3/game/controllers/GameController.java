@@ -44,7 +44,12 @@ public class GameController {
 
     @MessageMapping("/startGame")
     public void startGame(StartGameMessage message) throws Exception {
-        logger.info("User: " +message.getUserEmail() + " has requested to start a game with: " + message.getEmailToNotify());
+    	
+    	//log this for a PvP match only
+    	if (message.getEmailToNotify() != "solo") {
+    		logger.info("User: " +message.getUserEmail() + " has requested to start a game with: " + message.getEmailToNotify());
+    	}
+        
 
         User user = userService.getUserByEmailToken(message.getUserEmail(),message.getUserToken());
 
@@ -60,6 +65,11 @@ public class GameController {
         if(gameType.equals("newPlayer")){
             gMessage = gameService.createGame(user,message.getGameType(), message.getEmailToNotify(),null);
             emailService.sendEmailInvite(user, message.getEmailToNotify(), gMessage.getGameId());
+        } 
+        //if solo match, no email or database actions just get into the game
+        else if (gameType.equals("single")){
+        	gMessage = gameService.createGame(user,message.getGameType(),null,null);
+        	messagingTemplate.convertAndSend("/queue/"+user.getToken()+"/message",new ErrorMessage("This is as far as solo play goes for the moment dawg"));
         }
         //if we are inviting a registered player, check database for user
         else{
