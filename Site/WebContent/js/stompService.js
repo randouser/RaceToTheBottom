@@ -92,6 +92,14 @@ StompService = {
                 GameProxy.getTurn(turnMessage);
 
             });
+            
+            that.client.subscribe('/queue/'+token+'/getTurnLog', function(frame){
+            	
+            	console.log(frame);
+            	var logMessage = JSON.parse(frame.body);
+            	GameProxy.getTurnLog(logMessage);	
+            
+        	})
 
             if(isAdmin){
                 that.client.subscribe('/queue/'+token+'/admin', function(frame){

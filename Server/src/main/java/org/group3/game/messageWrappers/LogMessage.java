@@ -11,37 +11,17 @@ import java.util.List;
 
 public class LogMessage {
 	
-	private Player curPlayer;
-	private Player oppPlayer;
 	private List<Card> cardsPlayed;
 	private int totalDamage;
-	private String logMessage;
+	private String strLogMessage;
 	
-	public LogMessage(Player curPlayer, Player oppPlayer, List<Card> cardsPlayed, int totalDamage, String logMessage)
+	public LogMessage(List<Card> cardsPlayed, int totalDamage, String strLogMessage)
 	{
 		
-		this.curPlayer = curPlayer;
-		this.oppPlayer = oppPlayer;
 		this.cardsPlayed = cardsPlayed;
 		this.totalDamage = totalDamage;
-		this.logMessage = logMessage;
+		this.strLogMessage = strLogMessage;
 		
-	}
-
-	public Player getCurPlayer() {
-		return curPlayer;
-	}
-
-	public void setCurPlayer(Player curPlayer) {
-		this.curPlayer = curPlayer;
-	}
-
-	public Player getOppPlayer() {
-		return oppPlayer;
-	}
-
-	public void setOppPlayer(Player oppPlayer) {
-		this.oppPlayer = oppPlayer;
 	}
 
 	public List<Card> getCardsPlayed() {
@@ -60,12 +40,12 @@ public class LogMessage {
 		this.totalDamage = totalDamage;
 	}
 
-	public String getLogMessage() {
-		return logMessage;
+	public String getStrLogMessage() {
+		return strLogMessage;
 	}
 
-	public void setLogMessage(String logMessage) {
-		this.logMessage = logMessage;
+	public void setStrLogMessage(String strLogMessage) {
+		this.strLogMessage = strLogMessage;
 	}
 
 }

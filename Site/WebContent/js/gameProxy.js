@@ -1,5 +1,9 @@
 GameProxy = {
      games:{}
+     
+     //Until I figure out a better place to put it... or the getTurnLog method calls something else to display it to user
+     //so we wouldn't even need to store it outside of getTurnLog.
+     ,lastTurnLog:{}
     ,startGame: function(emailToNotify,gameType){
         var user = UserProxy.user;
         StompService.sendMessage('startGame',{userEmail:user.email,userToken:user.token,emailToNotify:emailToNotify,gameType:gameType,gameId:null});
@@ -119,6 +123,17 @@ GameProxy = {
 
         jQuery('#lobbyWrapper').hide();
         gameStage.fadeIn();
+    }
+    
+    //Returns the GameLog entry for the most recent turn from gameId
+    //Array with [0] = List<Card> cardsPlayed
+    //[1] = int totalCardDamage (a sum of the damage of all cards played), [2] = String turnSummary (see GameLog.java)
+    //
+    ,getTurnLog:function(logMessage){
+    	
+    	var turnLog = new TurnLog(logMessage);
+    	this.lastTurnLog = turnLog;
+    	
     }
 
     ,endDebate:function(score){
@@ -368,9 +383,15 @@ function Game(turnMessage){
 
 }
 
+// ======== Alpha GameLog Object
+function TurnLog(logMessage){
+	
+	var that = this;
+	this.cardsPlayed = logMessage.cardsPlayed;
+	this.totalDamage = logMessage.totalDamage;
+	this.logMessage = logMessage.strLogMessage;
 
-
-
+}
 
 
 

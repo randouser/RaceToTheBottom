@@ -2,7 +2,9 @@ package org.group3.game.model.game;
 
 import org.group3.game.messageWrappers.GameMessage;
 import org.group3.game.messageWrappers.LobbyMessage;
+import org.group3.game.messageWrappers.LogMessage;
 import org.group3.game.messageWrappers.TurnMessage;
+import org.group3.game.messageWrappers.LogMessage;
 import org.group3.game.model.card.Card;
 import org.group3.game.model.user.User;
 
@@ -17,6 +19,8 @@ public interface GameService {
     TurnMessage takeTurn(User user,int gameId,List<Card> cardsPlayed, boolean burnTurn,int debateScore,boolean surrender);
 
     LobbyMessage getActiveGamesForUser(User user);
+    
+    LogMessage getLastTurnLog(int gameId);
 
     void deleteGameById(int gameId);
 }

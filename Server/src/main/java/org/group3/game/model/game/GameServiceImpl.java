@@ -4,6 +4,7 @@ import org.group3.game.messageWrappers.GameMessage;
 import org.group3.game.messageWrappers.JoinGameMessage;
 import org.group3.game.messageWrappers.LobbyMessage;
 import org.group3.game.messageWrappers.TurnMessage;
+import org.group3.game.messageWrappers.LogMessage;
 import org.group3.game.model.card.Card;
 import org.group3.game.model.card.CardService;
 import org.group3.game.model.user.User;
@@ -155,6 +156,20 @@ public class GameServiceImpl implements GameService{
         }
 
         return new LobbyMessage(games,invites);
+    }
+    
+    @Override
+    public LogMessage getLastTurnLog(int gameId)
+    {
+    
+    	Game game = loadGame(gameId);
+    	
+    	GameLog lastLogEntry = game.getLog().get(game.getLog().size() - 1);
+    	
+    	LogMessage logMessage = new LogMessage(lastLogEntry.getCardsPlayed(), lastLogEntry.getCardsDamage(), lastLogEntry.getLogMessage());
+    	
+    	return logMessage;
+    	
     }
 
 

@@ -41,7 +41,7 @@ public class Game{
         this.districts = districts;
 
         this.districtPointer = 0;
-        this.log = new ArrayList<GameLog>(50);
+        this.log = new ArrayList<GameLog>();
         this.type = type;
         this.isInProgress = false;
         this.winnerEmail = null;
@@ -50,8 +50,8 @@ public class Game{
     }
 
     public void toggleTurn(){
-        //Flip all bits, mask all bits except the one in first position
-        turnIndex = ~turnIndex & 0x00000001;
+        //xor with 1
+        turnIndex = turnIndex ^ 0x00000001;
     }
 
     public void surrender(Integer userId) {
@@ -197,7 +197,8 @@ public class Game{
     }
 
     public Player getNonCurrentPlayer(){
-        return players[~turnIndex & 0x00000001];
+    	//xor with 1
+        return players[turnIndex^0x00000001];
     }
 
     /**

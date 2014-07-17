@@ -116,6 +116,12 @@ public class GameController {
 
         //start the turn for the player other player
         if(turnMessage.isInProgress()) {
+        	//Get a LogMessage of most recent turn
+        	LogMessage logMessage = gameService.getLastTurnLog(message.getGameId());
+        	
+        	//Send the LogMessage to the other player
+        	messagingTemplate.convertAndSend("/queue/"+turnMessage.getUserToken()+"/getTurnLog",logMessage);
+        	
             messagingTemplate.convertAndSend("/queue/"+turnMessage.getUserToken()+"/getTurn",turnMessage);
         }else{
             messagingTemplate.convertAndSend("/queue/"+user.getToken()+"/message","gameEnd");
@@ -170,10 +176,6 @@ public class GameController {
         //TODO request leaderboard can go here somewhere
 
     }
-
-
-
-
 
 
     @SendTo("/topic/greetings")
