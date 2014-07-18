@@ -8,6 +8,15 @@
     color:white;
 }
 
+.leadShown.active{
+	cursor:pointer;
+}
+	
+.leadShown.active:hover{
+	background-color:deepskyblue;
+	color:white;
+}
+
 .lobbyPanelContent{
     display: inline-block;
     text-align: left;

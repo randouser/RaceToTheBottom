@@ -155,8 +155,14 @@ GameProxy = {
     	//check if user isn't listed
     	if (row.length == 0){
     		
-    		var newRow = '<tr id="leadrow_'+ userId+'" class ="leadShown"><td>'+ 'ID: ' + userId+' UserName: ' + userName + ' Email: ' + userEmail + ' Wins: ' + wins+'</td></tr>';
+    		var newRow = '<tr id="leadrow_'+ userId+'" class ="leadShown active"><td>'+ 'ID: ' + userId+' UserName: ' + userName + ' Email: ' + userEmail + ' Wins: ' + wins+'</td></tr>';
     		row = jQuery('#leaderBoardTable').append(newRow).find('#leadrow_' + userId);
+    		row
+				.addClass('ready')
+				.click({userId:userId},function(e){
+					jQuery('#emailToNotifyInput').val(userEmail);		
+			
+				})
     		
     	}
     	
