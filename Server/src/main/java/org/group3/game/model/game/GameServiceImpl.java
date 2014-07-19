@@ -128,7 +128,7 @@ public class GameServiceImpl implements GameService{
         //return message for other player
         Player curPlayer = game.getCurrentPlayer();
         User curUser = null;
-        if(!game.getType().equals("single")) {
+        if(!curPlayer.getId().equals(-1)) {
         	curUser = userService.getUserById(curPlayer.getId());
         }
 
