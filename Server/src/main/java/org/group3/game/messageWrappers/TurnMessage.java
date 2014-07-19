@@ -14,14 +14,15 @@ import java.util.List;
 public class TurnMessage{
     private Integer gameId;
     private String gameName;
-    private List<Card> hand;
-    private int maxWorkers;
-    private int maxMoney;
+    private List<Card> hand;//5 cards 
+    private int maxWorkers;//3 initially
+    private int maxMoney;//3 initially
     private boolean isInProgress;
     private int districtPointer;
     private int playerIndex;
     private boolean isUserTurn;
     private boolean needsUserConfirmation;
+    private String gameType;
 
     private boolean isDebate;
 
@@ -40,11 +41,12 @@ public class TurnMessage{
         this.maxWorkers = player.getMaxWorkers();
         this.maxMoney = player.getMaxMoney();
         this.districts = game.getDistricts();
-        this.userToken = user.getToken();
+        this.userToken = user==null ? null : user.getToken();
         this.isInProgress = game.isInProgress();
         this.districtPointer = game.getDistrictPointer();
         this.playerIndex = player.getPlayerIndex();
         this.isUserTurn = player == game.getCurrentPlayer();
+        this.gameType = game.getType();
 
         this.hand = player.isDebating() ? new ArrayList<Card>() :player.getHand();
 
@@ -157,5 +159,13 @@ public class TurnMessage{
 
     public void setGameName(String gameName) {
         this.gameName = gameName;
+    }
+    
+    public String getGameType() {
+    	return gameType;
+    }
+    
+    public void setGameType(String gameType) {
+    	this.gameType = gameType;
     }
 }

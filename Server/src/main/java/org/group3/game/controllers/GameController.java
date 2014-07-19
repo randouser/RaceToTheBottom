@@ -5,6 +5,7 @@ import org.group3.game.model.game.GameService;
 import org.group3.game.model.user.User;
 import org.group3.game.model.user.UserService;
 import org.group3.game.services.EmailService;
+import org.group3.game.services.AIService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,9 @@ public class GameController {
 
     @Autowired
     EmailService emailService;
+    
+    @Autowired
+    AIService aiService;
 
 
 
@@ -50,9 +54,7 @@ public class GameController {
     		logger.info("User: " +message.getUserEmail() + " has requested to start a game with: " + message.getEmailToNotify());
     	}
         
-
         User user = userService.getUserByEmailToken(message.getUserEmail(),message.getUserToken());
-
 
         if(user == null){
             throw new IllegalArgumentException("There is no user with these credentials");
@@ -69,7 +71,9 @@ public class GameController {
         //if solo match, no email or database actions just get into the game
         else if (gameType.equals("single")){
         	gMessage = gameService.createGame(user,message.getGameType(),null,null);
-        	messagingTemplate.convertAndSend("/queue/"+user.getToken()+"/message",new ErrorMessage("This is as far as solo play goes for the moment dawg"));
+        	messagingTemplate.convertAndSend("/queue/"+user.getToken()+"/message",gMessage);
+        	StartGameMessage aIGMessage = aiService.invite(gMessage);//return a new start game message
+        	joinGame(aIGMessage);//needs a slightly different start game message       	
         }
         //if we are inviting a registered player, check database for user
         else{
@@ -85,30 +89,40 @@ public class GameController {
 
         }
 
-        //tell the user that the game has been created
-        messagingTemplate.convertAndSend("/queue/"+user.getToken()+"/message",gMessage);
-
-
+        //tell the user that the game has been created if not AI
+        if(!gameType.equals("single")) {
+        	messagingTemplate.convertAndSend("/queue/"+user.getToken()+"/message",gMessage);
+        }
+        
     }
 
     @MessageMapping("/joinGame")
     public void joinGame(StartGameMessage message) throws Exception {
 
         logger.info("User: " +message.getUserEmail() +"has accepted to join the game:" /* +message.getGameId() */);
-
-        User user = userService.getUserByEmailToken(message.getUserEmail(),message.getUserToken());
-        if(user == null){
-            throw new IllegalArgumentException("There is no user with these credentials");
+        logger.info("GameType is: " + message.getGameType());
+ 
+        User user = null;
+        if(message.getGameType().equals("single")){
+        	user = null;
+        } else {
+        	user = userService.getUserByEmailToken(message.getUserEmail(),message.getUserToken());
+        	if(user == null){
+                throw new IllegalArgumentException("There is no user with these credentials");
+            }
         }
-
+       
         //join the game
         TurnMessage turnMessage = gameService.joinGame(user,message.getEmailToNotify(),message.getGameId());
 
         //start the turn for the player waiting
         messagingTemplate.convertAndSend("/queue/"+turnMessage.getUserToken()+"/getTurn",turnMessage);
 
-        //tell the joiner that the game has started
-        messagingTemplate.convertAndSend("/queue/"+user.getToken()+"/message",new GameMessage(turnMessage.getGameId(),GameMessage.GAME_START,turnMessage.getGameName()));
+        //tell the joiner that the game has started if player is not AI
+        if(!message.getGameType().equals("single")){
+        	messagingTemplate.convertAndSend("/queue/"+user.getToken()+"/message",new GameMessage(turnMessage.getGameId(),GameMessage.GAME_START,turnMessage.getGameName()));
+        }
+        
 
     }
 
@@ -121,18 +135,32 @@ public class GameController {
             throw new IllegalArgumentException("There is no user with these credentials");
         }
 
-
+        //the "message" comes from the UI (when it is the user's turn)
         TurnMessage turnMessage = gameService.takeTurn(user,message.getGameId(),message.getCardsPlayed(), message.getBurnTurn(),message.getDebateScore(),message.isSurrender());
 
-        //start the turn for the player other player
+        LogMessage logMessage;
+        
+        //start the turn for the player
         if(turnMessage.isInProgress()) {
-        	//Get a LogMessage of most recent turn
-        	LogMessage logMessage = gameService.getLastTurnLog(message.getGameId());
-        	
-        	//Send the LogMessage to the other player
-        	messagingTemplate.convertAndSend("/queue/"+turnMessage.getUserToken()+"/getTurnLog",logMessage);
-        	
-            messagingTemplate.convertAndSend("/queue/"+turnMessage.getUserToken()+"/getTurn",turnMessage);
+        	//AI player
+        	if(turnMessage.getUserToken() == null && turnMessage.getGameType().equals("single")){
+        		RequestTurnMessage rtMessage = aiService.takeTurn(turnMessage);
+        		logger.info(rtMessage.toString());
+        		logger.info(rtMessage.getGameId() + " " + rtMessage.getCardsPlayed() + " " + rtMessage.getBurnTurn() + " " + rtMessage.getDebateScore() + " " + rtMessage.isSurrender());
+        		turnMessage = gameService.takeTurn(null,rtMessage.getGameId(),rtMessage.getCardsPlayed(),rtMessage.getBurnTurn(),rtMessage.getDebateScore(),rtMessage.isSurrender());
+        		logMessage = gameService.getLastTurnLog(message.getGameId());
+        		messagingTemplate.convertAndSend("/queue/"+turnMessage.getUserToken()+"/getTurnLog",logMessage);
+            	messagingTemplate.convertAndSend("/queue/"+turnMessage.getUserToken()+"/getTurn",turnMessage);
+        	//Non AI player
+        	} else {
+        		
+        		logMessage = gameService.getLastTurnLog(message.getGameId());
+        		
+            	//Send the LogMessage to the other player
+            	messagingTemplate.convertAndSend("/queue/"+turnMessage.getUserToken()+"/getTurnLog",logMessage);
+            	
+                messagingTemplate.convertAndSend("/queue/"+turnMessage.getUserToken()+"/getTurn",turnMessage);
+        	}
         }else{
             messagingTemplate.convertAndSend("/queue/"+user.getToken()+"/message","gameEnd");
             messagingTemplate.convertAndSend("/queue/"+turnMessage.getUserToken()+"/message","gameEnd");

@@ -71,15 +71,22 @@ public class GameServiceImpl implements GameService{
         Game game = loadGame(gameId);
         Player playerTwo = game.getPendingPlayer();
 
-        //check if this game has started
-
-        if(!game.isInProgress()
-           && playerTwo.getEmail().equals(inviteEmail)){
+        //add the AI logic here
+        if(game.getType().equals("single") && !game.isInProgress()) {
+        	
+        	playerTwo.setEmail(null);
+        	playerTwo.setId(-1);
+        	game.setInProgress(true);
+        	Player curPlayer = game.getCurrentPlayer();//
+        	User curUser = userService.getUserById(curPlayer.getId());
+        	saveGame(game); 
+        	return new TurnMessage(curUser,curPlayer,game);
+        		
+        } else if(!game.isInProgress() && playerTwo.getEmail().equals(inviteEmail)){
 
             playerTwo.setEmail(user.getEmail());
             playerTwo.setId(user.getId());
             game.setInProgress(true);
-
             //TODO random turn start?
             //return message for other player
             Player curPlayer = game.getCurrentPlayer();
@@ -92,9 +99,6 @@ public class GameServiceImpl implements GameService{
         }else{
             return null;
         }
-
-
-
 
     }
 
@@ -110,7 +114,7 @@ public class GameServiceImpl implements GameService{
             game.finishDebate(user.getId(),debateScore);
         }else{
             //play the cards!
-            game.playCards(user.getId(),cardsPlayed, burnTurn);
+        	game.playCards((game.getType().equals("single") && user == null ?-1: user.getId()),cardsPlayed, burnTurn);
 
             if(game.getWinnerEmail() != null){
                 game.setInProgress(false);
@@ -123,7 +127,10 @@ public class GameServiceImpl implements GameService{
 
         //return message for other player
         Player curPlayer = game.getCurrentPlayer();
-        User curUser = userService.getUserById(curPlayer.getId());
+        User curUser = null;
+        if(!game.getType().equals("single")) {
+        	curUser = userService.getUserById(curPlayer.getId());
+        }
 
         saveGame(game);
         

@@ -1,8 +1,6 @@
 package org.group3.game.messageWrappers;
 
-import java.io.Serializable;
-
-public class JoinGameMessage implements Serializable{
+public class JoinGameMessage {
     
 
     private Integer gameId;

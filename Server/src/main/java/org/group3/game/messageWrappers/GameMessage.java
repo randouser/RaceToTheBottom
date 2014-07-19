@@ -85,4 +85,5 @@ public class GameMessage {
     public void setNeedsUserConfirmation(boolean needsUserConfirmation) {
         this.needsUserConfirmation = needsUserConfirmation;
     }
+    
 }

@@ -6,6 +6,10 @@ public class StartGameMessage {
     private String gameType;
     private String emailToNotify;
     private Integer gameId;
+    
+    public StartGameMessage() {
+    	
+    }
 
     public Integer getGameId() {
         return gameId;

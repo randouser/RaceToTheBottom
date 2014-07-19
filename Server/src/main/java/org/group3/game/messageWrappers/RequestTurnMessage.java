@@ -13,11 +13,15 @@ public class RequestTurnMessage {
     private String userEmail;
     private String userToken;
     private Integer gameId;
-    private List<Card> cardsPlayed; //probably just list of card ids, could include general actions?
+    private List<Card> cardsPlayed;
     private boolean burnTurn;
     private int debateScore;
     private boolean surrender;
 
+    public RequestTurnMessage() {
+    	
+    }
+    
     public boolean isSurrender() {
         return surrender;
     }
