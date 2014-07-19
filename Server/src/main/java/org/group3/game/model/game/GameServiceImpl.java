@@ -111,7 +111,7 @@ public class GameServiceImpl implements GameService{
             game.surrender(user.getId());
         }
         else if(game.isDebate()){
-            game.finishDebate(user.getId(),debateScore);
+            game.finishDebate((game.getType().equals("single") && user == null ?-1: user.getId()),debateScore);
         }else{
             //play the cards!
         	game.playCards((game.getType().equals("single") && user == null ?-1: user.getId()),cardsPlayed, burnTurn);
