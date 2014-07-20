@@ -90,11 +90,16 @@ GameProxy = {
             game.displayDistricts();
             game.displayResources();
             jQuery('#waitingScreen').hide();
-            if(turnMessage.debate){
-                this.toggleButtonHandlers(false);
-                DebateGame.startDebate();
-            }
 
+            //display the log cards.  We pass in the debate stuff as a callback that runs when displayLogCards is done.
+            that.toggleButtonHandlers(false);
+            game.displayLogCards(function(){
+                if(turnMessage.debate){
+                    DebateGame.startDebate();
+                }else{
+                    that.toggleButtonHandlers(true);
+                }
+            });
         }
 
         this.games[game.gameId] = game;
@@ -281,6 +286,7 @@ function Game(turnMessage){
     this.debate = turnMessage.debate;
     this.debateScore = 0;
     this.lastTurnLog = turnMessage.lastTurnLog;
+    this.logTimerId = null;
 
     this.districtViews = [];
 
@@ -375,6 +381,39 @@ function Game(turnMessage){
         this.districtViews[this.districtPointer].update();
 
 
+    };
+
+    this.displayLogCards = function(completeCallback){
+        var cardListModel = this.lastTurnLog.cardsPlayed;
+        jQuery('#turnLogWrapper').show();
+        var cardContainer = document.getElementById('turnLogStage');
+        this.displayLogCardsRecursive(0,cardListModel,cardContainer,completeCallback);
+
+    };
+
+    /** takes in a raw cardListModel and the number of cards in the list.
+     */
+    this.displayLogCardsRecursive = function(cardIndex,cardListModel,cardContainer,completeCallback){
+        var that = this;
+        if(cardIndex < cardListModel.length){
+
+            var cardView = new CardView(cardListModel[cardIndex]);
+            cardView.element.classList.add('animated','bounceInDown');
+            cardContainer.appendChild(cardView.element);
+
+             setTimeout(function(){
+                that.displayLogCardsRecursive(cardIndex + 1,cardListModel,cardContainer,completeCallback);
+            },500);
+        }else{
+            setTimeout(function(){
+                jQuery('#turnLogWrapper').fadeOut(400,function(){
+                    that.empty(cardContainer);
+                    completeCallback();
+                });
+            },3000);
+
+
+        }
     };
 
 
