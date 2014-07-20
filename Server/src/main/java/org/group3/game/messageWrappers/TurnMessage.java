@@ -3,10 +3,11 @@ package org.group3.game.messageWrappers;
 import org.group3.game.model.card.Card;
 import org.group3.game.model.game.District;
 import org.group3.game.model.game.Game;
+import org.group3.game.model.game.GameLog;
 import org.group3.game.model.game.Player;
 import org.group3.game.model.user.User;
 
-import java.io.Serializable;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,15 +24,10 @@ public class TurnMessage{
     private boolean isUserTurn;
     private boolean needsUserConfirmation;
     private String gameType;
-
     private boolean isDebate;
-
-
-    List<District> districts;
-
+    private GameLog lastTurnLog;
+    private List<District> districts;
     private String userToken;
-
-
 
 
 
@@ -47,6 +43,7 @@ public class TurnMessage{
         this.playerIndex = player.getPlayerIndex();
         this.isUserTurn = player == game.getCurrentPlayer();
         this.gameType = game.getType();
+        this.lastTurnLog = game.getLastTurnLog(); //this is null on first turn
 
         this.hand = player.isDebating() ? new ArrayList<Card>() :player.getHand();
 
@@ -56,6 +53,13 @@ public class TurnMessage{
         this.needsUserConfirmation = (!this.isInProgress) && (player.getPlayerIndex() == 1);
     }
 
+    public GameLog getLastTurnLog() {
+        return lastTurnLog;
+    }
+
+    public void setLastTurnLog(GameLog lastTurnLog) {
+        this.lastTurnLog = lastTurnLog;
+    }
 
     public boolean isDebate() {
         return isDebate;

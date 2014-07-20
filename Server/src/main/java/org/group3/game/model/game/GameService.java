@@ -164,20 +164,6 @@ public class GameService{
 
         return new LobbyMessage(games,invites);
     }
-    
-    
-    public LogMessage getLastTurnLog(int gameId)
-    {
-    
-    	Game game = loadGame(gameId);
-    	
-    	GameLog lastLogEntry = game.getLog().get(game.getLog().size() - 1);
-    	
-    	LogMessage logMessage = new LogMessage(lastLogEntry.getCardsPlayed(), lastLogEntry.getCardsDamage(), lastLogEntry.getLogMessage());
-    	
-    	return logMessage;
-    	
-    }
 
 
     

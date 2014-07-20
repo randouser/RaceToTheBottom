@@ -138,32 +138,27 @@ public class GameController {
         //the "message" comes from the UI (when it is the user's turn)
         TurnMessage turnMessage = gameService.takeTurn(user,message.getGameId(),message.getCardsPlayed(), message.getBurnTurn(),message.getDebateScore(),message.isSurrender());
 
-        LogMessage logMessage;
         
         //start the turn for the player
         if(turnMessage.isInProgress()) {
         	//AI player
         	if(turnMessage.getUserToken() == null && turnMessage.getGameType().equals("single")){
-        		RequestTurnMessage rtMessage = aiService.takeTurn(turnMessage);
-        		logger.info(rtMessage.toString());
-        		logger.info(rtMessage.getGameId() + " " + rtMessage.getCardsPlayed() + " " + rtMessage.getBurnTurn() + " " + rtMessage.getDebateScore() + " " + rtMessage.isSurrender());
+
+                RequestTurnMessage rtMessage = aiService.takeTurn(turnMessage);
         		turnMessage = gameService.takeTurn(null,rtMessage.getGameId(),rtMessage.getCardsPlayed(),rtMessage.getBurnTurn(),rtMessage.getDebateScore(),rtMessage.isSurrender());
-        		logMessage = gameService.getLastTurnLog(message.getGameId());
-        		messagingTemplate.convertAndSend("/queue/"+turnMessage.getUserToken()+"/getTurnLog",logMessage);
             	messagingTemplate.convertAndSend("/queue/"+turnMessage.getUserToken()+"/getTurn",turnMessage);
+
         	//Non AI player
         	} else {
-        		
-        		logMessage = gameService.getLastTurnLog(message.getGameId());
-        		
-            	//Send the LogMessage to the other player
-            	messagingTemplate.convertAndSend("/queue/"+turnMessage.getUserToken()+"/getTurnLog",logMessage);
-            	
+
                 messagingTemplate.convertAndSend("/queue/"+turnMessage.getUserToken()+"/getTurn",turnMessage);
+
         	}
         }else{
+
             messagingTemplate.convertAndSend("/queue/"+user.getToken()+"/message","gameEnd");
             messagingTemplate.convertAndSend("/queue/"+turnMessage.getUserToken()+"/message","gameEnd");
+
         }
 
     }
@@ -185,8 +180,7 @@ public class GameController {
             
             //Show list of games and leaderboard to newly registered user accepting game invite
             LobbyMessage gameMessages = gameService.getActiveGamesForUser(user);
-            
-            
+
             
             //Set leaderboard
             gameMessages.setLeaderBoard(userService.getTopPlayers(5));

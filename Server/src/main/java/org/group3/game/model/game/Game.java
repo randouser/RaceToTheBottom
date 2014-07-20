@@ -1,10 +1,7 @@
 package org.group3.game.model.game;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.group3.game.model.card.Card;
-import org.group3.game.model.user.User;
 
 import java.util.List;
 import java.util.Random;
@@ -20,7 +17,7 @@ public class Game{
     private List<District> districts;
     private int turnIndex; //could be 0 or 1 to indicate which player, either that or a player id
     private int districtPointer;
-    private List<GameLog> log;
+    private List<GameLog> turnLog;
     private String type;
     private boolean isInProgress;
     private String winnerEmail;
@@ -41,7 +38,7 @@ public class Game{
         this.districts = districts;
 
         this.districtPointer = 0;
-        this.log = new ArrayList<GameLog>();
+        this.turnLog = new ArrayList<>();
         this.type = type;
         this.isInProgress = false;
         this.winnerEmail = null;
@@ -121,7 +118,7 @@ public class Game{
 
 
              //Add new GameLog entry in list
-             log.add(new GameLog(cards, curPlayer, otherPlayer, districtPointer, curDistrict, damage));
+             turnLog.add(new GameLog(cards, curPlayer, otherPlayer, districtPointer, curDistrict, damage));
 
              curDistrict.setTurn(curDistrict.getTurn() + 1);
 
@@ -217,6 +214,11 @@ public class Game{
     }
 
 
+    public GameLog getLastTurnLog(){
+        return turnLog.isEmpty() ? null : turnLog.get(turnLog.size() -1);
+    }
+
+
 
     public String getWinnerEmail() {
         return winnerEmail;
@@ -269,12 +271,12 @@ public class Game{
         this.districtPointer = districtPointer;
     }
 
-    public List<GameLog> getLog() {
-        return log;
+    public List<GameLog> getTurnLog() {
+        return turnLog;
     }
 
-    public void setLog(List<GameLog> log) {
-        this.log = log;
+    public void setTurnLog(List<GameLog> turnLog) {
+        this.turnLog = turnLog;
     }
 
     public String getGameName() {
