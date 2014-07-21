@@ -12,3 +12,4 @@ Server/Target
 ./Server/target
 ./Server/Target
 build.xml
+/build/

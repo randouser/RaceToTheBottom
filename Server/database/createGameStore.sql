@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS gamestore(
   playerOneId int, -- we use playerIds as a way to identify a game with a user, should match a user id, but may be null
   playerTwoId int,
   serializedGame MEDIUMTEXT NOT NULL,
+  lastPlayed TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
   FOREIGN KEY (playerOneId) REFERENCES user(id) -- this works because starting player is always a user
 );

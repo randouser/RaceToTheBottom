@@ -15,6 +15,7 @@ import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import org.joda.time.DateTime;
 
 @Repository
 public class GameDao{
@@ -34,7 +35,7 @@ public class GameDao{
     public int save(final Game newGame){
         //remove old value if it exists
         KeyHolder holder = new GeneratedKeyHolder();
-        final String sql = "INSERT INTO gamestore (playerOneId,playerTwoId,serializedGame) VALUES (?,?,?)";
+        final String sql = "INSERT INTO gamestore (playerOneId,playerTwoId,serializedGame,lastPlayed) VALUES (?,?,?,?)";
         jdbcTemplate.update(new PreparedStatementCreator() {
 
             @Override
@@ -51,6 +52,9 @@ public class GameDao{
                     ps.setInt(2, playerTwoId);
                 }
                 ps.setString(3,stringifyGame(newGame));
+                DateTime dt = new DateTime();
+                Timestamp lastPlayed = new Timestamp(dt.getMillis());
+                ps.setTimestamp(4, lastPlayed);
                 return ps;
             }
         }, holder);
@@ -60,10 +64,12 @@ public class GameDao{
     }
 
     public void update(final Game existingGame){
-        final String sql = "UPDATE gamestore SET playerOneId=?,playerTwoId=?,serializedGame=? WHERE id=?";
+        final String sql = "UPDATE gamestore SET playerOneId=?,playerTwoId=?,serializedGame=?,lastPlayed=? WHERE id=?";
 
         Player[] players = existingGame.getPlayers();
-        Object[] updateArgs = {players[0].getId(),players[1].getId(),stringifyGame(existingGame), existingGame.getGameId()};
+        DateTime dt = new DateTime();
+        Timestamp lastPlayed = new Timestamp(dt.getMillis());
+        Object[] updateArgs = {players[0].getId(),players[1].getId(),stringifyGame(existingGame),lastPlayed,existingGame.getGameId()};
 
         this.jdbcTemplate.update(sql, updateArgs);
 
