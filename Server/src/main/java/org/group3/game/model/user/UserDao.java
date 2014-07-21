@@ -8,6 +8,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.stereotype.Repository;
 
+import org.joda.time.DateTime;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -25,11 +27,11 @@ public class UserDao {
 
 
     
-    public void registerUser(String email,String password,String name, String salt, String token, String passwordHash, int wins, int losses, Timestamp tokenExpirationDate) {
+    public void registerUser(String email,String password,String name, String salt, String token, String passwordHash, int wins, int losses, Timestamp tokenExpirationDate, Timestamp registerTime) {
 
-        String sql = "INSERT INTO user (name, email, passwordHash,salt,token,wins,losses,tokenExpirationDate)" +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        Object[] updateArgs = {name,email,passwordHash,salt,token,0,0,tokenExpirationDate};
+        String sql = "INSERT INTO user (name, email, passwordHash,salt,token,wins,losses,tokenExpirationDate,registerTime,lastLogin) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        Object[] updateArgs = {name,email,passwordHash,salt,token,0,0,tokenExpirationDate,registerTime,registerTime};
 
 
         this.jdbcTemplate.update(sql, updateArgs);
@@ -85,10 +87,10 @@ public class UserDao {
     }
 
 
-    public void updateUserToken(User user,String token, Timestamp timestamp){
-        String sql = "UPDATE user SET token=?,tokenExpirationDate=? where id = ?";
+    public void updateUserToken(User user,String token, Timestamp timestamp, Timestamp lastLogin){
+        String sql = "UPDATE user SET token=?,tokenExpirationDate=?,lastLogin=? where id = ?";
 
-        Object[] updateArgs = {token,timestamp,user.getId()};
+        Object[] updateArgs = {token,timestamp,lastLogin,user.getId()};
 
         this.jdbcTemplate.update(sql, updateArgs);
     }

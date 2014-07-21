@@ -15,6 +15,8 @@ public class User{
 	private String token;
 	private Timestamp tokenExpirationDate;
     boolean isAdmin;
+    private Timestamp registerTime;
+    private Timestamp lastLogin;
 
 	public User() {
 	}
@@ -110,5 +112,25 @@ public class User{
     public int hashCode(){
         return this.id.hashCode();
     }
+
+
+	public Timestamp getRegisterTime() {
+		return registerTime;
+	}
+
+
+	public void setRegisterTime(Timestamp registerTime) {
+		this.registerTime = registerTime;
+	}
+
+
+	public Timestamp getLastLogin() {
+		return lastLogin;
+	}
+
+
+	public void setLastLogin(Timestamp lastLogin) {
+		this.lastLogin = lastLogin;
+	}
 }
 
