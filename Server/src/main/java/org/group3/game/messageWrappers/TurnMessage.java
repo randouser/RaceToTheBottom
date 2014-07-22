@@ -25,7 +25,7 @@ public class TurnMessage{
     private boolean needsUserConfirmation;
     private String gameType;
     private boolean isDebate;
-    private GameLog lastTurnLog;
+    private List<GameLog> lastTurnLogs;
     private List<District> districts;
     private String userToken;
 
@@ -43,9 +43,9 @@ public class TurnMessage{
         this.playerIndex = player.getPlayerIndex();
         this.isUserTurn = player == game.getCurrentPlayer();
         this.gameType = game.getType();
-        this.lastTurnLog = game.getLastTurnLog(); //this is null on first turn
+        this.lastTurnLogs = game.getLastTurnLogs(game.getLogNumber()); //this is null on first turn
 
-        this.hand = player.isDebating() ? new ArrayList<Card>() :player.getHand();
+        this.hand = player.isDebating() ? new ArrayList<Card>() : player.getHand();
 
         this.isDebate = player.isDebating();
 
@@ -53,12 +53,12 @@ public class TurnMessage{
         this.needsUserConfirmation = (!this.isInProgress) && (player.getPlayerIndex() == 1);
     }
 
-    public GameLog getLastTurnLog() {
-        return lastTurnLog;
+    public List<GameLog> getLastTurnLogs() {
+        return lastTurnLogs;
     }
 
-    public void setLastTurnLog(GameLog lastTurnLog) {
-        this.lastTurnLog = lastTurnLog;
+    public void setLastTurnLogs(List<GameLog> lastTurnLogs) {
+        this.lastTurnLogs = lastTurnLogs;
     }
 
     public boolean isDebate() {

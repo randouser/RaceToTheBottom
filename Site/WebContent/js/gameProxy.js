@@ -91,9 +91,9 @@ GameProxy = {
             game.displayResources();
             jQuery('#waitingScreen').hide();
 
-            //display the log cards.  We pass in the debate stuff as a callback that runs when displayLogCards is done.
+            //display the log cards.  We pass in the debate stuff as a callback that runs when displayLog is done.
             that.toggleButtonHandlers(false);
-            game.displayLogCards(function(){
+            game.displayLog(function(){
                 if(turnMessage.debate){
                     DebateGame.startDebate();
                 }else{
@@ -285,7 +285,7 @@ function Game(turnMessage){
     this.userTurn = turnMessage.userTurn;
     this.debate = turnMessage.debate;
     this.debateScore = 0;
-    this.lastTurnLog = turnMessage.lastTurnLog;
+    this.lastTurnLogs = turnMessage.lastTurnLogs;
     this.logTimerId = null;
 
     this.districtViews = [];
@@ -383,11 +383,45 @@ function Game(turnMessage){
 
     };
 
-    this.displayLogCards = function(completeCallback){
-        var cardListModel = this.lastTurnLog.cardsPlayed;
+    this.displayLog = function(completeCallback){
+        var that = this;
         jQuery('#turnLogWrapper').show();
-        var cardContainer = document.getElementById('turnLogStage');
-        this.displayLogCardsRecursive(0,cardListModel,cardContainer,completeCallback);
+        var logContainer = document.getElementById('turnLogWrapper');
+
+        var count = 0;
+        var finishCallback = function(){
+            ++count;
+            if(count === that.lastTurnLogs.length){
+                jQuery('#turnLogWrapper').hide();
+                completeCallback();
+            }
+        };
+
+        for(var i = 0; i < this.lastTurnLogs.length; ++i){
+            var stage = document.createElement('div');
+            stage.id = 'turnLogStage' + i;
+            logContainer.appendChild(stage);
+
+            var log = this.lastTurnLogs[i];
+            if(log.debateLog || log.burnTurnLog){
+                this.displayMessageLog(log,stage,finishCallback);
+            }else{
+                this.displayLogCardsRecursive(0,log.cardsPlayed,stage,finishCallback);
+            }
+        }
+
+    };
+    this.displayMessageLog = function(log,container,callBack){
+        var logDiv = document.createElement('div');
+        logDiv.className = "debateLog animated zoomIn";
+        logDiv.innerHTML = '<span>'+log.logMessage+'</span>';
+        container.appendChild(logDiv);
+        setTimeout(function(){
+            jQuery(container).fadeOut(400,function(){
+                jQuery(container).remove();
+                callBack();
+            });
+        },3000);
 
     };
 
@@ -406,8 +440,8 @@ function Game(turnMessage){
             },500);
         }else{
             setTimeout(function(){
-                jQuery('#turnLogWrapper').fadeOut(400,function(){
-                    that.empty(cardContainer);
+                jQuery(cardContainer).fadeOut(400,function(){
+                    jQuery(cardContainer).remove();
                     completeCallback();
                 });
             },3000);

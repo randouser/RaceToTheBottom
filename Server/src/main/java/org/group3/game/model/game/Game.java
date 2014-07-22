@@ -93,9 +93,17 @@ public class Game{
          if(curPlayer.canPlayCards(cards) || burnTurn){
              //deal damage //TODO right now just focus on simple damage, worry about complicated stuff later
              int damage = 0;
+             District curDistrict = districts.get(districtPointer);
+
 
              if (!burnTurn){
-                 for(Card card : cards) damage += card.getMaxDamage();
+                 for(Card card : cards) {damage += card.getMaxDamage();}
+
+                 //calculate damage/score for current district
+                 curDistrict.increaseScoreForPlayer(curPlayer.getPlayerIndex(), damage);
+
+                 //Add new CardsLog entry in list
+                 turnLog.add(new CardsLog(cards, curPlayer, otherPlayer, districtPointer, curDistrict, damage));
              }
              else{
 
@@ -110,15 +118,12 @@ public class Game{
                  curPlayer.setMaxWorkers(curPlayer.getMaxWorkers() + addWorkers);
                  curPlayer.setMaxMoney(curPlayer.getMaxMoney() + addMoney);
 
+                 //Add new BurnTurnLog entry in list
+                 turnLog.add(new BurnTurnLog(curPlayer));
+
              }
 
-             //calculate damage/score for current district
-             District curDistrict = districts.get(districtPointer);
-             curDistrict.increaseScoreForPlayer(curPlayer.getPlayerIndex(), damage);
 
-
-             //Add new GameLog entry in list
-             turnLog.add(new GameLog(cards, curPlayer, otherPlayer, districtPointer, curDistrict, damage));
 
              curDistrict.setTurn(curDistrict.getTurn() + 1);
 
@@ -148,24 +153,32 @@ public class Game{
     public void finishDebate(Integer playerId,int debateScore){
         Player curPlayer = assertCurrentPlayer(playerId);
         Player otherPlayer = getNonCurrentPlayer();
-        District curDistrict;
+        District curDistrict = districts.get(districtPointer);
 
         curPlayer.setDebating(false);
         curPlayer.setDebateScore(debateScore);
+
 
         if(otherPlayer.isDebating()){
             return;
         }
 
         this.isDebate = false;
-        curDistrict = districts.get(districtPointer);
+
 
         //debate logic, gives small bonus to person with lower score, we don't apply bonus if they happen to tie
+        Player winningPlayer;
         if(curPlayer.getDebateScore() < otherPlayer.getDebateScore()){
             curDistrict.increaseScoreForPlayer(curPlayer.getPlayerIndex(),DEBATE_BONUS);
+            winningPlayer = curPlayer;
         }else if (curPlayer.getDebateScore() > otherPlayer.getDebateScore()){
             curDistrict.increaseScoreForPlayer(otherPlayer.getPlayerIndex(),DEBATE_BONUS);
+            winningPlayer = otherPlayer;
+        }else{
+            winningPlayer = null;
         }
+
+        turnLog.add(new DebateLog(winningPlayer,districtPointer,debateScore,DEBATE_BONUS));
 
         //set winner for that district
         if(curDistrict.getPlayerOneScore() > curDistrict.getPlayerTwoScore()){
@@ -216,6 +229,34 @@ public class Game{
 
     public GameLog getLastTurnLog(){
         return turnLog.isEmpty() ? null : turnLog.get(turnLog.size() -1);
+    }
+    public List<GameLog> getLastTurnLogs(int n){
+        int size = this.turnLog.size();
+
+        if(turnLog.isEmpty()){
+            return null;
+        }else if(n > size){
+            return turnLog;
+        }else{
+            return turnLog.subList(size-n,size);
+        }
+    }
+
+    /**
+     * This method analyses the turnLog of this game to determine
+     * how many gameLogs should be sent to the client.  This helps to resolve the quirk
+     * that after a debate, the second player will need to be able to see the last
+     * debate result and the last cards played.
+     *
+     * @return the number of logs that should be sent to the client
+     */
+    public int getLogNumber(){
+        int logSize = turnLog.size();
+        if(logSize > 1 && turnLog.get(logSize-2) instanceof DebateLog){
+            return 2;
+        }else{
+            return 1;
+        }
     }
 
 
