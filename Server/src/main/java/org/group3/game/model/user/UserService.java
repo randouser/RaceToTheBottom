@@ -93,6 +93,18 @@ public class UserService{
     	return userDao.getTopPlayer(howMany);
     	
     }
+    
+    public List<User> getInactivePlayers()
+    {
+    	
+    	DateTime dt = new DateTime();
+    	
+    	//subtract 7 days from dt, pass as parameter to UserDao.getInactivePlayersByDate()
+    	dt.minusDays(7);
+    	
+    	return userDao.getInactivePlayersByDate(dt);
+    	
+    }
 
     
     public void deleteUserByEmail(String email){

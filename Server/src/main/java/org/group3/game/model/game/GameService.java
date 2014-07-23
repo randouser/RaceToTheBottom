@@ -9,9 +9,11 @@ import org.group3.game.model.card.Card;
 import org.group3.game.model.card.CardService;
 import org.group3.game.model.user.User;
 import org.group3.game.model.user.UserService;
+import org.group3.game.model.game.Game;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import org.joda.time.DateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -173,6 +175,16 @@ public class GameService{
         }
 
         gameDao.delete(gameId);
+    }
+    
+    public List<Integer> getInactiveGameIds(){
+    	
+    	DateTime dt = new DateTime();
+    	
+    	dt.minusDays(7);
+    	
+    	return gameDao.getInactiveGameIdsByDate(dt);
+    	
     }
 
 

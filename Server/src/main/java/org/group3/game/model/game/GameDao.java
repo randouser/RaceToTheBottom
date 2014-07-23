@@ -134,6 +134,33 @@ public class GameDao{
         });
 
     }
+    
+    public List<Integer> getInactiveGameIdsByDate(DateTime curDateTime){
+    	
+    	Timestamp ts = new Timestamp(curDateTime.getMillis());
+    	
+    	String sql = "SELECT id FROM gamestore WHERE lastPlayed <= ?";
+    	Object[] args = {ts};
+    	
+    	return jdbcTemplate.query(sql, args, new ResultSetExtractor<List<Integer>>(){
+    		@Override
+    		public List<Integer> extractData(ResultSet rs) throws SQLException,DataAccessException {
+    			
+    			List<Integer> retList = new ArrayList<>();
+    			while(rs.next())
+    			{
+    				
+    				int id = rs.getInt("id");
+    				retList.add(id);
+    				
+    			}
+    			
+    			return retList;
+    			
+    		}
+    	});
+    	
+    }
 
 
 

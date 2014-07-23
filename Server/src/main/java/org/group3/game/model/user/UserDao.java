@@ -125,6 +125,23 @@ public class UserDao {
 
     	
     }
+    
+    public List<User> getInactivePlayersByDate(DateTime curDateTime)
+    {
+    	
+    	Timestamp ts = new Timestamp(curDateTime.getMillis());
+    	
+    	String sql = "SELECT * FROM user WHERE lastLogin <= ?";
+    	
+    	Object[] args = {ts};
+    	
+    	List<User> inactivePlayers = new ArrayList<User>();
+    	
+    	inactivePlayers = jdbcTemplate.query(sql, args, new BeanPropertyRowMapper<>(User.class));
+    	
+    	return inactivePlayers;
+    	
+    }
 
 
 }
