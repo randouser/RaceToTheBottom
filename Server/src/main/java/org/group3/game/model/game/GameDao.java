@@ -105,6 +105,7 @@ public class GameDao{
         return jdbcTemplate.query(sql,args,new ResultSetExtractor<Game>(){
             @Override
             public Game extractData(ResultSet rs) throws SQLException,DataAccessException {
+                rs.next();
                 Game retGame = parseGameJSON(rs.getString("serializedGame"));
                 retGame.setGameId(id);
                 return retGame;
