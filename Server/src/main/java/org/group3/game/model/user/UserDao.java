@@ -143,5 +143,13 @@ public class UserDao {
     	
     }
 
+    public void updateLastLogin(User user){
+        Object[] args = {user.getId()};
+        String sql = "UPDATE user SET lastLogin=CURRENT_TIMESTAMP WHERE id=?";
+
+        this.jdbcTemplate.update(sql, args);
+    }
+
+
 
 }

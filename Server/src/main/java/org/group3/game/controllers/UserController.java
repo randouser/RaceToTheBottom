@@ -30,6 +30,7 @@ public class UserController {
 
             if(isValid){
                 message = "Successful login";
+                userService.updateLastLogin(user);
             }else{
                 message="Token has expired, Please log in again.";
                 user = null;
@@ -60,6 +61,7 @@ public class UserController {
             message = "There is no user with those credentials";
         }else{
             message = "Successful Login";
+            userService.updateLastLogin(user);
         }
 
 

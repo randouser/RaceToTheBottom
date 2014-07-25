@@ -63,7 +63,7 @@ public class UserService{
 
     }
 
-    
+
     public User getUserByEmailToken(String email, String userToken) {
         User user = userDao.getUserByEmail(email);
 
@@ -110,6 +110,10 @@ public class UserService{
     public void deleteUserByEmail(String email){
         userDao.deleteUserByEmail(email);
 
+    }
+
+    public void updateLastLogin(User user){
+        userDao.updateLastLogin(user);
     }
 
 
