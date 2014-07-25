@@ -97,7 +97,10 @@ public class Game{
 
 
              if (!burnTurn){
-                 for(Card card : cards) {damage += card.getMaxDamage();}
+                 for(Card card : cards) {
+                     damage += card.getMaxDamage();
+                 }
+                 curPlayer.removeCardsFromHand(cards);
 
                  //calculate damage/score for current district
                  curDistrict.increaseScoreForPlayer(curPlayer.getPlayerIndex(), damage);

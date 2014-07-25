@@ -115,4 +115,9 @@ public class Card {
     public boolean equals(Object obj){
         return (obj instanceof Card) && (this.id.equals(((Card)obj).id));
     }
+
+    @Override
+    public int hashCode(){
+        return this.id;
+    }
 }

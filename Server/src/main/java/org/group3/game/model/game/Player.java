@@ -6,6 +6,7 @@ import org.group3.game.model.user.User;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -17,6 +18,7 @@ public class Player {
     private Integer id;
     private List<Card> hand;
     private List<Card> deck;
+    private List<Card> discardPile;
     private int maxMoney;
     private int maxWorkers;
     private String email;
@@ -33,6 +35,7 @@ public class Player {
         this.maxWorkers = maxWorkers;
         this.email = email;
         this.playerIndex = playerIndex;
+        this.discardPile = new ArrayList<>();
 
         this.hand = new ArrayList<>();
         drawHand();
@@ -40,8 +43,15 @@ public class Player {
 
 
     public void drawHand(){
-        while(this.hand.size() < MAX_HAND && this.deck.size() !=0 ){
-            this.hand.add(this.deck.remove(0));
+        while(hand.size() < MAX_HAND){
+            //if deck is out of cards, reshuffle discards
+            if(deck.isEmpty()){
+                deck.addAll(discardPile);
+                Collections.shuffle(deck);
+                discardPile.clear();
+            }
+            //draw next card
+            hand.add(deck.remove(0));
         }
     }
 
@@ -58,6 +68,12 @@ public class Player {
         return (moneySpent <= this.maxMoney && workersSpent <= this.maxWorkers && isCardInHand);
 
 
+    }
+    public void removeCardsFromHand(List<Card> cardsToRemove){
+        for(Card card : cardsToRemove){
+            int cardIndex = hand.indexOf(card);
+            discardPile.add(hand.remove(cardIndex));
+        }
     }
 
     public boolean isDebating() {
@@ -131,5 +147,13 @@ public class Player {
 
     public void setDebateScore(int debateScore) {
         this.debateScore = debateScore;
+    }
+
+    public List<Card> getDiscardPile() {
+        return discardPile;
+    }
+
+    public void setDiscardPile(List<Card> discardPile) {
+        this.discardPile = discardPile;
     }
 }
