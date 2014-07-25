@@ -85,6 +85,9 @@ h2{
 
 #gameStageMain{
     position:relative;
+    border:4px solid #981a22;
+    display: inline-block;
+    width:1000px;
 }
 
 #adminPanelWrapper{
@@ -115,13 +118,11 @@ h2{
 
 #bottomStage > div{
     display:inline-block;
-    border:1px solid black;
     height:150px;
     vertical-align: top;
     padding:10px;
 }
 #cardStage{
-    border:1px solid purple;
     display:inline-block;
     max-width: 600px;
     width: 100%;
@@ -240,4 +241,27 @@ h2{
     color:white;
     cursor:pointer;
 
+}
+
+/* =========== Icons ============ */
+#buntingImage{
+        width:1000px;
+}
+
+#currentPlayerImage{
+  width:100px;
+}
+
+#opponentPlayerImage{
+    width:150px;
+
+}
+#opponent{
+    border:1px solid #112c79;
+    padding:10px;
+    display:inline-block;
+    margin-top:10px;
+}
+#opponentWrapper{
+    margin-top: 10px;
 }

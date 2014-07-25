@@ -100,10 +100,18 @@
 
 
     <div id="gameStageWrapper" style="display:none;">
-        <button id="backToLobbyButton">Back to Lobby</button>
+        <button id="backToLobbyButton">Back to Lobby</button><br />
         <div id="gameStageMain">
             <!---->
             <div id="waitingScreen">Waiting For Next Turn</div>
+
+
+            <div id="opponentWrapper">
+                <div id="opponent" style="">
+                    <img id="opponentPlayerImage" src="images/player_red.png" />
+                    <span id="opponentName"></span>
+                </div>
+            </div>
 
             <div id="districtWrapper">
 
@@ -134,8 +142,13 @@
                     <!--Districts generated here-->
                 </div>
             </div>
-
+            <div id="buntingWrapper">
+                <img id="buntingImage" src="images/bunting.png" />
+            </div>
             <div id="bottomStage">
+                <div id="currentPlayer">
+                    <img id="currentPlayerImage" src="images/player_blue.png" />
+                </div>
                 <div id="cardStage">
                     <!--Cards generated here-->
                 </div>
