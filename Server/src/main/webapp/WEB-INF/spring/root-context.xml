@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
+<beans 
+	xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/task 
+	http://www.springframework.org/schema/task/spring-task.xsd"
+	>
+	
+	<task:annotation-driven/>
 	
 	<!-- Root Context: defines shared resources visible to all other web components -->
     <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
@@ -17,6 +25,12 @@
             </props>
         </property>
     </bean>
+    
+    <!--  Need to manually define instead of using stereotype annotations or it is run twice
+    every time, once by Spring container, once by the component scan
+     -->
+	<bean id="maintDriver" class="org.group3.game.services.MaintenanceService" lazy-init="false"></bean>
+    <bean id="maintWorker" class="org.group3.game.services.MaintenanceComponent" lazy-init="false"></bean>
 
 
 </beans>

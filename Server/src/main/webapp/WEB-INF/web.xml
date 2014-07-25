@@ -12,8 +12,10 @@
 			/WEB-INF/spring/root-context.xml
 			/WEB-INF/spring/database/DataSource.xml
             /WEB-INF/spring/appServlet/servlet-context.xml
+          <!--  /WEB-INF/spring/schedulerConfig/schConfig.xml -->
 		</param-value>
   </context-param>
+  
 
   <listener>
     <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>

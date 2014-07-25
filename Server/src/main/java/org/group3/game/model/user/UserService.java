@@ -100,7 +100,7 @@ public class UserService{
     	DateTime dt = new DateTime();
     	
     	//subtract 7 days from dt, pass as parameter to UserDao.getInactivePlayersByDate()
-    	dt.minusDays(7);
+    	dt = dt.minusWeeks(1);
     	
     	return userDao.getInactivePlayersByDate(dt);
     	

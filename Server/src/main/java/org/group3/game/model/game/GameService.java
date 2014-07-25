@@ -181,7 +181,7 @@ public class GameService{
     	
     	DateTime dt = new DateTime();
     	
-    	dt.minusDays(7);
+    	dt = dt.minusWeeks(1);
     	
     	return gameDao.getInactiveGameIdsByDate(dt);
     	

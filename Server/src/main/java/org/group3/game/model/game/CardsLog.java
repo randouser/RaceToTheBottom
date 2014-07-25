@@ -5,7 +5,6 @@ import org.group3.game.model.card.Card;
 
 import java.util.List;
 
-
 public class CardsLog extends GameLog{
 
     private List<Card> cardsPlayed;
@@ -15,7 +14,10 @@ public class CardsLog extends GameLog{
     protected int curTurn;
     protected int districtIndex;
 
-    public CardsLog(){}
+    public CardsLog(){
+    	super();
+    	
+    }
 
     public CardsLog(List<Card> cardsPlayed, Player curPlayer, Player oppPlayer, int districtIndex, District curDistrict, int cardsDamage)
     {

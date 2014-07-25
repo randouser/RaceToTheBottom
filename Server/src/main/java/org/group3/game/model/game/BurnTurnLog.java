@@ -1,12 +1,20 @@
 package org.group3.game.model.game;
 
+
 /**
  * Created by nperkins on 7/21/14.
  */
+
 public class BurnTurnLog extends GameLog {
     private boolean isBurnTurnLog;
 
 
+   BurnTurnLog()
+   {
+	   super();
+   }
+    
+    
     BurnTurnLog(Player curPlayer){
         super();
 
@@ -15,6 +23,8 @@ public class BurnTurnLog extends GameLog {
 
 
     }
+    
+    
 
 
 

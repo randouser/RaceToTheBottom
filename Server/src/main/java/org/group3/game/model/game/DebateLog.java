@@ -1,8 +1,10 @@
 package org.group3.game.model.game;
 
+
 /**
  * Created by nperkins on 7/20/14.
  */
+
 public class DebateLog extends GameLog{
 
     private boolean isDebateLog;
@@ -11,7 +13,10 @@ public class DebateLog extends GameLog{
     private int curDistrictIndex;
     private int bonus;
 
-    public DebateLog(){}
+    public DebateLog(){
+    	
+    	super();
+    }
 
     public DebateLog(Player winningPlayer,int districtPointer, int score,int bonus){
         super();
