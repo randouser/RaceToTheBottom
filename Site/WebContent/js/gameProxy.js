@@ -263,7 +263,7 @@ function CardView(card){
 
 
 // ========== DistrictView Objects
-function DistrictView(district,index){
+function DistrictView(district,index,isCurDistrict){
     this.district = district;
     this.className = district.type;
     this.bodyText = 'p1Score: '+district.playerOneScore + '<br />' + 'p2Score: ' + district.playerTwoScore;
@@ -273,12 +273,22 @@ function DistrictView(district,index){
     this.element = document.createElement('div');
     this.element.className = 'district';
     var imgIndex = index + 1;
-    this.element.innerHTML =
+    var dHtml =
     '<div class="districtTextWrapper d'+imgIndex+'">'+
     '<div class="name"><span class="nameText">'+this.index+' - '+district.type+'</span></div>'+
-    '<div class="body"><span class="bodyText">'+this.bodyText+'</span></div>'+
-    '</div>'+
-    '<img src="images/d'+imgIndex+'.png" />';
+    '<div class="body"><span class="bodyText">'+this.bodyText+'</span></div>';
+
+    if(district.winnerEmail){
+        dHtml += '<div class="turn"><span class="turnText">Winner: '+district.winnerEmail+'</span></div>';
+    }else if(isCurDistrict){
+        var turnText  = (district.turn < 10) ? (district.turn + 1) : 'Debate';
+        dHtml += '<div class="turn"><span class="turnText">Turn: '+turnText+'</span></div>';
+    }
+
+    dHtml += '</div><img src="images/d'+imgIndex+'.png" />';
+
+    this.element.innerHTML = dHtml;
+
     this.nameElement = this.element.getElementsByClassName('nameText')[0];
     this.bodyElement = this.element.getElementsByClassName('bodyText')[0];
 
@@ -323,9 +333,12 @@ function Game(turnMessage){
         this.empty(districtStage);
         var curDistrict;
         for(; i < this.districts.length; ++i){
-            var districtV = new DistrictView(this.districts[i],i);
+            var districtV;
             if(i === this.districtPointer){
+                districtV = new DistrictView(this.districts[i],i,true);
                 curDistrict = districtV.element;
+            }else{
+                districtV = new DistrictView(this.districts[i],i,false);
             }
             this.districtViews.push(districtV);
             districtStage.appendChild(districtV.element);
