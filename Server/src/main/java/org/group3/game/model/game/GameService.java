@@ -76,7 +76,7 @@ public class GameService{
         //add the AI logic here
         if(game.getType().equals("single") && !game.isInProgress()) {
         	
-        	playerTwo.setEmail(null);
+        	playerTwo.setEmail("Politibot");
         	playerTwo.setId(-1);
         	game.setInProgress(true);
         	Player curPlayer = game.getCurrentPlayer();//

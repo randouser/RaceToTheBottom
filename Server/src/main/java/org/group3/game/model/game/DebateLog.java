@@ -24,7 +24,7 @@ public class DebateLog extends GameLog{
         if(winningPlayer == null){
             this.logMessage = "The debate was a tie!";
         }else{
-            this.logMessage = "Player: " + winningPlayer.getEmail() + "has won the debate with the score " + score;
+            this.logMessage = "Player: " + winningPlayer.getEmail() + " has won the debate with the score " + score;
         }
 
         this.winningPlayer = winningPlayer;
