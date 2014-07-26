@@ -29,6 +29,9 @@ public class TurnMessage{
     private List<District> districts;
     private String userToken;
     private String winnerEmail;
+    private String opponentName;
+    private String playerColor;
+    private String opponentColor;
 
 
 
@@ -46,6 +49,9 @@ public class TurnMessage{
         this.gameType = game.getType();
         this.lastTurnLogs = game.getLastTurnLogs(game.getLogNumber()); //this is null on first turn
         this.winnerEmail = game.getWinnerEmail();
+        this.opponentName = game.getNonCurrentPlayer().getEmail();
+        this.playerColor = game.getCurrentPlayer().getColor();
+        this.opponentColor = game.getNonCurrentPlayer().getColor();
 
         this.hand = player.isDebating() ? new ArrayList<Card>() : player.getHand();
 
@@ -181,5 +187,29 @@ public class TurnMessage{
 
     public void setWinnerEmail(String winnerEmail) {
         this.winnerEmail = winnerEmail;
+    }
+
+    public String getOpponentName() {
+        return opponentName;
+    }
+
+    public void setOpponentName(String opponentName) {
+        this.opponentName = opponentName;
+    }
+
+    public String getPlayerColor() {
+        return playerColor;
+    }
+
+    public void setPlayerColor(String playerColor) {
+        this.playerColor = playerColor;
+    }
+
+    public String getOpponentColor() {
+        return opponentColor;
+    }
+
+    public void setOpponentColor(String opponentColor) {
+        this.opponentColor = opponentColor;
     }
 }

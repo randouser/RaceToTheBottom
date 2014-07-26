@@ -14,6 +14,10 @@ public class Player {
 
     @JsonIgnoreProperties
     private static final int MAX_HAND = 5;
+    @JsonIgnoreProperties
+    public static final String RED = "red";
+    @JsonIgnoreProperties
+    public static final String BLUE = "blue";
 
     private Integer id;
     private List<Card> hand;
@@ -25,10 +29,11 @@ public class Player {
     private int playerIndex;
     private boolean isDebating;
     private int debateScore;
+    private String color;
 
     public Player(){}
 
-    public Player(Integer id,List<Card> deck, int maxMoney, int maxWorkers, String email, int playerIndex) {
+    public Player(Integer id,List<Card> deck, int maxMoney, int maxWorkers, String email, int playerIndex,String color) {
         this.id = id;
         this.deck = deck;
         this.maxMoney = maxMoney;
@@ -36,6 +41,7 @@ public class Player {
         this.email = email;
         this.playerIndex = playerIndex;
         this.discardPile = new ArrayList<>();
+        this.color = color;
 
         this.hand = new ArrayList<>();
         drawHand();
@@ -155,5 +161,13 @@ public class Player {
 
     public void setDiscardPile(List<Card> discardPile) {
         this.discardPile = discardPile;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
     }
 }

@@ -89,6 +89,7 @@ GameProxy = {
             game.displayCards();
             game.displayDistricts();
             game.displayResources();
+            game.displayPlayerItems();
             jQuery('#waitingScreen').hide();
 
             //display the log cards.  We pass in the debate stuff as a callback that runs when displayLog is done.
@@ -115,6 +116,7 @@ GameProxy = {
         game.displayCards();
         game.displayDistricts();
         game.displayResources();
+        game.displayPlayerItems();
 
         jQuery('#waitingScreen').toggle(!game.userTurn);
 
@@ -319,7 +321,9 @@ function Game(turnMessage){
     this.debate = turnMessage.debate;
     this.debateScore = 0;
     this.lastTurnLogs = turnMessage.lastTurnLogs;
-    this.logTimerId = null;
+    this.opponentName = turnMessage.opponentName;
+    this.playerColor = turnMessage.playerColor;
+    this.opponentColor = turnMessage.opponentColor;
 
     this.districtViews = [];
 
@@ -485,6 +489,14 @@ function Game(turnMessage){
 
         }
     };
+
+    this.displayPlayerItems = function(){
+        jQuery('#opponentName').text(this.opponentName);
+        jQuery('#playerName').text(UserProxy.user.name);
+
+        jQuery("#currentPlayerImage").attr('src','images/player_'+ this.playerColor + '.png');
+        jQuery("#opponentPlayerImage").attr('src','images/player_'+ this.opponentColor + '.png');
+    }
 
 
 }

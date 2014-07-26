@@ -108,7 +108,7 @@
 
             <div id="opponentWrapper">
                 <div id="opponent" style="">
-                    <img id="opponentPlayerImage" src="images/player_red.png" />
+                    <img id="opponentPlayerImage" src="images/player_red.png" /><br />
                     <span id="opponentName"></span>
                 </div>
             </div>
@@ -147,7 +147,12 @@
             </div>
             <div id="bottomStage">
                 <div id="currentPlayer">
-                    <img id="currentPlayerImage" src="images/player_blue.png" />
+                    <div>
+                        <img id="currentPlayerImage" src="images/player_blue.png" />
+                    </div>
+                    <div>
+                        <span id="playerName"></span>
+                    </div>
                 </div>
                 <div id="cardStage">
                     <!--Cards generated here-->
@@ -224,7 +229,7 @@
 
     var startGameSoloButton =
     jQuery('#startGameSoloButton').click(function(){
-    	var emailToNotify = "solo"//something better later . . .
+    	var emailToNotify = "solo";//something better later . . .
     	GameProxy.startGame(emailToNotify,"single");
     });
     
