@@ -109,21 +109,11 @@ public class UserDao {
         }
     }
     
-    public List<User> getTopPlayer(int howMany)
-    {
-    	
-    	String sql = "SELECT * FROM user ORDER BY wins LIMIT ?";
-    	
+    public List<User> getTopPlayer(int howMany){
+    	String sql = "SELECT * FROM user ORDER BY wins DESC LIMIT ?";
     	Object[] args = {howMany};
     	
-    	List<User> leaderBoardUsers = new ArrayList<User>(howMany);
-    	
-
-    	leaderBoardUsers = jdbcTemplate.query(sql, args, new BeanPropertyRowMapper<>(User.class));
-    	
-    	return leaderBoardUsers;
-
-    	
+        return jdbcTemplate.query(sql, args, new BeanPropertyRowMapper<>(User.class));
     }
     
     public List<User> getInactivePlayersByDate(DateTime curDateTime)

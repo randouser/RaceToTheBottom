@@ -44,8 +44,17 @@ public class Game{
         this.type = type;
         this.isInProgress = false;
         this.winnerEmail = null;
-        this.gameName = playerOne.getEmail() + " vs " + playerTwo.getEmail();
+
+        updateGameName();
         this.isDebate = false;
+    }
+
+    public void updateGameName(){
+        if(type.equals("single")){
+            gameName = "Single-player game";
+        }else{
+            gameName = players[0].getEmail() + " vs " + players[1].getEmail();
+        }
     }
 
     public void toggleTurn(){

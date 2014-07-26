@@ -89,6 +89,7 @@ public class GameService{
             playerTwo.setEmail(user.getEmail());
             playerTwo.setId(user.getId());
             game.setInProgress(true);
+            game.updateGameName();
             //TODO random turn start?
             //return message for other player
             Player curPlayer = game.getCurrentPlayer();

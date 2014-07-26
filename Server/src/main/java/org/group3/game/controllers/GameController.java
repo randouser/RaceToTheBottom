@@ -69,7 +69,7 @@ public class GameController {
         } 
         //if solo match, no email or database actions just get into the game
         else if (gameType.equals("single")){
-        	gMessage = gameService.createGame(user,message.getGameType(),null,null);
+        	gMessage = gameService.createGame(user,message.getGameType(),"Politibot",null);
         	messagingTemplate.convertAndSend("/queue/"+user.getToken()+"/message",gMessage);
         	StartGameMessage aIGMessage = aiService.invite(gMessage);//return a new start game message
         	joinGame(aIGMessage);//needs a slightly different start game message       	
