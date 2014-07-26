@@ -37,7 +37,16 @@ var DebateGame = {
 
         jQuery('#scrollOverlay').off('click').click(function(){
             jQuery(this).hide();
-            that.generateObstacles(that.obstTotal);
+            var finishCallback = function(){
+                --that.obstTotal;
+                if(that.obstTotal === 0){
+                    that.endDebate()
+                }
+            };
+            var scoreCallback = function(){
+                that.nudgeScore();
+            };
+            that.generateObstacles(that.obstTotal,scoreCallback,finishCallback);
         });
     }
 
@@ -65,20 +74,22 @@ var DebateGame = {
     /**
      * Game loop, makes the obstacles at random intervals
      */
-    ,generateObstacles: function(number){
-        if(number === 0){
-            this.isDone = true;
-            return;
-        }
+    ,generateObstacles: function(number,scoreCallback,finishCallback){
+
         var that = this;
         var item = this.topics[Math.floor(Math.random()*this.topics.length)];
         var speed = Math.floor(Math.random()*8) + 1;
-        var obst1 = new Obstacle(item,speed,this.debaterElement,this);
+        var obst1 = new Obstacle(item,speed,this.debaterElement,scoreCallback,finishCallback);
         this.scrollStage.appendChild(obst1.element);
         obst1.start();
 
+        if(number === 1){
+            console.log('setting isDone to true');
+            this.isDone = true;
+            return;
+        }
         setTimeout(function(){
-            that.generateObstacles(number - 1);
+            that.generateObstacles(number - 1,scoreCallback,finishCallback);
         },Math.floor(Math.random()*3000) + 200);
     }
 
@@ -166,7 +177,7 @@ function Debater(element){
     };
 }
 /*Obstacle constructor */
-function Obstacle(text,speed,collisionEle,parent){
+function Obstacle(text,speed,collisionEle,scoreCallback,finishCallback){
     this.element = document.createElement('div');
     this.element.innerHTML = '<span>'+text+'</span>';
     this.element.className = 'obstacle';
@@ -175,7 +186,6 @@ function Obstacle(text,speed,collisionEle,parent){
     this.COLLISION_RANGE = 500;
     this.LOC_DELTA = speed;
     this.collisionEle = collisionEle;
-    this.parent = parent;
 
 
     this.start = function(){
@@ -191,7 +201,7 @@ function Obstacle(text,speed,collisionEle,parent){
 
         //slight optimization, only check collision when near the object
         if(delta > this.COLLISION_RANGE && this.overlaps(this.element,this.collisionEle)){
-            this.parent.nudgeScore();
+            scoreCallback();
         }
         window.requestAnimationFrame(function(){that.rec_start(delta + that.LOC_DELTA)});
 
@@ -199,10 +209,7 @@ function Obstacle(text,speed,collisionEle,parent){
     };
     this.remove = function(){
         this.element.parentNode.removeChild(this.element);
-        this.parent.obstTotal--;
-        if(this.parent.isDone && this.parent.obstTotal === 0){
-            this.parent.endDebate();
-        }
+        finishCallback();
     }
 
 }
