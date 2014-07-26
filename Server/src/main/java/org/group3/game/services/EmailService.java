@@ -22,8 +22,8 @@ public class EmailService {
 
 
     //TODO there probably is a better way to get the location of the server
-    private static final String SERVER_ADDRESS = "http://192.168.56.102:8080";
-//    private static final String SERVER_ADDRESS = "http://www.cornerinternets.com:8080";
+    private static final String SERVER_ADDRESS = "http://192.168.56.102";
+//    private static final String SERVER_ADDRESS = "http://cornerinternets.com";
 
     public void sendMail(String from, String to, String subject, String msg) {
         logger.info("Sending email to: " + to + "  from: " + from );
