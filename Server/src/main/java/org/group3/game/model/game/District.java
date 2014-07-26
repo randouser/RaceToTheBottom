@@ -14,7 +14,7 @@ public class District {
 
     public District(){}
 
-    public District(String type, int playerTwoScore, int playerOneScore) {
+    public District(String type,int playerOneScore,int playerTwoScore) {
         this.type = type;
         this.turn = 0;
         this.playerTwoScore = playerTwoScore;

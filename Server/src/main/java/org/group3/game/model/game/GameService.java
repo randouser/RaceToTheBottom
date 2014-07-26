@@ -48,9 +48,11 @@ public class GameService{
 
         //make the districts
         List<District> districts = new ArrayList<>();
-        for(int i = 0; i < 5; ++i){
-            districts.add(new District("neutral",50,50));
-        }
+        districts.add(new District("p1 home",60,40));
+        districts.add(new District("p2 home",40,60));
+        districts.add(new District("neutral",50,50));
+        districts.add(new District("neutral",50,50));
+        districts.add(new District("neutral",50,50));
 
         //create initial game
         Game game = new Game(playerOne,playerTwo,districts,type);
