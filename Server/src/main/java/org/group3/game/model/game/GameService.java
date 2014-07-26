@@ -118,10 +118,21 @@ public class GameService{
             //play the cards!
         	game.playCards((game.getType().equals("single") && user == null ?-1: user.getId()),cardsPlayed, burnTurn);
 
-            if(game.getWinnerEmail() != null){
-                game.setInProgress(false);
-            }
+        }
 
+        if(game.getWinnerEmail() != null){
+            game.setInProgress(false);
+            //update the scores if the game IS NOT a single player game
+            if(!game.getType().equals("single")){
+                Integer winnerId = game.getWinnerId();
+                Integer loserId = game.getLoserId();
+                if(winnerId != null && winnerId > 0){
+                    userService.incrementWinById(winnerId);
+                }
+                if(loserId != null && loserId > 0){
+                    userService.incrementLossById(loserId);
+                }
+            }
         }
 
         //change the turn
@@ -135,6 +146,8 @@ public class GameService{
         }
 
         saveGame(game);
+
+
         
         
         return new TurnMessage(curUser,curPlayer,game);

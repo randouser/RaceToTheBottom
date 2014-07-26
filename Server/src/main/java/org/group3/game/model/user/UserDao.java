@@ -151,5 +151,18 @@ public class UserDao {
     }
 
 
+    public void incrementWinById(Integer winnerId) {
+        Object[] args = {winnerId};
+        String sql = "UPDATE user SET wins=(wins + 1) WHERE id=?";
 
+        this.jdbcTemplate.update(sql, args);
+    }
+
+    public void incrementLossById(Integer loserId) {
+        Object[] args = {loserId};
+        String sql = "UPDATE user SET losses=(losses + 1) WHERE id=?";
+
+        this.jdbcTemplate.update(sql, args);
+
+    }
 }

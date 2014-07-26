@@ -45,6 +45,9 @@ StompService = {
                     case 'error':
                         alert(gameMessage.message);
                         break;
+                    case 'gameEnd':
+                        GameProxy.endGame(gameMessage);
+                        break;
                 }
                 console.log(frame);
 

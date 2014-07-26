@@ -28,6 +28,7 @@ public class TurnMessage{
     private List<GameLog> lastTurnLogs;
     private List<District> districts;
     private String userToken;
+    private String winnerEmail;
 
 
 
@@ -44,6 +45,7 @@ public class TurnMessage{
         this.isUserTurn = player == game.getCurrentPlayer();
         this.gameType = game.getType();
         this.lastTurnLogs = game.getLastTurnLogs(game.getLogNumber()); //this is null on first turn
+        this.winnerEmail = game.getWinnerEmail();
 
         this.hand = player.isDebating() ? new ArrayList<Card>() : player.getHand();
 
@@ -171,5 +173,13 @@ public class TurnMessage{
     
     public void setGameType(String gameType) {
     	this.gameType = gameType;
+    }
+
+    public String getWinnerEmail() {
+        return winnerEmail;
+    }
+
+    public void setWinnerEmail(String winnerEmail) {
+        this.winnerEmail = winnerEmail;
     }
 }

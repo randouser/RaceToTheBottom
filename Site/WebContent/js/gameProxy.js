@@ -212,6 +212,29 @@ GameProxy = {
     }
 
 
+    ,endGame:function(endGameMessage){
+        var gameId = endGameMessage.gameId;
+        var gameName = endGameMessage.gameName;
+        var winnerEmail = endGameMessage.winnerEmail;
+
+        alert("Game '" + gameName +"' has ended with " + winnerEmail + " as the victor!");
+        delete this.games[endGameMessage.gameId];
+        jQuery('#gamerow_' + gameId).remove();
+
+
+        var gameStage = jQuery('#gameStageWrapper');
+        var curGameId = gameStage.data('gameId');
+
+        if(gameId === curGameId && gameStage.is(':visible')){
+            window.location.hash = 'lobby';
+        }
+
+
+        //TODO request score update
+
+    }
+
+
 
 };
 

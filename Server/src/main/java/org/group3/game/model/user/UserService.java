@@ -101,7 +101,7 @@ public class UserService{
     	
     	//subtract 7 days from dt, pass as parameter to UserDao.getInactivePlayersByDate()
     	dt = dt.minusWeeks(1);
-    	
+
     	return userDao.getInactivePlayersByDate(dt);
     	
     }
@@ -126,5 +126,13 @@ public class UserService{
         DateTime dt = new DateTime().plusDays(7);
 
         return new Timestamp(dt.getMillis());
+    }
+
+    public void incrementWinById(Integer winnerId) {
+        userDao.incrementWinById(winnerId);
+    }
+
+    public void incrementLossById(Integer loserId) {
+        userDao.incrementLossById(loserId);
     }
 }

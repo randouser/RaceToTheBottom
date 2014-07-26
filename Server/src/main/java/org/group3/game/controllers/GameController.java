@@ -49,10 +49,9 @@ public class GameController {
     @MessageMapping("/startGame")
     public void startGame(StartGameMessage message) throws Exception {
     	
-    	//log this for a PvP match only
-    	if (message.getEmailToNotify() != "solo") {
-    		logger.info("User: " +message.getUserEmail() + " has requested to start a game with: " + message.getEmailToNotify());
-    	}
+
+        logger.info("User: " +message.getUserEmail() + " has requested to start a game with: " + message.getEmailToNotify());
+
         
         User user = userService.getUserByEmailToken(message.getUserEmail(),message.getUserToken());
 
@@ -139,26 +138,28 @@ public class GameController {
         TurnMessage turnMessage = gameService.takeTurn(user,message.getGameId(),message.getCardsPlayed(), message.getBurnTurn(),message.getDebateScore(),message.isSurrender());
 
         
-        //start the turn for the player
+        //start the turn for the player if it's in progress
         if(turnMessage.isInProgress()) {
         	//AI player
         	if(turnMessage.getUserToken() == null && turnMessage.getGameType().equals("single")){
 
                 RequestTurnMessage rtMessage = aiService.takeTurn(turnMessage);
         		turnMessage = gameService.takeTurn(null,rtMessage.getGameId(),rtMessage.getCardsPlayed(),rtMessage.getBurnTurn(),rtMessage.getDebateScore(),rtMessage.isSurrender());
-            	messagingTemplate.convertAndSend("/queue/"+turnMessage.getUserToken()+"/getTurn",turnMessage);
+
+                if(turnMessage.isInProgress()){
+                    messagingTemplate.convertAndSend("/queue/"+turnMessage.getUserToken()+"/getTurn",turnMessage);
+                }else{
+                    endGame(null, turnMessage);
+                }
 
         	//Non AI player
         	} else {
-
                 messagingTemplate.convertAndSend("/queue/"+turnMessage.getUserToken()+"/getTurn",turnMessage);
-
         	}
+
+        //end the game if it's not in progress
         }else{
-
-            messagingTemplate.convertAndSend("/queue/"+user.getToken()+"/message","gameEnd");
-            messagingTemplate.convertAndSend("/queue/"+turnMessage.getUserToken()+"/message","gameEnd");
-
+            endGame(user, turnMessage);
         }
 
     }
@@ -206,6 +207,22 @@ public class GameController {
 
 
         //TODO request leaderboard can go here somewhere
+
+    }
+
+    public void endGame(User curUser,TurnMessage turnMessage){
+
+        EndGameMessage endMessage = new EndGameMessage(turnMessage);
+
+        if(curUser != null){
+            messagingTemplate.convertAndSend("/queue/"+curUser.getToken()+"/message",endMessage);
+        }
+        if(turnMessage.getUserToken() != null){
+            messagingTemplate.convertAndSend("/queue/"+turnMessage.getUserToken()+"/message",endMessage);
+        }
+
+        gameService.deleteGameById(turnMessage.getGameId());
+
 
     }
 

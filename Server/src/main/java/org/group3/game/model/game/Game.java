@@ -21,6 +21,8 @@ public class Game{
     private String type;
     private boolean isInProgress;
     private String winnerEmail;
+    private Integer winnerId;
+    private Integer loserId;
     private boolean isDebate;
 
     public Game(){}
@@ -53,7 +55,10 @@ public class Game{
 
     public void surrender(Integer userId) {
         Player curPlayer = assertCurrentPlayer(userId);
-        winnerEmail = getNonCurrentPlayer().getEmail();
+        Player otherPlayer = getNonCurrentPlayer();
+        winnerEmail = otherPlayer.getEmail();
+        winnerId = otherPlayer.getId();
+        loserId = curPlayer.getId();
         this.setInProgress(false);
     }
 
@@ -75,10 +80,18 @@ public class Game{
         }
         if(p1Score > p2Score){
             winnerEmail = players[0].getEmail();
+            winnerId = players[0].getId();
+            loserId = players[1].getId();
         }else if (p2Score < p1Score){
             winnerEmail = players[1].getEmail();
+            winnerId = players[1].getId();
+            loserId = players[0].getId();
         }else{ //tie?
-            winnerEmail = "Tie";
+            int randoIndex = new Random().nextInt(2); //between 0 and 1
+            Player randoWinner = players[randoIndex];
+            winnerEmail = randoWinner.getEmail();
+            winnerId = randoWinner.getId();
+            loserId = players[randoIndex ^ 1].getId();
         }
     }
 
@@ -345,5 +358,21 @@ public class Game{
 
     public void setDebate(boolean isDebate) {
         this.isDebate = isDebate;
+    }
+
+    public Integer getWinnerId() {
+        return winnerId;
+    }
+
+    public void setWinnerId(Integer winnerId) {
+        this.winnerId = winnerId;
+    }
+
+    public Integer getLoserId() {
+        return loserId;
+    }
+
+    public void setLoserId(Integer loserId) {
+        this.loserId = loserId;
     }
 }
