@@ -22,7 +22,7 @@
         <exec executable="${ssh}">
             <arg value="-i"/>
             <arg file="${privateKeyLoc}"/>
-            <arg value="${serverUser}@${serverAdd}"/>
+            <arg value="ubuntu@${serverAdd}"/>
             <arg value="sudo /etc/init.d/tomcat7 stop"/>
         </exec>
     </target>
@@ -32,7 +32,7 @@
         <exec executable="${ssh}">
             <arg value="-i"/>
             <arg file="${privateKeyLoc}"/>
-            <arg value="${serverUser}@${serverAdd}"/>
+            <arg value="ubuntu@${serverAdd}"/>
             <arg value="sudo /etc/init.d/tomcat7 restart"/>
         </exec>
     </target>
@@ -56,7 +56,7 @@
         <exec executable="${scp}">
             <arg value="-i"/>
             <arg file="${privateKeyLoc}"/>
-            <arg value="${serverUser}@${serverAdd}:/var/log/tomcat7/catalina.out"/>
+            <arg value="ubuntu@${serverAdd}:/var/log/tomcat7/catalina.out"/>
             <arg file="${basedir}"/>
         </exec>
     </target>
@@ -66,15 +66,15 @@
     <target name="x_buildDatabaseTables">
         <echo message="Run createUser.sql" />
         <exec executable="${ssh}" failonerror="true">
-            <arg line="-i ${privateKeyLoc} ${serverUser}@${serverAdd} 'mysql --user=${databaseUser} --password=${databasePass} --database=${schema} &lt; ~/database/createUser.sql'"/>
+            <arg line="-i ${privateKeyLoc} ubuntu@${serverAdd} 'mysql --user=${databaseUser} --password=${databasePass} --database=${schema} &lt; ~/database/createUser.sql'"/>
         </exec>
         <echo message="Run createCards.sql" />
         <exec executable="${ssh}" failonerror="true">
-            <arg line="-i ${privateKeyLoc} ${serverUser}@${serverAdd} 'mysql --user=${databaseUser} --password=${databasePass} --database=${schema} &lt; ~/database/createCards.sql'"/>
+            <arg line="-i ${privateKeyLoc} ubuntu@${serverAdd} 'mysql --user=${databaseUser} --password=${databasePass} --database=${schema} &lt; ~/database/createCards.sql'"/>
         </exec>
         <echo message="Run createGameStore.sql" />
         <exec executable="${ssh}" failonerror="true">
-            <arg line="-i ${privateKeyLoc} ${serverUser}@${serverAdd} 'mysql --user=${databaseUser} --password=${databasePass} --database=${schema} &lt; ~/database/createGameStore.sql'"/>
+            <arg line="-i ${privateKeyLoc} ubuntu@${serverAdd} 'mysql --user=${databaseUser} --password=${databasePass} --database=${schema} &lt; ~/database/createGameStore.sql'"/>
         </exec>
     </target>
 
@@ -83,7 +83,7 @@
     <target name="x_runDatabaseReset">
         <echo message="Run dropAllTables.sql" />
         <exec executable="${ssh}" failonerror="true">
-            <arg line="-i ${privateKeyLoc} ${serverUser}@${serverAdd} 'mysql --user=${databaseUser} --password=${databasePass} --database=${schema} &lt; ~/database/dropAllTables.sql'"/>
+            <arg line="-i ${privateKeyLoc} ubuntu@${serverAdd} 'mysql --user=${databaseUser} --password=${databasePass} --database=${schema} &lt; ~/database/dropAllTables.sql'"/>
         </exec>
     </target>
 
@@ -96,7 +96,7 @@
             <arg value="-i"/>
             <arg file="${privateKeyLoc}"/>
             <arg file="${basedir}/database"/>
-            <arg value="${serverUser}@${serverAdd}:/home/${serverUser}"/>
+            <arg value="ubuntu@${serverAdd}:/home/ubuntu"/>
         </exec>
 
     </target>

@@ -10,9 +10,15 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.ServletContext;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.net.NetworkInterface;
+import java.util.Enumeration;
+import java.net.SocketException;
 
 @Service
 public class EmailService {
@@ -20,10 +26,64 @@ public class EmailService {
     @Autowired
     private MailSender mailSender;
 
+    private String SERVER_ADDRESS;
 
     //TODO there probably is a better way to get the location of the server
-    private static final String SERVER_ADDRESS = "http://192.168.56.102";
-//    private static final String SERVER_ADDRESS = "http://cornerinternets.com";
+    
+    public EmailService(){
+    
+	    InetAddress servIp;
+	    
+		
+	    try {
+	    	
+		    Enumeration<NetworkInterface> networkDevices = NetworkInterface.getNetworkInterfaces();
+		    
+		    while (networkDevices.hasMoreElements())
+		    {
+		    	
+		    	NetworkInterface ni = networkDevices.nextElement();
+		    	
+		    	if (ni.getDisplayName().equals("eth0")) {
+		    	
+		    		Enumeration<InetAddress> addies = ni.getInetAddresses();
+		    	
+		    		//InetAddress will have two elements, IP6 addy, IP4 addy, get IP4 addy
+		    		while (addies.hasMoreElements())
+		    		{
+		    			
+		    			SERVER_ADDRESS = addies.nextElement().getHostAddress();
+		    			
+		    		}
+		    		
+		    		if (SERVER_ADDRESS.contains("192.168"))
+		    		{
+		    			
+		    			SERVER_ADDRESS += ":8080";
+		    			
+		    		}
+		    		
+		    		break;
+		    	
+		    	}
+		    	
+		    	
+		    } 
+		    
+	    }catch (SocketException ex)
+		    {
+		    	
+		    	logger.info("Couldn't get server IP, defaulting...");
+		    	
+		    	SERVER_ADDRESS = "http://192.168.56.102:8080";
+		    	
+//		    	SERVER_ADDRESS = "http:cornerinternets.com:8080";
+		    	
+		    	
+		    }
+	    	
+    	
+    }
 
     public void sendMail(String from, String to, String subject, String msg) {
         logger.info("Sending email to: " + to + "  from: " + from );

@@ -16,7 +16,7 @@
   	    <arg value="-i"/>
   	    <arg file="${privateKeyLoc}"/>
   	    <arg file="${basedir}/target/gameserver.war"/>
-  	    <arg value="${serverUser}@${serverAdd}:/var/lib/tomcat7/webapps"/>
+  	    <arg value="ubuntu@${serverAdd}:/var/lib/tomcat7/webapps"/>
   	 </exec>
   </target>
 
@@ -24,7 +24,7 @@
   	 <exec executable="${ssh}">
   	    <arg value="-i"/>
   	    <arg file="${privateKeyLoc}"/>
-  	    <arg value="${serverUser}@${serverAdd}"/>
+  	    <arg value="ubuntu@${serverAdd}"/>
   	    <arg value="sudo /etc/init.d/tomcat7 restart"/>
   	  </exec>
   </target>
@@ -34,7 +34,7 @@
  	 <exec executable="${ssh}">
  	    <arg value="-i"/>
  	    <arg file="${privateKeyLoc}"/>
- 	    <arg value="${serverUser}@${serverAdd}"/>
+ 	    <arg value="ubuntu@${serverAdd}"/>
  	    <arg value="sudo rm -rf /var/lib/tomcat7/webapps/gameserver*"/>
  	  </exec>
   </target>
@@ -43,7 +43,7 @@
  	 <exec executable="${ssh}">
  	    <arg value="-i"/>
  	    <arg file="${privateKeyLoc}"/>
- 	    <arg value="${serverUser}@${serverAdd}"/>
+ 	    <arg value="ubuntu@${serverAdd}"/>
  	    <arg value="sudo /etc/init.d/tomcat7 stop"/>
  	  </exec>
   </target>
@@ -53,7 +53,7 @@
         <exec executable="${scp}">
             <arg value="-i"/>
             <arg file="${privateKeyLoc}"/>
-            <arg value="${serverUser}@${serverAdd}:/var/log/tomcat7/catalina.out"/>
+            <arg value="ubuntu@${serverAdd}:/var/log/tomcat7/catalina.out"/>
             <arg file="${basedir}"/>
         </exec>
     </target>
