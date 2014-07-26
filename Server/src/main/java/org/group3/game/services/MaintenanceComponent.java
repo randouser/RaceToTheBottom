@@ -4,8 +4,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.group3.game.controllers.GameController;
-import org.group3.game.model.user.User;
-import org.group3.game.model.user.UserService;
 import org.group3.game.model.game.Game;
 import org.group3.game.model.game.GameService;
 import org.group3.game.model.game.GameDao;
@@ -20,9 +18,6 @@ import org.joda.time.DateTime;
 public class MaintenanceComponent {
 	
 	@Autowired
-	UserService userService;
-	
-	@Autowired
 	GameService gameService;
 	
 	@Autowired
@@ -32,12 +27,6 @@ public class MaintenanceComponent {
 	
 	public void maintainDb()
 	{
-		
-		//Users
-		logger.info("clean old users routine started");
-		
-		deleteUsers(userService.getInactivePlayers());
-		
 		//Games
 		logger.info("clean old games routine started");
 		
@@ -56,36 +45,6 @@ public class MaintenanceComponent {
 			gameService.deleteGameById(gameId.intValue());
 			
 			logger.info("Game ID send to delete" + gameId.intValue());
-			
-		}
-		
-	}
-	
-	public void deleteUsers(List<User> oldUsersToDelete)
-	{
-		
-		for (User curUser: oldUsersToDelete)
-		{
-			
-			//get all games the deleted user is in, delete them first
-			List<Game> gamesToDelete = gameDao.getSavedGamesForUser(curUser);
-			
-			List<Integer> gamesToDeleteIds = new ArrayList<>();
-			
-			for (Game userOldGames : gamesToDelete)
-			{
-				
-				gamesToDeleteIds.add(userOldGames.getGameId());
-				
-			}
-			
-			//Delete games old user is in
-			deleteGames(gamesToDeleteIds);
-			
-			//Then get rid of user
-			userService.deleteUserByEmail(curUser.getEmail());
-			
-			logger.info("user send to delete" + curUser.getEmail());
 			
 		}
 		
