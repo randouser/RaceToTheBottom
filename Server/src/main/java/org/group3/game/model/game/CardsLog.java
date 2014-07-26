@@ -9,8 +9,10 @@ public class CardsLog extends GameLog{
 
     private List<Card> cardsPlayed;
     private int cardsDamage;
-    protected Player curPlayer;
-    protected Player oppPlayer;
+    protected Integer curPlayerId;
+    protected Integer oppPlayerId;
+    protected String curPlayerName;
+    protected String oppPlayerName;
     protected int curTurn;
     protected int districtIndex;
 
@@ -25,10 +27,12 @@ public class CardsLog extends GameLog{
 
         this.cardsDamage = cardsDamage;
         this.cardsPlayed = cardsPlayed;
-        this.curPlayer = curPlayer;
-        this.oppPlayer = oppPlayer;
+        this.curPlayerId = curPlayer.getId();
+        this.oppPlayerId = oppPlayer.getId();
         this.curTurn = curDistrict.getTurn();
         this.districtIndex = districtIndex;
+        this.curPlayerName = curPlayer.getEmail();
+        this.oppPlayerName = oppPlayer.getEmail();
 
         String districtTurnPrefix = "District " + (districtIndex + 1) + " Turn " + curTurn + ": ";
 
@@ -47,10 +51,10 @@ public class CardsLog extends GameLog{
 
         if (cardsPlayed.size() == 0)
         {
-            return ("Player " + curPlayer.getEmail() + " burned a turn to generate resources.");
+            return ("Player " + curPlayerName + " burned a turn to generate resources.");
         }
 
-        String firstHalfMessage = "Player " + curPlayer.getEmail() + " played";
+        String firstHalfMessage = "Player " + oppPlayerName + " played";
 
         String posCardsPlayed = " positive card(s)";
 
@@ -123,22 +127,6 @@ public class CardsLog extends GameLog{
         this.cardsDamage = cardsDamage;
     }
 
-    public Player getCurPlayer() {
-        return curPlayer;
-    }
-
-    public void setCurPlayer(Player curPlayer) {
-        this.curPlayer = curPlayer;
-    }
-
-    public Player getOppPlayer() {
-        return oppPlayer;
-    }
-
-    public void setOppPlayer(Player oppPlayer) {
-        this.oppPlayer = oppPlayer;
-    }
-
     public int getCurTurn() {
         return curTurn;
     }
@@ -153,5 +141,37 @@ public class CardsLog extends GameLog{
 
     public void setDistrictIndex(int districtIndex) {
         this.districtIndex = districtIndex;
+    }
+
+    public Integer getCurPlayerId() {
+        return curPlayerId;
+    }
+
+    public void setCurPlayerId(Integer curPlayerId) {
+        this.curPlayerId = curPlayerId;
+    }
+
+    public Integer getOppPlayerId() {
+        return oppPlayerId;
+    }
+
+    public void setOppPlayerId(Integer oppPlayerId) {
+        this.oppPlayerId = oppPlayerId;
+    }
+
+    public String getCurPlayerName() {
+        return curPlayerName;
+    }
+
+    public void setCurPlayerName(String curPlayerName) {
+        this.curPlayerName = curPlayerName;
+    }
+
+    public String getOppPlayerName() {
+        return oppPlayerName;
+    }
+
+    public void setOppPlayerName(String oppPlayerName) {
+        this.oppPlayerName = oppPlayerName;
     }
 }

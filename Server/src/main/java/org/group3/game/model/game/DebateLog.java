@@ -9,7 +9,7 @@ public class DebateLog extends GameLog{
 
     private boolean isDebateLog;
     private int score;
-    private Player winningPlayer;
+    private Integer winningPlayerId;
     private int curDistrictIndex;
     private int bonus;
 
@@ -23,11 +23,14 @@ public class DebateLog extends GameLog{
 
         if(winningPlayer == null){
             this.logMessage = "The debate was a tie!";
+            this.winningPlayerId = null;
+
         }else{
             this.logMessage = "Player: " + winningPlayer.getEmail() + " has won the debate with the score " + score;
+            this.winningPlayerId = winningPlayer.getId();
         }
 
-        this.winningPlayer = winningPlayer;
+
         this.score = score;
         this.isDebateLog = true; //for the javascript to know what class this is
         this.curDistrictIndex = districtPointer;
@@ -51,12 +54,12 @@ public class DebateLog extends GameLog{
         this.bonus = bonus;
     }
 
-    public Player getWinningPlayer() {
-        return winningPlayer;
+    public Integer getWinningPlayerId() {
+        return winningPlayerId;
     }
 
-    public void setWinningPlayer(Player winningPlayer) {
-        this.winningPlayer = winningPlayer;
+    public void setWinningPlayerId(Integer winningPlayerId) {
+        this.winningPlayerId = winningPlayerId;
     }
 
     public boolean isDebateLog() {
@@ -74,4 +77,6 @@ public class DebateLog extends GameLog{
     public void setScore(int score) {
         this.score = score;
     }
+
+
 }
