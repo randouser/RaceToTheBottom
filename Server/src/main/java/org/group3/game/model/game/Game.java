@@ -199,8 +199,10 @@ public class Game{
         //set winner for that district
         if(curDistrict.getPlayerOneScore() > curDistrict.getPlayerTwoScore()){
             curDistrict.setWinnerEmail(players[0].getEmail());
+            curDistrict.setColor(players[0].getColor());
         }else if(curDistrict.getPlayerOneScore() < curDistrict.getPlayerTwoScore()){
             curDistrict.setWinnerEmail(players[1].getEmail());
+            curDistrict.setColor(players[1].getColor());
         }else{
             curDistrict.setWinnerEmail("Tie");
         }

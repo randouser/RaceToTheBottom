@@ -287,7 +287,7 @@ function DistrictView(district,index,isCurDistrict){
         dHtml += '<div class="turn"><span class="turnText">Turn: '+turnText+'</span></div>';
     }
 
-    dHtml += '</div><img src="images/d'+imgIndex+'.png" />';
+    dHtml += '</div><img src="images/districts/d'+imgIndex+'_'+district.color+'.png" />';
 
     this.element.innerHTML = dHtml;
 
@@ -341,18 +341,18 @@ function Game(turnMessage){
             if(i === this.districtPointer){
                 districtV = new DistrictView(this.districts[i],i,true);
                 curDistrict = districtV.element;
+                curDistrict.classList.add('districtToggle');
             }else{
                 districtV = new DistrictView(this.districts[i],i,false);
             }
             this.districtViews.push(districtV);
             districtStage.appendChild(districtV.element);
         }
-        if(turnMessage.debate){
-            curDistrict.classList.add('districtToggle');
-        }else{
+
+        if(!turnMessage.debate){
             //delay the animation
             setTimeout(function(){
-                curDistrict.classList.add('districtToggle','animated','flash');
+                curDistrict.classList.add('animated','flash');
             },700);
         }
 

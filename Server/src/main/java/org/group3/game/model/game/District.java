@@ -10,6 +10,7 @@ public class District {
     private int turn;
     private String type;
     private String winnerEmail;
+    private String color;
 
     public District(){}
 
@@ -19,6 +20,7 @@ public class District {
         this.playerTwoScore = playerTwoScore;
         this.playerOneScore = playerOneScore;
         winnerEmail = null;
+        color = "gray";
     }
 
 
@@ -80,5 +82,11 @@ public class District {
         this.type = type;
     }
 
+    public String getColor() {
+        return color;
+    }
 
+    public void setColor(String color) {
+        this.color = color;
+    }
 }

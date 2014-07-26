@@ -110,14 +110,17 @@
     position:absolute;
     left: 50%;
     margin: 0 0 0 -393.5px;
-    opacity:.5;
+    color:#f7f5f1;
+
 }
 .districtToggle{
     opacity:1;
+    color:yellow !important;
 }
 
 .districtTextWrapper{
     position:absolute;
+    text-shadow: 1px 1px 1px black;
 }
 
 .districtTextWrapper.d1{
