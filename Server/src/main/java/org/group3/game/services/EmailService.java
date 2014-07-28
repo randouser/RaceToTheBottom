@@ -77,7 +77,7 @@ public class EmailService {
 		    	
 		    	SERVER_ADDRESS = "http://192.168.56.102:8080";
 		    	
-//		    	SERVER_ADDRESS = "http:cornerinternets.com";
+//		    	SERVER_ADDRESS = "http://cornerinternets.com";
 		    	
 		    	
 		    }
