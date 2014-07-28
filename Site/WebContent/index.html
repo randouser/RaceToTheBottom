@@ -327,15 +327,15 @@
 
     jQuery('#backToLobbyButton').click(function(){
         window.location.hash = 'lobby';
-        jQuery('gameStageWrapper').hide();
-        jQuery('lobbyWrapper').fadeIn();
+        jQuery('#gameStageWrapper').hide();
+        jQuery('#lobbyWrapper').fadeIn();
     });
 
 
     jQuery('#backToLoginButton').click(function(){
         window.location.hash = '';
-        jQuery('registerWrapper').hide();
-        jQuery('lobbyWrapper').fadeIn();
+        jQuery('#registerWrapper').hide();
+        jQuery('#loginWrapper').fadeIn();
     });
 
     jQuery('#adminButton').click(function(){
