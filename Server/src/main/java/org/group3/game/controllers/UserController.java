@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import org.apache.commons.validator.routines.EmailValidator;
+
 @Controller
 @RequestMapping("/user")
 public class UserController {
@@ -45,9 +47,54 @@ public class UserController {
 	public @ResponseBody LoginMessage registerUser(@RequestParam String name,@RequestParam String email,@RequestParam String password) {
 
         logger.info("REGISTER POST!");
-        User newUser = userService.registerUser(email,password,name);
+        
+        User newUser;
+        
+        String resultMessage;
+        
+        EmailValidator validator = EmailValidator.getInstance();
+        
+        //Check if any of the params are empty
+        if (name == null || name.length() == 0 || email == null || email.length() == 0 || password == null || password.length() == 0)
+        {
+        	
+        	resultMessage = "Error: Please ensure all form fields are filled.";
+        	
+        	newUser = null;
+        	
+        }
+        
+        //Check if email is already registered
+        else if (userService.getUserByEmail(email) != null)
+        {
+        	
+        	newUser = null;
+        	
+        	resultMessage = "Error: Email already registered!";
+        	
+        }
+        
+        //Check if email is valid
+        else if (!validator.isValid(email))
+        {
+        	
+        	newUser = null;
+        	
+        	resultMessage = "Error: Please enter a valid email";
+        	
+        }
+        
+        //Ok, nothing wrong
+        else
+        {
+        	
+        	newUser = userService.registerUser(email, password, name);
+        	
+        	resultMessage = "Succesfully registered";
+        	
+        }
 
-		return new LoginMessage("Successful Register",newUser);
+		return new LoginMessage(resultMessage, newUser);
 	}
 
     @RequestMapping(value="/login",method = RequestMethod.GET)
