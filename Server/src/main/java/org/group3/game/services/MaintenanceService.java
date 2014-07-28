@@ -30,8 +30,8 @@ public class MaintenanceService {
 	@Autowired
 	private MaintenanceComponent maintWorker;
 	
-	//runs every 7 days
-	@Scheduled(cron="* * * */7 * *")
+	//runs every Sunday at 1AM
+	@Scheduled(cron="0 0 1 ? * 7")
 	public void runMaintenance()
 	{
 		
