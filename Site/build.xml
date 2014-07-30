@@ -45,6 +45,7 @@
  	    <arg value="${serverUser}@${serverAdd}"/>
  	    <arg value="sudo rm -rf /var/lib/tomcat7/webapps/ROOT*"/>
  	  </exec>
+      <delete dir="build"/>
   </target>
 
   <target name="stopTomcat">

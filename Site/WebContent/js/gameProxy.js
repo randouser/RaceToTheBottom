@@ -9,7 +9,7 @@ GameProxy = {
     ,takeTurn:function(turnType){
         jQuery('#waitingScreen').fadeIn();
 
-        var gameId = jQuery('#gameStageWrapper').data('gameId');
+        var gameId = jQuery('#gamePanel').data('gameId');
         var game = this.games[gameId];
         var cardsSelected = game.cardsSelected;
 
@@ -72,7 +72,7 @@ GameProxy = {
     
     ,getTurn:function(turnMessage){
         var that = this;
-        var gameStage = jQuery('#gameStageWrapper');
+        var gameStage = jQuery('#gamePanel');
         var curGameId = gameStage.data('gameId');
 
         var game = new Game(turnMessage);
@@ -107,9 +107,10 @@ GameProxy = {
 
 
     }
+    //generally called from panelController
     ,displayGame:function(gameId){
         var game = this.games[gameId];
-        var gameStage = jQuery('#gameStageWrapper');
+        var gameStage = jQuery('#gamePanel');
 
 
         gameStage.data('gameId',game.gameId);
@@ -128,14 +129,11 @@ GameProxy = {
             this.toggleButtonHandlers(true);
         }
 
-
-        jQuery('#lobbyWrapper').hide();
-        gameStage.fadeIn();
     }
 
     ,endDebate:function(score){
         this.toggleButtonHandlers(true);
-        var gameId = jQuery('#gameStageWrapper').data('gameId');
+        var gameId = jQuery('#gamePanel').data('gameId');
         this.games[gameId].debate = false;
         this.games[gameId].debateScore = score;
         this.takeTurn('debate');
@@ -181,8 +179,7 @@ GameProxy = {
                 .removeClass('pending')
                 .addClass('ready')
                 .click({gameId:gameId},function(e){
-                    that.displayGame(e.data.gameId);
-                    window.location.hash = 'game';
+                    PanelController.goToGame(e.data.gameId);
                 })
 
         } else{
@@ -224,16 +221,19 @@ GameProxy = {
         jQuery('#gamerow_' + gameId).remove();
 
 
-        var gameStage = jQuery('#gameStageWrapper');
+        var gameStage = jQuery('#gamePanel');
         var curGameId = gameStage.data('gameId');
 
         if(gameId === curGameId && gameStage.is(':visible')){
-            window.location.hash = 'lobby';
+            PanelController.goToLobbyPanel();
         }
 
 
         //TODO request score update
 
+    }
+    ,doesGameExist:function(gameId){
+        return gameId && this.games[gameId] != undefined;
     }
 
 

@@ -119,8 +119,13 @@ StompService = {
         this.client.connect({},connectSuccess,connectFailure);
 
     }
-    ,disconnect:function(){
-        if(this.client){this.client.disconnect();}
+    ,disconnect:function(callback){
+
+        if(this.client){
+            this.client.disconnect(callback)
+        }else if(callback){
+            callback();
+        }
     }
     ,sendMessage:function(destination,jsonMessage){
         this.client.send('/app/'+destination, {}, JSON.stringify(jsonMessage));
