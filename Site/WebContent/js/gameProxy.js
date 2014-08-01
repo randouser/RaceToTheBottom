@@ -268,7 +268,6 @@ function CardView(card){
 function DistrictView(district,index,isCurDistrict){
     this.district = district;
     this.className = district.type;
-    this.bodyText = 'p1Score: '+district.playerOneScore + '<br />' + 'p2Score: ' + district.playerTwoScore;
     this.index = index;
 
 
@@ -278,10 +277,11 @@ function DistrictView(district,index,isCurDistrict){
     var dHtml =
     '<div class="districtTextWrapper d'+imgIndex+'">'+
     '<div class="name"><span class="nameText">'+this.index+' - '+district.type+'</span></div>'+
-    '<div class="body"><span class="bodyText">'+this.bodyText+'</span></div>';
+    '<div class="p1Score"><span>Blue: </span><span class="p1ScoreText">'+district.playerOneScore+'</span></div>'+
+    '<div class="p2Score"><span>Red:</span><span class="p2ScoreText">'+district.playerTwoScore+'</span></div>';
 
     if(district.winnerEmail){
-        dHtml += '<div class="turn"><span class="turnText">Winner: '+district.winnerEmail+'</span></div>';
+        dHtml += '<div class="turn"><span class="turnTextEmail">Winner: '+district.winnerEmail+'</span></div>';
     }else if(isCurDistrict){
         var turnText  = (district.turn < 10) ? (district.turn + 1) : 'Debate';
         dHtml += '<div class="turn"><span class="turnText">Turn: '+turnText+'</span></div>';
@@ -290,15 +290,16 @@ function DistrictView(district,index,isCurDistrict){
     dHtml += '</div><img src="images/districts/d'+imgIndex+'_'+district.color+'.png" />';
 
     this.element.innerHTML = dHtml;
-
-    this.nameElement = this.element.getElementsByClassName('nameText')[0];
-    this.bodyElement = this.element.getElementsByClassName('bodyText')[0];
-
+    this.p1ScoreText = this.element.getElementsByClassName('p1ScoreText')[0];
+    this.p2ScoreText = this.element.getElementsByClassName('p2ScoreText')[0];
 
 
-    //TODO clean this up so we have separate elements for each score
+
+
+
     this.update = function(){
-        this.bodyElement.innerHTML = 'p1Score: Updating'+ '<br />' + 'p2Score: Updating';
+        this.p1ScoreText.innerHTML = 'Updating';
+        this.p2ScoreText.innerHTML = 'Updating';
     }
 }
 
@@ -333,6 +334,7 @@ function Game(turnMessage){
 
     this.displayDistricts = function(){
         var districtStage = document.getElementById('districtStage');
+        var zIndex = 10;
         var i = 0;
         this.empty(districtStage);
         var curDistrict;
@@ -345,6 +347,7 @@ function Game(turnMessage){
             }else{
                 districtV = new DistrictView(this.districts[i],i,false);
             }
+            districtV.element.style.zIndex = --zIndex;
             this.districtViews.push(districtV);
             districtStage.appendChild(districtV.element);
         }

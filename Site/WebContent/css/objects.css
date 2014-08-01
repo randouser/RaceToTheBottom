@@ -121,6 +121,13 @@
 .districtTextWrapper{
     position:absolute;
     text-shadow: 1px 1px 1px black;
+    width:130px;
+    white-space: nowrap;
+
+}
+.districtTextWrapper > div{
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .districtTextWrapper.d1{
@@ -129,21 +136,21 @@
 }
 .districtTextWrapper.d2{
     top: 23%;
-    left: 18%;
+    left: 15%;
 
 }
 .districtTextWrapper.d3{
     top: 10%;
-    left: 42%;
+    left: 40%;
 
 }
 .districtTextWrapper.d4{
     top: 20%;
-    left: 69%;
+    left: 68%;
 
 }
 .districtTextWrapper.d5{
     top: 56%;
-    left: 83%;
+    left: 79%;
 }
 
