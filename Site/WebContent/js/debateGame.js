@@ -22,6 +22,8 @@ var DebateGame = {
         this.scrollWrapper = document.getElementById('scrollWrapper');
 
         this.score = 0;
+        this.scoreElement.innerHTML = this.score;
+
         this.isDone = false;
         this.obstTotal = 10;
         this.debater = new Debater(this.debaterElement);
