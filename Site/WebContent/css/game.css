@@ -208,6 +208,9 @@ h2{
     -ms-user-select: none;
     user-select: none;
 }
+#debater img{
+    width:50px;
+}
 
 .obstacle{
     position:absolute;
@@ -265,4 +268,9 @@ h2{
 }
 #opponentWrapper{
     margin-top: 10px;
+}
+
+
+#miniInfo{
+    display:none;
 }

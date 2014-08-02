@@ -109,6 +109,7 @@
     padding:0;
     position:absolute;
     left: 50%;
+    top:1em;
     margin: 0 0 0 -393.5px;
     color:#f7f5f1;
 
@@ -154,3 +155,18 @@
     left: 79%;
 }
 
+
+
+
+#debater{
+    width:50px;vertical-align:bottom;
+}
+
+.debateLog{
+    background-color:#f7f5f1;
+    font-weight:bold;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    display:inline-block;
+}

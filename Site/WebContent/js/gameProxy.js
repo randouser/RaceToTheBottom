@@ -342,8 +342,8 @@ function Game(turnMessage){
             var districtV;
             if(i === this.districtPointer){
                 districtV = new DistrictView(this.districts[i],i,true);
-                curDistrict = districtV.element;
-                curDistrict.classList.add('districtToggle');
+                curDistrict = districtV;
+                curDistrict.element.classList.add('districtToggle');
             }else{
                 districtV = new DistrictView(this.districts[i],i,false);
             }
@@ -355,10 +355,23 @@ function Game(turnMessage){
         if(!turnMessage.debate){
             //delay the animation
             setTimeout(function(){
-                curDistrict.classList.add('animated','flash');
+                curDistrict.element.classList.add('animated','flash');
             },700);
         }
 
+        this.updateMiniInfo(curDistrict);
+
+
+    };
+
+    this.updateMiniInfo = function(curDistrict){
+        var district = curDistrict.district;
+        var miniInfo = document.getElementById('miniInfo');
+        miniInfo.innerHTML =
+            'D'+ this.districtPointer +
+            ' | Blue: ' + district.playerOneScore +
+            ' | Red: ' + district.playerTwoScore +
+            ' | Turn: ' + ((district.turn < 10) ? (district.turn + 1) : 'Debate');
 
     };
 
@@ -389,7 +402,11 @@ function Game(turnMessage){
 
     this.empty = function(element){
         while (element.hasChildNodes()) {
-            element.removeChild(element.firstChild);
+            if(element.lastChild.className === 'endEmpty'){
+                break;
+            }else{
+                element.removeChild(element.lastChild);
+            }
         }
     };
     this.cardWatcher = function(e,cardView,gameObj){

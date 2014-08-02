@@ -1,0 +1,206 @@
+
+
+
+/* ============= Small size ============= */
+@media (max-width: 640px) {
+    #opponent{
+        position: absolute;
+        width: inherit;
+        z-index: 20;
+        font-size: 10px;
+        left: 0;
+        top: 0;
+        background-color: white;
+        margin:0;
+        padding:0;
+    }
+
+    #opponentPlayerImage{
+        width:27px !important;
+    }
+
+    #opponentWrapper{
+        margin:0;
+    }
+
+    #cardStage {
+        text-align:left;
+    }
+
+    #widgetWrapper{
+        position: relative;
+        left: 100px;
+    }
+
+    #miniInfo{
+        display:block;
+        position: absolute;
+        color: black;
+        text-shadow: 1px 1px 1px white;
+        background-color: rgba(255, 255, 255, 0.82);
+        font-weight: bold;
+    }
+
+    /* *** Debate game stuff *** */
+    #scrollWrapper{
+        width:100%;
+        margin:0;
+        left:0;
+
+    }
+
+    #scrollStage{
+        width:300px;
+    }
+
+    #debater{
+        left:0;
+
+    }
+    #debater img{
+        width:40px;
+    }
+
+    #turnLogWrapper{
+        width:100%;
+        margin:0;
+        left:inherit;
+    }
+
+    #districtStage div.district{
+        width: 100%;
+        height: 200px;
+        padding: 0;
+        left:inherit;
+        margin:0;
+        top:0;
+
+    }
+    div#districtStage{
+        height:inherit;
+    }
+
+     .districtTextWrapper{
+        display:none;
+    }
+
+}
+
+/* ============= Medium size ============= */
+
+@media (max-width: 1100px) {
+    #mainContentWrapper{
+        padding:0;
+    }
+
+}
+
+@media (max-width: 700px) {
+    #currentPlayer{
+        display:none !important;
+    }
+
+}
+
+
+@media (max-width: 1005px) {
+    body{
+        margin:0;
+    }
+
+    #mainContentWrapper{
+        max-width:2000px;
+        padding:0;
+    }
+
+    #opponent{
+        padding:5px;
+    }
+    #opponentPlayerImage{
+        width:100px;
+    }
+
+    #cardStage{
+        max-width:530px;
+    }
+
+    #gameStageMain{
+        display: block;
+        width: inherit;
+
+    }
+
+    #buntingImage{
+        width:100%;
+    }
+
+
+    #bottomStage > div{
+        padding:0;
+    }
+
+
+    #districtStage{
+        padding:0;
+        height: 300px;
+    }
+
+
+
+
+    #districtStage img {
+        width: 100%;
+    }
+
+
+
+
+    div.districtTextWrapper.d1{
+        top: 70%;
+        left: 23%;
+    }
+    div.districtTextWrapper.d2{
+        top: 22%;
+        left: 13%;
+
+    }
+    div.districtTextWrapper.d3{
+        top: 9%;
+        left: 37%;
+
+    }
+    div.districtTextWrapper.d4{
+        top: 27%;
+        left: 66%;
+
+    }
+    div.districtTextWrapper.d5{
+        top: 54%;
+        left: 79%;
+    }
+
+    .districtTextWrapper {
+        font-size:14px;
+        width: 110px;
+    }
+
+    #districtStage .district{
+        height:auto;
+        width:600px;
+        left: 50%;
+        margin-left: -300px;
+    }
+
+    #districtStage{
+        height:280px;
+    }
+
+
+
+
+
+}
+
+
+
+

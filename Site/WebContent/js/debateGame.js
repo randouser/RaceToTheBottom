@@ -185,7 +185,6 @@ function Obstacle(text,speed,collisionEle,scoreCallback,finishCallback){
     this.element.className = 'obstacle';
     this.element.style.backgroundColor = '#'+(Math.random()*0xFFFFFF<<0).toString(16);
     this.MAX_DIST = 700; //in px
-    this.COLLISION_RANGE = 500;
     this.LOC_DELTA = speed;
     this.collisionEle = collisionEle;
 
@@ -202,7 +201,7 @@ function Obstacle(text,speed,collisionEle,scoreCallback,finishCallback){
         this.element.style.right = delta + 'px';
 
         //slight optimization, only check collision when near the object
-        if(delta > this.COLLISION_RANGE && this.overlaps(this.element,this.collisionEle)){
+        if(this.overlaps(this.element,this.collisionEle)){
             scoreCallback();
         }
         window.requestAnimationFrame(function(){that.rec_start(delta + that.LOC_DELTA)});

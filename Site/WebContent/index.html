@@ -3,6 +3,7 @@
 <head>
     <title>Race to the Bottom</title>
     <link rel="stylesheet" type="text/css" href="css/game.css">
+    <link rel="stylesheet" type="text/css" href="css/mediaOverrides.css">
     <link rel="stylesheet" type="text/css" href="css/objects.css">
     <link rel="stylesheet" type="text/css" href="css/animate.css">
 
@@ -130,7 +131,7 @@
                     </div>
                     <div id="scrollCell">
                         <div id="scrollStage">
-                            <div id="debater"><img src="images/debater.png" style="width:50px;vertical-align:bottom;"></div>
+                            <div id="debater"><img src="images/debater.png"></div>
                         </div>
 
                     </div>
@@ -140,10 +141,12 @@
 
                 </div>
                 <div id="districtStage" >
+                    <img class="endEmpty" src="images/districts/dbase.png" />
                     <!--Districts generated here-->
                 </div>
             </div>
             <div id="buntingWrapper">
+                <div id="miniInfo"></div>
                 <img id="buntingImage" src="images/bunting.png" />
             </div>
             <div id="bottomStage">
