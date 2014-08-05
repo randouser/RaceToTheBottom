@@ -3,7 +3,7 @@ GameProxy = {
 
     ,startGame: function(emailToNotify,gameType){
         var user = UserProxy.user;
-        StompService.sendMessage('startGame',{userEmail:user.email,userToken:user.token,emailToNotify:emailToNotify,gameType:gameType,gameId:null});
+        StompService.sendMessage('startGameWrapper',{userEmail:user.email,userToken:user.token,emailToNotify:emailToNotify,gameType:gameType,gameId:null});
     }
 
     ,takeTurn:function(turnType){

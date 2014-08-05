@@ -13,7 +13,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-
+import org.apache.commons.validator.routines.EmailValidator;
 import java.net.URLDecoder;
 
 @Controller
@@ -46,54 +46,116 @@ public class GameController {
 
 
 
-    @MessageMapping("/startGame")
-    public void startGame(StartGameMessage message) throws Exception {
-    	
+    @MessageMapping("/startGameWrapper")
+    public void startGameWrapper(StartGameMessage message) {
 
-        logger.info("User: " +message.getUserEmail() + " has requested to start a game with: " + message.getEmailToNotify());
-
-        
-        User user = userService.getUserByEmailToken(message.getUserEmail(),message.getUserToken());
-
-        if(user == null){
-            throw new IllegalArgumentException("There is no user with these credentials");
-        }
-
-        GameMessage gMessage;
-        String gameType = message.getGameType();
-
-        //if we are inviting a new player, we send an email invite
-        if(gameType.equals("newPlayer")){
-            gMessage = gameService.createGame(user,message.getGameType(), message.getEmailToNotify(),null);
-            emailService.sendEmailInvite(user, message.getEmailToNotify(), gMessage.getGameId());
-        } 
-        //if solo match, no email or database actions just get into the game
-        else if (gameType.equals("single")){
-        	gMessage = gameService.createGame(user,message.getGameType(),"Politibot",null);
-        	messagingTemplate.convertAndSend("/queue/"+user.getToken()+"/message",gMessage);
-        	StartGameMessage aIGMessage = aiService.invite(gMessage);//return a new start game message
-        	joinGame(aIGMessage);//needs a slightly different start game message       	
-        }
-        //if we are inviting a registered player, check database for user
-        else{
-            User invitee = userService.getUserByEmail(message.getEmailToNotify());
-            if(invitee == null) {
-                //TODO better error handling, maybe make general messages enums
-                messagingTemplate.convertAndSend("/queue/"+user.getToken()+"/message",new ErrorMessage("There is no registered user with email " + message.getEmailToNotify()));
-                return;
-            }
-            gMessage = gameService.createGame(user,message.getGameType(), message.getEmailToNotify(),invitee);
-            messagingTemplate.convertAndSend("/queue/" + invitee.getToken() + "/invite", new JoinGameMessage(gMessage.getGameId(), message.getEmailToNotify()));
-
-
-        }
-
-        //tell the user that the game has been created if not AI
-        if(!gameType.equals("single")) {
-        	messagingTemplate.convertAndSend("/queue/"+user.getToken()+"/message",gMessage);
-        }
+    	try {
+    		
+    		startGame(message);
+    		
+    	}
+    	catch(IllegalArgumentException ex)
+    	{
+    		
+    		messagingTemplate.convertAndSend("/queue/"+message.getUserToken()+"/message", new ErrorMessage(ex.getMessage()));
+    		return;
+    		
+    	}
+    	catch(Exception ex)
+    	{
+    		
+    		logger.info("Exception when creating game: " + ex.getMessage());
+    		
+    		return;
+    		
+    	}
+       
         
     }
+    
+    public void startGame(StartGameMessage message) throws IllegalArgumentException, Exception  {
+    	
+    	 logger.info("User: " +message.getUserEmail() + " has requested to start a game with: " + message.getEmailToNotify());
+
+         
+         User user = userService.getUserByEmailToken(message.getUserEmail(),message.getUserToken());
+
+         if(user == null){
+             throw new Exception("There is no user with these credentials");
+         }
+         
+    	 //Check if some smart alec tried to invite themselves
+    	 if (message.getEmailToNotify().equals(message.getUserEmail()))
+    	 {
+    		 
+    		 throw new IllegalArgumentException("Choose \"Single Player\" to play the AI.");
+    		 
+    	 }
+
+         GameMessage gMessage;
+         String gameType = message.getGameType();
+
+         //if we are inviting a new player, we send an email invite
+         if(gameType.equals("newPlayer")){
+        	 
+        	 //Check if invitee is valid email
+        	 if (!verifyEmail(message.getEmailToNotify()))
+        	 {
+        		 
+        		 throw new IllegalArgumentException(message.getEmailToNotify() + " is not a valid email address.");
+        		 
+        	 }
+        	 
+        	 //Check if invitee is already registerd
+        	 if (userService.getUserByEmail(message.getEmailToNotify()) != null)
+        	 {
+        		 
+        		 throw new IllegalArgumentException(message.getEmailToNotify() + " is already registered. Invite using \"Invite Player\".");
+        		 
+        	 }
+        	 
+        	 
+             gMessage = gameService.createGame(user,message.getGameType(), message.getEmailToNotify(),null);
+             emailService.sendEmailInvite(user, message.getEmailToNotify(), gMessage.getGameId());
+         } 
+         //if solo match, no email or database actions just get into the game
+         else if (gameType.equals("single")){
+         	gMessage = gameService.createGame(user,message.getGameType(),"Politibot",null);
+         	messagingTemplate.convertAndSend("/queue/"+user.getToken()+"/message",gMessage);
+         	StartGameMessage aIGMessage = aiService.invite(gMessage);//return a new start game message
+         	joinGame(aIGMessage);//needs a slightly different start game message       	
+         }
+         //if we are inviting a registered player, check database for user
+         else{
+             User invitee = userService.getUserByEmail(message.getEmailToNotify());
+             
+             //Check if email is valid
+        	 if (!verifyEmail(message.getEmailToNotify()))
+        	 {
+        		 
+        		 throw new IllegalArgumentException(message.getEmailToNotify() + " is not a valid email address.");
+        		 
+        	 }
+             
+             //If they aren't registered, tell them to invite new player.
+             if(invitee == null) {
+                 
+            	 throw new IllegalArgumentException("Error: " + message.getEmailToNotify() + " is not registered. Choose invite new player.");
+             }
+             
+             gMessage = gameService.createGame(user,message.getGameType(), message.getEmailToNotify(),invitee);
+             messagingTemplate.convertAndSend("/queue/" + invitee.getToken() + "/invite", new JoinGameMessage(gMessage.getGameId(), message.getEmailToNotify()));
+
+
+         }
+
+         //tell the user that the game has been created if not AI
+         if(!gameType.equals("single")) {
+         	messagingTemplate.convertAndSend("/queue/"+user.getToken()+"/message",gMessage);
+         }
+    	
+    }
+    
 
     @MessageMapping("/joinGame")
     public void joinGame(StartGameMessage message) throws Exception {
@@ -224,6 +286,15 @@ public class GameController {
         gameService.deleteGameById(turnMessage.getGameId());
 
 
+    }
+    
+    private boolean verifyEmail(String email)
+    {
+    	
+    	EmailValidator validator = EmailValidator.getInstance();
+    	
+    	return validator.isValid(email);
+    	
     }
 
 
