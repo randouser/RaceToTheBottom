@@ -157,6 +157,14 @@ public class GameService{
 
     }
 
+    public int getActiveGameCountForUser(User user)
+    {
+    	
+    	List<Game> gameList = gameDao.getSavedGamesForUser(user);
+    	
+    	return gameList.size();
+    	
+    }
 
     
     public LobbyMessage getActiveGamesForUser(User user) {

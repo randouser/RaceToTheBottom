@@ -21,6 +21,8 @@ public class GameController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(GameController.class);
 	
+	private static final int MAX_ACTIVE_GAMES = 10;
+	
 	@Autowired
     UserService userService;
 
@@ -83,6 +85,14 @@ public class GameController {
          if(user == null){
              throw new Exception("There is no user with these credentials");
          }
+
+         //Check if inviter has max active games
+         if (gameService.getActiveGameCountForUser(user) >= MAX_ACTIVE_GAMES)
+         {
+        	 
+        	 throw new IllegalArgumentException("You have too many active games. Finish some games and try again.");
+        	 
+         }
          
     	 //Check if some smart alec tried to invite themselves
     	 if (message.getEmailToNotify().equals(message.getUserEmail()))
@@ -141,6 +151,14 @@ public class GameController {
              if(invitee == null) {
                  
             	 throw new IllegalArgumentException("Error: " + message.getEmailToNotify() + " is not registered. Choose invite new player.");
+             }
+             
+             //check if invitee is at active games cap
+             if (gameService.getActiveGameCountForUser(invitee) >= MAX_ACTIVE_GAMES)
+             {
+            	 
+            	 throw new IllegalArgumentException(message.getEmailToNotify() + " has too many active games. Try again later.");
+            	 
              }
              
              gMessage = gameService.createGame(user,message.getGameType(), message.getEmailToNotify(),invitee);
