@@ -210,7 +210,61 @@ public class GameService{
     	return gameDao.getInactiveGameIdsByDate(dt);
     	
     }
-
+    
+    public User getPlayerOneByGame(int gameId)
+    {
+    	
+    	Game game;
+    	
+    	if (activeGames.containsKey(gameId))
+    		game = activeGames.get(gameId);
+    	else{
+    		
+    		game = gameDao.getGameById(gameId);
+    		if (game == null){
+    			
+    			throw new IllegalArgumentException("Couldn't load game " + gameId);
+    			
+    		}
+    		
+    	}
+    	
+    	Player[] players = game.getPlayers();
+    	
+    	return userService.getUserByEmail(players[0].getEmail());
+    	
+    }
+    
+    public User getPlayerTwoByGame(int gameId)
+    {
+    	
+    	Game game;
+    	
+    	if (activeGames.containsKey(gameId))
+    		game = activeGames.get(gameId);
+    	else{
+    		
+    		game = gameDao.getGameById(gameId);
+    		if (game == null){
+    			
+    			throw new IllegalArgumentException("Couldn't load game " + gameId);
+    			
+    		}
+    		
+    	}
+    	
+    	Player[] players = game.getPlayers();
+    	
+    	return userService.getUserByEmail(players[1].getEmail());
+    	
+    }
+    
+    public Game getGameById(int gameId)
+    {
+    	
+    	return loadGame(gameId);
+    	
+    }
 
 
     /**

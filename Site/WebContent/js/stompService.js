@@ -30,7 +30,18 @@ StompService = {
                         ,emailToNotify:joinInfo.inviteeEmail
                     });
                 } else {
-                   alert("Invitation Canceled");
+                   
+                	var user = UserProxy.user;
+                	that.sendMessage('rejectInvite', {
+                		userEmail:user.email
+                		,userToken:user.token
+                		,gameType:'player'
+                		,gameId:joinInfo.gameId
+                		,emailToNotify:joinInfo.inviteeEmail
+                	});
+                	
+                	alert("Invitation Canceled");
+                   
                 }
 
 
@@ -45,6 +56,11 @@ StompService = {
                     case 'error':
                         alert(gameMessage.message);
                         break;
+                    case 'gameReject':
+                    	GameProxy.games[gameMessage.gameId] = null;
+                    	GameProxy.removeGameFromList(gameMessage.gameId);
+                    	PanelController.goToLobbyPanel();
+                    	break;
                     case 'gameEnd':
                         GameProxy.endGame(gameMessage);
                         break;
@@ -80,6 +96,16 @@ StompService = {
                             ,emailToNotify:invites[i].inviteeEmail
                         });
                     } else {
+                    	
+                    	var user = UserProxy.user;
+                    	that.sendMessage('rejectInvite', {
+                    		userEmail:user.email
+                    		,userToken:user.token
+                    		,gameType:'player'
+                    		,gameId:invites[i].gameId
+                    		,emailToNotify:invites[i].inviteeEmail
+                    	});
+                    	
                         alert("Invitation Canceled");
                     }
                 }

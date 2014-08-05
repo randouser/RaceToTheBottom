@@ -10,6 +10,9 @@ public class GameMessage {
 
     @JsonIgnoreProperties
     public static final String GAME_LOOKUP = "gameLookup";
+    
+    @JsonIgnoreProperties
+    public static final String GAME_REJECT = "gameReject";
 
 
     private String type;

@@ -70,6 +70,22 @@ GameProxy = {
         }
     }
     
+    ,removeGameFromList:function(gameId){
+    	
+    	var row = jQuery('#gamerow_' + gameId);
+    	
+    	if (row.length == 0)
+    		{
+    		return
+    		}
+    	else{
+    		
+    		row.remove();
+    	}
+    	
+    }
+    	
+    
     ,getTurn:function(turnMessage){
         var that = this;
         var gameStage = jQuery('#gamePanel');

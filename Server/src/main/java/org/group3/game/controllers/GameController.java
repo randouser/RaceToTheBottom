@@ -204,6 +204,37 @@ public class GameController {
         
 
     }
+    
+    @MessageMapping("/rejectInvite")
+    public void rejectInvite(StartGameMessage message) throws Exception {
+    	
+    	logger.info("User: " + message.getUserEmail() + " has rejected invite to " + message.getGameId());
+    	logger.info("Game is " + message.getGameType());
+    	
+    	User user = null;
+    	
+    	if (message.getGameType().equals("single")){
+    		user = null;
+    	} else {
+    		
+    		user = userService.getUserByEmailToken(message.getUserEmail(), message.getUserToken());
+    		
+    		if (user == null)
+    			{
+    			
+    				throw new IllegalArgumentException("There is no user with these credentials");
+    			
+    			}
+    		
+    	}
+    	
+    	User playerOne = gameService.getPlayerOneByGame(message.getGameId());
+    	
+    	gameService.deleteGameById(message.getGameId());
+    	
+    	messagingTemplate.convertAndSend("/queue/"+playerOne.getToken()+"/message", new GameMessage(message.getGameId(), GameMessage.GAME_REJECT, "User " + message.getUserEmail() + " rejected game invite."));
+    	
+    }
 
 
     @MessageMapping("/takeTurn")
