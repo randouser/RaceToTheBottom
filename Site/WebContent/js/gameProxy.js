@@ -72,6 +72,8 @@ GameProxy = {
     
     ,removeGameFromList:function(gameId){
     	
+    	var that = this;
+    	
     	var row = jQuery('#gamerow_' + gameId);
     	
     	if (row.length == 0)
@@ -81,7 +83,10 @@ GameProxy = {
     	else{
     		
     		row.remove();
+        	delete that.games[gameId];
     	}
+    	
+    	PanelController.reloadPage();
     	
     }
     	

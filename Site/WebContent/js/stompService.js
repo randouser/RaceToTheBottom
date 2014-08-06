@@ -57,9 +57,8 @@ StompService = {
                         alert(gameMessage.message);
                         break;
                     case 'gameReject':
-                    	GameProxy.games[gameMessage.gameId] = null;
-                    	GameProxy.removeGameFromList(gameMessage.gameId);
-                    	PanelController.goToLobbyPanel();
+                    	//GameProxy.removeGameFromList(gameMessage.gameId);
+                    	PanelController.reloadPage();
                     	break;
                     case 'gameEnd':
                         GameProxy.endGame(gameMessage);
