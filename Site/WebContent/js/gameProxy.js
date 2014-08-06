@@ -1,5 +1,8 @@
 GameProxy = {
      games:{}
+    ,preTurnAnimating:false
+    ,curTurnCallback:null
+
 
     ,startGame: function(emailToNotify,gameType){
         var user = UserProxy.user;
@@ -7,7 +10,9 @@ GameProxy = {
     }
 
     ,takeTurn:function(turnType){
-        jQuery('#waitingScreen').fadeIn();
+        console.log('%c ****** Take Turn: ' + turnType + ' ******','color:orange;');
+
+        this.toggleButtonHandlers(false);
 
         var gameId = jQuery('#gamePanel').data('gameId');
         var game = this.games[gameId];
@@ -16,8 +21,10 @@ GameProxy = {
         var burnTurn = (turnType === 'burnTurnButton') || (cardsSelected.length == 0 && !game.debate);
         var surrender = (turnType === 'surrenderButton');
 
-
-        game.clear();
+        if(turnType === 'playCardsButton'){
+            console.log('cardsSelected = ' + cardsSelected );
+            game.clear();
+        }
         game.userTurn = false;
 
         var rowMessage = 'waiting for turn';
@@ -66,7 +73,6 @@ GameProxy = {
             //update games collection
             this.games[m.gameId] = new Game(m);
 
-
         }
     }
     
@@ -91,42 +97,178 @@ GameProxy = {
     	
     
     ,getTurn:function(turnMessage){
+        console.groupCollapsed('%c Get Turn','color:blue;');
+            console.log(turnMessage);
+        console.groupEnd();
         var that = this;
         var gameStage = jQuery('#gamePanel');
         var curGameId = gameStage.data('gameId');
 
-        var game = new Game(turnMessage);
-
-        if(this.games[game.gameId] === null){ //new game, note that null is intentional
+        var game;
+        //if it's a new game
+        if(this.games[turnMessage.gameId] === null){
+            game = new Game(turnMessage);
             this.activateGameRow(game.gameId,turnMessage.gameName,turnMessage.userTurn,turnMessage.inProgress);
-        }else{
+            this.games[game.gameId] = game;
+        }
+        //if it's an existing game that is currently being played
+        else if(curGameId === turnMessage.gameId && gameStage.is(':visible')){
+            game = this.games[turnMessage.gameId];
+            //update diff between old and new game
+            game.districts = turnMessage.districts;
+            game.debate = turnMessage.debate;
+            game.lastTurnLogs = turnMessage.lastTurnLogs;
+            game.userTurn = turnMessage.userTurn;
+
             var rowMessage = turnMessage.userTurn? 'turn ready': 'waiting for turn';
             jQuery('#gamerow_' + game.gameId).children('td').html(game.gameId + ': '+ game.gameName + ' - '+rowMessage);
-        }
 
-        //only display game stuff if data is for current displayed game
-        if(curGameId === turnMessage.gameId && gameStage.is(':visible')){
-            game.displayCards();
-            game.displayDistricts();
-            game.displayResources();
-            game.displayPlayerItems();
-            jQuery('#waitingScreen').hide();
-
-            //display the log cards.  We pass in the debate stuff as a callback that runs when displayLog is done.
-            that.toggleButtonHandlers(false);
-            game.displayLog(function(){
-                if(turnMessage.debate){
-                    DebateGame.startDebate();
-                }else{
-                    that.toggleButtonHandlers(true);
+            var curTurnCallback = function(){
+                //round changed, reset cards, resources
+                if(game.districtPointer !== turnMessage.districtPointer || game.hand.length < 5){
+                    game.hand = turnMessage.hand;
+                    game.maxMoney = turnMessage.maxMoney;
+                    game.maxWorkers = turnMessage.maxWorkers;
+                    game.money = game.maxMoney;
+                    game.workers = game.maxWorkers;
+                    game.districtPointer = turnMessage.districtPointer;
+                    game.displayCards(null);
+                    game.displayResources();
                 }
-            });
+
+                console.log('%c curTurnCallback()','color:DodgerBlue;');
+                jQuery('#waitingScreen').hide();
+                game.displayDistricts();
+
+                //pass callback to displayLog, runs when log is finished animating
+                game.displayLog(function(){
+                    if(turnMessage.debate){
+                        console.log('%c Start debate (no toggle buttons)','color:darksalmon;');
+                        DebateGame.startDebate();
+                    }else{
+                        console.log('%c turnMessage.debate = false, enable buttons','color:darksalmon;');
+                        that.toggleButtonHandlers(true);
+                    }
+                });
+
+            };
+
+            //this crazy thing prevents preturn animations (such as card and resource updates) from being wiped out
+            //by the log animations by putting the function into a bin that gets called when the preturn animations end.
+            if(this.preTurnAnimating){
+                console.log('this.preTurnAnimating, set turn log to wait','color:purple');
+                this.curTurnCallback = curTurnCallback;
+            }else{
+                console.log('this.preTurnAnimating == false, run turn logs now','color:purple');
+                //display the log animations immediately if there are no other animations going on
+                curTurnCallback();
+            }
+        }
+        //if it's an existing game that isn't open, we just overwrite it
+        else{
+            game = new Game(turnMessage);
+            var rowMessage = turnMessage.userTurn? 'turn ready': 'waiting for turn';
+            jQuery('#gamerow_' + game.gameId).children('td').html(game.gameId + ': '+ game.gameName + ' - '+rowMessage);
+            this.games[game.gameId] = game;
         }
 
-        this.games[game.gameId] = game;
 
 
     }
+
+    ,finishLogAnimation:function(){
+        console.log('%c finishLogAnimation()', 'color:green;');
+        jQuery('#waitingScreen').fadeIn();
+        if(this.curTurnCallback){
+            console.log('%c TurnCallback exists, executing', 'color:green;');
+            this.curTurnCallback();
+            this.curTurnCallback = null;
+
+        }
+
+    }
+
+    /**
+     * Updates the last actions of the player while he/she waits for next turn.
+     */
+    ,preTurnUpdate:function(preTurnMessage){
+        console.groupCollapsed('%cPreTurnUpdate()','color:Magenta ;');
+            console.log(preTurnMessage);
+        console.groupEnd();
+        this.preTurnAnimating = true;
+        var that = this;
+        var gameId = preTurnMessage.gameId;
+        var game = this.games[gameId];
+
+        //maxWorkers & money
+        var diffWorkers = preTurnMessage.maxWorkers - game.maxWorkers;
+        if(diffWorkers !== 0){
+            console.log('%cDiffWorkers !== 0','color:red;');
+            game.maxWorkers += diffWorkers;
+            game.workers+= diffWorkers;
+
+            console.log('updating active workers to ' +game.workers );
+            document.getElementById('workerTotal').innerHTML = game.maxWorkers;
+            document.getElementById('workerCount').innerHTML = game.workers;
+
+        }
+
+        var diffMoney = preTurnMessage.maxMoney - game.maxMoney;
+        if(diffMoney !== 0){
+            console.log('%cDiffmoney !== 0','color:red;');
+            game.maxMoney += diffMoney;
+            game.money+= diffMoney;
+
+            console.log('updating active money to ' +game.money );
+            document.getElementById('moneyTotal').innerHTML = game.maxMoney;
+            document.getElementById('moneyCount').innerHTML = game.money;
+        }
+
+        //damage/burn notifications, the last log is our turn
+        var log = preTurnMessage.lastTurnLogs ? preTurnMessage.lastTurnLogs[0] : null;
+        if(log && log.burnTurnLog){
+            console.log('%c log.burnTunLog','color:red;');
+            var message = document.createElement('div');
+            message.className = 'animated rollIn resourceMessage';
+            message.innerHTML = '<span>+'+log.moneyAdded+'</span><br><span style="color:red;">+'+log.workersAdded+'</span>';
+            document.getElementById('widgetWrapper').appendChild(message);
+            setTimeout(function(){
+                message.className = 'animated fadeOutDown resourceMessage';
+                setTimeout(function(){
+                    message.parentNode.removeChild(message);
+                    that.preTurnAnimating = false;
+                    that.finishLogAnimation();
+                },1000);
+            },2000);
+
+        }else if(log && log.cardsLog){
+            console.log('%c log.cardsLog','color:red;');
+            var message = document.createElement('div');
+            message.className = 'animated zoomInDown cardsMessage';
+            message.innerHTML = '<span>-'+log.cardsDamage+'</span>';
+            document.getElementById('opponent').appendChild(message);
+            setTimeout(function(){
+                message.className = 'animated fadeOutDown cardsMessage';
+                setTimeout(function(){
+                    message.parentNode.removeChild(message);
+                    that.preTurnAnimating = false;
+                    that.finishLogAnimation();
+                },1000);
+            },2000);
+        }else{
+            this.preTurnAnimating = false;
+            this.finishLogAnimation();
+        }
+
+        game.displayCards(preTurnMessage.lastCardsDrawn);
+
+        game.currentDistrict.update(preTurnMessage.currentDistrict);
+
+
+
+    }
+
+
     //generally called from panelController
     ,displayGame:function(gameId){
         var game = this.games[gameId];
@@ -134,7 +276,7 @@ GameProxy = {
 
 
         gameStage.data('gameId',game.gameId);
-        game.displayCards();
+        game.displayCards(null);
         game.displayDistricts();
         game.displayResources();
         game.displayPlayerItems();
@@ -152,7 +294,7 @@ GameProxy = {
     }
 
     ,endDebate:function(score){
-        this.toggleButtonHandlers(true);
+        console.log('%c End debate, enable buttons', 'color:Fuchsia;');
         var gameId = jQuery('#gamePanel').data('gameId');
         this.games[gameId].debate = false;
         this.games[gameId].debateScore = score;
@@ -219,6 +361,7 @@ GameProxy = {
 
 
     ,toggleButtonHandlers:function(enabled){
+        console.log('%c button handlers toggled to:' + enabled,'background-color:green;');
         var buttons = jQuery('#widgetWrapper').find('.turnButton');
         buttons.off('click').prop('disabled',true);
 
@@ -230,6 +373,7 @@ GameProxy = {
                         var accept = window.confirm("Are you sure you wish to surrender?");
                         if(!accept){return;}
                     }
+                    console.log(this.id + ' clicked');
                     GameProxy.takeTurn(this.id);
                 });
         }
@@ -269,6 +413,7 @@ GameProxy = {
 function CardView(card){
     var that = this;
     this.card = card;
+    this.selected = false;
 
     this.element = document.createElement('div');
     this.element.className = 'card ' + card.type;
@@ -321,9 +466,16 @@ function DistrictView(district,index,isCurDistrict){
 
 
 
-    this.update = function(){
-        this.p1ScoreText.innerHTML = 'Updating';
-        this.p2ScoreText.innerHTML = 'Updating';
+    this.update = function(district){
+        if(district){
+            this.district = district;
+            this.p1ScoreText.innerHTML = district.playerOneScore;
+            this.p2ScoreText.innerHTML = district.playerTwoScore;
+        }else{
+            this.p1ScoreText.innerHTML = 'Updating...';
+            this.p2ScoreText.innerHTML = 'Updating...';
+        }
+
     }
 }
 
@@ -349,25 +501,28 @@ function Game(turnMessage){
     this.opponentName = turnMessage.opponentName;
     this.playerColor = turnMessage.playerColor;
     this.opponentColor = turnMessage.opponentColor;
+    this.currentDistrict = null;
 
     this.districtViews = [];
+    this.cardViews = [];
 
     this.money =this.maxMoney;
     this.workers = this.maxWorkers;
     this.cardsSelected = [];
+
 
     this.displayDistricts = function(){
         var districtStage = document.getElementById('districtStage');
         var zIndex = 10;
         var i = 0;
         this.empty(districtStage);
-        var curDistrict;
+
         for(; i < this.districts.length; ++i){
             var districtV;
             if(i === this.districtPointer){
                 districtV = new DistrictView(this.districts[i],i,true);
-                curDistrict = districtV;
-                curDistrict.element.classList.add('districtToggle');
+                this.currentDistrict = districtV;
+                this.currentDistrict.element.classList.add('districtToggle');
             }else{
                 districtV = new DistrictView(this.districts[i],i,false);
             }
@@ -379,11 +534,11 @@ function Game(turnMessage){
         if(!turnMessage.debate){
             //delay the animation
             setTimeout(function(){
-                curDistrict.element.classList.add('animated','flash');
+                that.currentDistrict.element.classList.add('animated','flash');
             },700);
         }
 
-        this.updateMiniInfo(curDistrict);
+        this.updateMiniInfo(this.currentDistrict);
 
 
     };
@@ -399,19 +554,50 @@ function Game(turnMessage){
 
     };
 
-    this.displayCards = function(){
+    this.displayCards = function(newCards){
         var cardStage = document.getElementById('cardStage');
-        var i = 0;
-        this.empty(cardStage);
-        for(; i < this.hand.length; ++i){
-            var cardView = new CardView(this.hand[i]);
-            var aELObj = {handleEvent:function(e){that.cardWatcher(e,this.cView,that);},cView:cardView};
-            cardView.element.addEventListener('click',aELObj,false);
-            cardStage.appendChild(cardView.element);
+        console.group('%c DisplayCards, newCards->','color:blue;');
+        console.log(newCards);
+        console.groupEnd();
+
+
+        //if we have new cards, we animate them into place
+        if(newCards){
+            this.displayAnimatedCards(newCards,0,cardStage,true);
+        }else{
+            this.empty(cardStage);
+            this.cardViews = [];
+            this.cardsSelected = [];
+            this.displayAnimatedCards(this.hand,0,cardStage,false);
+        }
+
+
+
+    };
+
+    this.displayAnimatedCards = function(cards,index,stage,isNew){
+        if(!cards || cards.length === 0){return;}
+
+        var curCard = cards[index];
+        if(isNew){
+            that.hand.push(curCard);
+        }
+        var cardView = new CardView(curCard);
+        jQuery(cardView.element).click({cardView:cardView,gameObj:that},that.cardWatcher);
+        cardView.element.classList.add('animated','bounceInLeft'); //TODO decide if this is the best animation to use
+        stage.appendChild(cardView.element);
+        that.cardViews.push(cardView);
+
+
+        if((index + 1) < cards.length){
+            setTimeout(function(){
+                that.displayAnimatedCards(cards, index + 1,stage,isNew);
+            },100);
         }
     };
 
     this.displayResources = function(){
+        console.log('%c Display Resources','color:green;');
         var moneyWrapper = document.getElementById('moneyCount');
         var workerWrapper = document.getElementById('workerCount');
         var workTotalWrap = document.getElementById('workerTotal');
@@ -433,36 +619,56 @@ function Game(turnMessage){
             }
         }
     };
-    this.cardWatcher = function(e,cardView,gameObj){
+    this.cardWatcher = function(e){
+        var cardView = e.data.cardView;
+        var gameObj = e.data.gameObj;
         var card = cardView.card;
-        var index = gameObj.cardsSelected.indexOf(card);
-        if(index < 0){
+
+
+        if(!cardView.selected){
             if(((gameObj.money - card.moneyCost) < 0) || ((gameObj.workers - card.workerCost) < 0)){return;}
+            console.log('Cards selected before click: ' + gameObj.cardsSelected.length);
+            cardView.selected = true;
             gameObj.cardsSelected.push(card); //add if it's not there
+            
             gameObj.money -= card.moneyCost;
             gameObj.workers -= card.workerCost;
             cardView.element.classList.add('cardToggle');
         }else{
-            gameObj.cardsSelected.splice(index,1);  //remove if it's there
+            console.log('Cards selected before click: ' + gameObj.cardsSelected.length);
+            cardView.selected = false;
+            gameObj.cardsSelected.splice(gameObj.cardsSelected.indexOf(card),1);  //remove if it's there
+            
             gameObj.money += card.moneyCost;
             gameObj.workers += card.workerCost;
             cardView.element.classList.remove('cardToggle');
         }
         gameObj.displayResources();
-
+        console.log('Cards selected after click: ' + gameObj.cardsSelected.length);
     };
     this.clear = function(){
-        var cardStage = document.getElementById('cardStage');
-        var collection = cardStage.getElementsByClassName('cardToggle');
-        var i = collection.length;
-        while(i > 0){
-            --i;
-            cardStage.removeChild(collection[i]);
+        console.log('%c Game.clear()','color:purple;');
+        //remove all selected cards from game and DOM
+        for(var i = this.cardViews.length - 1 ; i >= 0 ; --i){
+            var cardV = this.cardViews[i];
+            if(cardV.selected){
+                this.cardViews.splice(i,1);
+                this.hand.splice(this.hand.indexOf(cardV.card),1);
+                this.money =
+                cardV.element.parentNode.removeChild(cardV.element);
+            }
         }
+        this.cardsSelected = [];
+
+
+        //reset money
         this.money = this.maxMoney;
         this.workers = this.maxWorkers;
+        this.displayResources();
 
+        //update districts
         this.districtViews[this.districtPointer].update();
+
 
 
     };
@@ -475,8 +681,10 @@ function Game(turnMessage){
         var count = 0;
         var finishCallback = function(){
             ++count;
+            console.log('%c finishCallback() - count:' + count,'color:DarkViolet ;');
             if(count === that.lastTurnLogs.length){
                 jQuery('#turnLogWrapper').hide();
+                console.log('%c kickback to curTurnCallback() from displayLog()','color:DarkViolet ;');
                 completeCallback();
             }
         };
@@ -545,14 +753,7 @@ function Game(turnMessage){
 
 }
 
-//// ======== Alpha GameLog Object
-//function TurnLog(logMessage){
-//
-//	this.cardsPlayed = logMessage.cardsPlayed;
-//	this.totalDamage = logMessage.totalDamage;
-//	this.logMessage = logMessage.strLogMessage;
-//
-//}
+
 
 
 

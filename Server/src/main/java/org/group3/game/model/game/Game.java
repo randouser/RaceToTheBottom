@@ -129,6 +129,7 @@ public class Game{
 
                  //Add new CardsLog entry in list
                  turnLog.add(new CardsLog(cards, curPlayer, otherPlayer, districtPointer, curDistrict, damage));
+                 curPlayer.setLastAction(Player.PLAY_CARDS);
              }
              else{
 
@@ -144,7 +145,8 @@ public class Game{
                  curPlayer.setMaxMoney(curPlayer.getMaxMoney() + addMoney);
 
                  //Add new BurnTurnLog entry in list
-                 turnLog.add(new BurnTurnLog(curPlayer));
+                 turnLog.add(new BurnTurnLog(curPlayer,addWorkers,addMoney));
+                 curPlayer.setLastAction(Player.BURN_TURN);
 
              }
 
@@ -182,7 +184,8 @@ public class Game{
 
         curPlayer.setDebating(false);
         curPlayer.setDebateScore(debateScore);
-
+        curPlayer.clearLastCardsDrawn();
+        curPlayer.setLastAction(Player.DO_DEBATE);
 
         if(otherPlayer.isDebating()){
             return;

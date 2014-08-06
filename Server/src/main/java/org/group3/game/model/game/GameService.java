@@ -1,10 +1,6 @@
 package org.group3.game.model.game;
 
-import org.group3.game.messageWrappers.GameMessage;
-import org.group3.game.messageWrappers.JoinGameMessage;
-import org.group3.game.messageWrappers.LobbyMessage;
-import org.group3.game.messageWrappers.TurnMessage;
-import org.group3.game.messageWrappers.LogMessage;
+import org.group3.game.messageWrappers.*;
 import org.group3.game.model.card.Card;
 import org.group3.game.model.card.CardService;
 import org.group3.game.model.user.User;
@@ -165,6 +161,23 @@ public class GameService{
     	return gameList.size();
     	
     }
+
+    /**
+     * This returns a smaller version of the turnMessage for game UI update
+     * purposes.  Since takeTurn() only returns the turn for the opposite player,
+     * this method allows the service to send information back to the player
+     * who just took a turn and is waiting (or potentially any player we want).
+     */
+    public PreTurnMessage getGameStateForPlayer(User user,Integer gameId){
+        Game game = loadGame(gameId);
+        for(Player player : game.getPlayers()){
+            if(user.getId().equals(player.getId())){
+                return new PreTurnMessage(user,player,game);
+            }
+        }
+        throw new RuntimeException("Game: " + game.getGameId() + " does not contain user " + user.getEmail());
+    }
+
 
     
     public LobbyMessage getActiveGamesForUser(User user) {

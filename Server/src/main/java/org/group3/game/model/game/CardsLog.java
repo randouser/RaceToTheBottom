@@ -15,6 +15,7 @@ public class CardsLog extends GameLog{
     protected String oppPlayerName;
     protected int curTurn;
     protected int districtIndex;
+    private boolean isCardsLog;
 
     public CardsLog(){
     	super();
@@ -25,6 +26,7 @@ public class CardsLog extends GameLog{
     {
         super();
 
+        this.isCardsLog = true;
         this.cardsDamage = cardsDamage;
         this.cardsPlayed = cardsPlayed;
         this.curPlayerId = curPlayer.getId();
@@ -173,5 +175,13 @@ public class CardsLog extends GameLog{
 
     public void setOppPlayerName(String oppPlayerName) {
         this.oppPlayerName = oppPlayerName;
+    }
+
+    public boolean isCardsLog() {
+        return isCardsLog;
+    }
+
+    public void setCardsLog(boolean isCardsLog) {
+        this.isCardsLog = isCardsLog;
     }
 }

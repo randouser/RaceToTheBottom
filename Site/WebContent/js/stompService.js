@@ -17,7 +17,7 @@ StompService = {
 
             that.client.subscribe('/queue/'+token+'/invite', function(frame){
                 var joinInfo = JSON.parse(frame.body);
-                console.log(frame);
+                
                 var r = confirm("You've been invited to a game\nDo you accept?");
                 if (r == true) {
                     GameProxy.games[joinInfo.gameId] = null;
@@ -63,7 +63,7 @@ StompService = {
                         GameProxy.endGame(gameMessage);
                         break;
                 }
-                console.log(frame);
+                
 
             });
             
@@ -120,15 +120,22 @@ StompService = {
                     }
                 }
 
-                console.log(frame);
+                
 
             });
 
 
             that.client.subscribe('/queue/'+token+'/getTurn', function(frame){
-                console.log(frame);
+                
                 var turnMessage = JSON.parse(frame.body);
                 GameProxy.getTurn(turnMessage);
+
+            });
+
+            that.client.subscribe('/queue/'+token+'/preTurn', function(frame){
+                
+                var preTurnMessage = JSON.parse(frame.body);
+                GameProxy.preTurnUpdate(preTurnMessage);
 
             });
 
@@ -164,6 +171,10 @@ StompService = {
         }
     }
     ,sendMessage:function(destination,jsonMessage){
+        console.groupCollapsed('%c sendMessage()-> '+destination,'color:orange;');
+            console.log(jsonMessage);
+        console.groupEnd();
+
         this.client.send('/app/'+destination, {}, JSON.stringify(jsonMessage));
     }
     ,showGreeting:function(message){

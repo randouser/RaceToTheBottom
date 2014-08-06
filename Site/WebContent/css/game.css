@@ -265,6 +265,7 @@ h2{
     padding:10px;
     display:inline-block;
     margin-top:10px;
+    position:relative;
 }
 #opponentWrapper{
     margin-top: 10px;
@@ -273,4 +274,26 @@ h2{
 
 #miniInfo{
     display:none;
+}
+
+.cardsMessage{
+    position: absolute;
+    font-size: 60px;
+    text-shadow: 1px 1px 1px white;
+    font-weight: bold;
+    top: 30%;
+    white-space: nowrap;
+}
+
+.resourceMessage{
+    position: absolute;
+    top: 50%;
+    font-size: 30px;
+    font-weight: bold;
+    text-shadow: 1px 1px 1px black;
+    color:green;
+}
+
+#widgetWrapper{
+    position:relative;
 }

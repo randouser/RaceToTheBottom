@@ -1,5 +1,4 @@
-window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
-    window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+
 
 var DebateGame = {
     score: 0
@@ -25,7 +24,7 @@ var DebateGame = {
         this.scoreElement.innerHTML = this.score;
 
         this.isDone = false;
-        this.obstTotal = 10;
+        this.obstTotal = 1;
         this.debater = new Debater(this.debaterElement);
 
         jQuery(this.scrollWrapper).show();
@@ -80,7 +79,7 @@ var DebateGame = {
 
         var that = this;
         var item = this.topics[Math.floor(Math.random()*this.topics.length)];
-        var speed = Math.floor(Math.random()*8) + 1;
+        var speed = Math.floor(Math.random()*8) + 3;
         var obst1 = new Obstacle(item,speed,this.debaterElement,scoreCallback,finishCallback);
         this.scrollStage.appendChild(obst1.element);
         obst1.start();

@@ -245,12 +245,16 @@ public class GameController {
             throw new IllegalArgumentException("There is no user with these credentials");
         }
 
-        //the "message" comes from the UI (when it is the user's turn)
+        //the incoming user takes his/her turn, then the turn for the opponent is returned
         TurnMessage turnMessage = gameService.takeTurn(user,message.getGameId(),message.getCardsPlayed(), message.getBurnTurn(),message.getDebateScore(),message.isSurrender());
+
 
         
         //start the turn for the player if it's in progress
         if(turnMessage.isInProgress()) {
+            //send the taker of this turn an immediate UI update message.
+            messagingTemplate.convertAndSend("/queue/"+user.getToken()+"/preTurn",gameService.getGameStateForPlayer(user,turnMessage.getGameId()));
+
         	//AI player
         	if(turnMessage.getUserToken() == null && turnMessage.getGameType().equals("single")){
 
