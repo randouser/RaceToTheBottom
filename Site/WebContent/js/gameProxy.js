@@ -85,8 +85,7 @@ GameProxy = {
     		row.remove();
         	delete that.games[gameId];
     	}
-    	
-    	PanelController.reloadPage();
+
     	
     }
     	
@@ -181,6 +180,12 @@ GameProxy = {
 				})
     		
     	}
+    	else{
+    		
+    		//update entry
+    		jQuery('#leadrow_'+userId).children('td').html('ID: ' + userId+' UserName: ' + userName + ' Email: ' + userEmail + ' Wins: ' + wins);
+    		
+    	}
     	
     }
 
@@ -249,8 +254,6 @@ GameProxy = {
             PanelController.goToLobbyPanel();
         }
 
-
-        //TODO request score update
 
     }
     ,doesGameExist:function(gameId){

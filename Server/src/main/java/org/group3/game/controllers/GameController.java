@@ -322,6 +322,12 @@ public class GameController {
     }
 
     public void endGame(User curUser,TurnMessage turnMessage){
+    	
+        LobbyMessage updateLeaderBoard = new LobbyMessage();
+        
+        updateLeaderBoard.setLeaderBoard(userService.getTopPlayers(5));
+        
+        messagingTemplate.convertAndSend("/queue/updateLeaderboard", updateLeaderBoard);
 
         EndGameMessage endMessage = new EndGameMessage(turnMessage);
 

@@ -8,6 +8,11 @@ public class LobbyMessage {
     public List<TurnMessage> inProgressGames;
     public List<JoinGameMessage> invites;
     public List<User> leaderBoard;
+    
+    public LobbyMessage()
+    {
+    	
+    }
 
     public LobbyMessage(List<TurnMessage> inProgressGames,List<JoinGameMessage> invites) {
         this.inProgressGames = inProgressGames;

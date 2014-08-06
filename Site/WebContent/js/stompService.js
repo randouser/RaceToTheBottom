@@ -57,8 +57,7 @@ StompService = {
                         alert(gameMessage.message);
                         break;
                     case 'gameReject':
-                    	//GameProxy.removeGameFromList(gameMessage.gameId);
-                    	PanelController.reloadPage();
+                    	GameProxy.removeGameFromList(gameMessage.gameId);
                     	break;
                     case 'gameEnd':
                         GameProxy.endGame(gameMessage);
@@ -67,6 +66,18 @@ StompService = {
                 console.log(frame);
 
             });
+            
+            that.client.subscribe("/queue/updateLeaderboard", function(frame){
+            	
+            	var lobbyMessage = JSON.parse(frame.body);
+            	
+            	var leadUsers = lobbyMessage.leaderBoard;
+            	
+            	GameProxy.displayLeaderBoard(leadUsers);
+
+            });
+            
+            
             that.client.subscribe('/queue/'+token+'/lobby', function(frame){
             	
                 var lobbyMessage = JSON.parse(frame.body);
