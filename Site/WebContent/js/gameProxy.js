@@ -35,14 +35,18 @@ GameProxy = {
         StompService.sendMessage('takeTurn',{userEmail:user.email,userToken:user.token,gameId:gameId,cardsPlayed:cardsSelected, burnTurn:burnTurn,debateScore:game.debateScore,surrender:surrender});
     }
 
-    ,getGameStart:function(gameId,gameName){
-
-        //set during when game is accepted from invite
-        var rowMessage = this.games.hasOwnProperty(gameId) ? "Waiting for turn" : "Waiting for Accept";
-
+    ,getGameStart:function(gameId,gameName,rowMessage){
+        var rowM;
+        if(rowMessage === 'waitForTurn'){
+            rowM = "waiting for turn"
+        }else if (rowMessage === 'waitForAccept'){
+            rowM = "waiting for accept"
+        }else{
+            rowM = '???';
+        }
         //we make it null to indicate that it exists without getting the game state.
         this.games[gameId] = null;
-        var newRow = '<tr id="gamerow_'+gameId+'" class="gameRow pending"><td>'+gameName+' - '+rowMessage+'</td></tr>';
+        var newRow = '<tr id="gamerow_'+gameId+'" class="gameRow pending"><td>'+gameName+' - '+rowM+'</td></tr>';
         jQuery('#gamesInProgressTable').append(newRow);
     }
     

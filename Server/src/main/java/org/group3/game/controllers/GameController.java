@@ -204,7 +204,7 @@ public class GameController {
 
         //tell the joiner that the game has started if player is not AI
         if(!message.getGameType().equals("single")){
-        	messagingTemplate.convertAndSend("/queue/"+user.getToken()+"/message",new GameMessage(turnMessage.getGameId(),GameMessage.GAME_START,turnMessage.getGameName()));
+        	messagingTemplate.convertAndSend("/queue/"+user.getToken()+"/message",new GameMessage(turnMessage.getGameId(),GameMessage.GAME_START,GameMessage.WAIT_TURN,turnMessage.getGameType(),turnMessage.getGameName()));
         }
         
 
@@ -237,7 +237,7 @@ public class GameController {
     	
     	gameService.deleteGameById(message.getGameId());
     	
-    	messagingTemplate.convertAndSend("/queue/"+playerOne.getToken()+"/message", new GameMessage(message.getGameId(), GameMessage.GAME_REJECT, "User " + message.getUserEmail() + " rejected game invite."));
+    	messagingTemplate.convertAndSend("/queue/"+playerOne.getToken()+"/message", new GameMessage(message.getGameId(), GameMessage.GAME_REJECT, "User " + message.getUserEmail() + " rejected game invite.",message.getGameType(),""));
     	
     }
 
@@ -316,7 +316,7 @@ public class GameController {
             //start turn for current player
             messagingTemplate.convertAndSend("/queue/"+turnMessage.getUserToken()+"/getTurn",turnMessage);
             //tell the joiner that the game has started
-            messagingTemplate.convertAndSend("/queue/"+user.getToken()+"/message",new GameMessage(turnMessage.getGameId(),GameMessage.GAME_START,turnMessage.getGameName()));
+            messagingTemplate.convertAndSend("/queue/"+user.getToken()+"/message",new GameMessage(turnMessage.getGameId(),GameMessage.GAME_START,GameMessage.WAIT_TURN,turnMessage.getGameType(),turnMessage.getGameName()));
 
         }
         //else, it's a normal user and we grab existing games

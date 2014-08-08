@@ -61,7 +61,7 @@ public class GameService{
         //add to the live list
         activeGames.put(game.getGameId(),game);
 
-        return new GameMessage(game.getGameId(),GameMessage.GAME_START,game.getGameName());
+        return new GameMessage(game.getGameId(),GameMessage.GAME_START,GameMessage.WAIT_ACCEPT,game.getType(),game.getGameName());
     }
 
     

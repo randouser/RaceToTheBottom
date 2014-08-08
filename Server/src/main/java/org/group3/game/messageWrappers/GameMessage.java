@@ -2,17 +2,15 @@ package org.group3.game.messageWrappers;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-
 public class GameMessage {
 
-    @JsonIgnoreProperties
-    public static final String GAME_START = "gameStart";
 
-    @JsonIgnoreProperties
+    public static final String GAME_START = "gameStart";
     public static final String GAME_LOOKUP = "gameLookup";
-    
-    @JsonIgnoreProperties
     public static final String GAME_REJECT = "gameReject";
+
+    public static final String WAIT_ACCEPT = "waitForAccept";
+    public static final String  WAIT_TURN = "waitForTurn";
 
 
     private String type;
@@ -21,12 +19,16 @@ public class GameMessage {
     private boolean isInProgress;
     private boolean isUserTurn;
     private boolean needsUserConfirmation;
+    private String gameType;
+    private String gameName;
 
 
-    public GameMessage(int gameId, String type, String message) {
+    public GameMessage(int gameId, String type, String message,String gameType,String gameName) {
         this.message = message;
         this.gameId = gameId;
         this.type = type;
+        this.gameType = gameType;
+        this.gameName = gameName;
     }
     public GameMessage(int gameId, String type, String message, boolean isPending, boolean isUserTurn,boolean needsUserConfirmation) {
         this.message = message;
@@ -88,5 +90,20 @@ public class GameMessage {
     public void setNeedsUserConfirmation(boolean needsUserConfirmation) {
         this.needsUserConfirmation = needsUserConfirmation;
     }
-    
+
+    public String getGameType() {
+        return gameType;
+    }
+
+    public void setGameType(String gameType) {
+        this.gameType = gameType;
+    }
+
+    public String getGameName() {
+        return gameName;
+    }
+
+    public void setGameName(String gameName) {
+        this.gameName = gameName;
+    }
 }
