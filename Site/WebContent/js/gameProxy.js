@@ -48,7 +48,17 @@ GameProxy = {
     
     ,displayLeaderBoard:function(leaderBoardUsers)
     {
-    
+    	
+    	var leaderBoardTable = jQuery('#leaderBoardTable');
+    	
+    	//clear leaderboard if it is already there
+    	if (leaderBoardTable.length != 0)
+    		{
+    		
+    			leaderBoardTable.empty();
+    		
+    		}
+    	
     	var i = 0;
     	
     	for (; i < leaderBoardUsers.length; i++){
@@ -320,12 +330,6 @@ GameProxy = {
 					jQuery('#emailToNotifyInput').val(userEmail);		
 			
 				})
-    		
-    	}
-    	else{
-    		
-    		//update entry
-    		jQuery('#leadrow_'+userId).children('td').html('ID: ' + userId+' UserName: ' + userName + ' Email: ' + userEmail + ' Wins: ' + wins);
     		
     	}
     	
