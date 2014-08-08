@@ -320,7 +320,7 @@ GameProxy = {
     	var row = jQuery('#leadrow_' + userId);
     	
     	//check if user isn't listed
-    	if (row.length == 0){
+
     		
     		var newRow = '<tr id="leadrow_'+ userId+'" class ="leadShown active"><td>'+ 'ID: ' + userId+' UserName: ' + userName + ' Email: ' + userEmail + ' Wins: ' + wins+'</td></tr>';
     		row = jQuery('#leaderBoardTable').append(newRow).find('#leadrow_' + userId);
@@ -331,7 +331,7 @@ GameProxy = {
 			
 				})
     		
-    	}
+    	
     	
     }
 
