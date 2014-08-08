@@ -1,6 +1,7 @@
 package org.group3.game.services;
 
 
+import org.group3.game.model.game.Game;
 import org.group3.game.model.user.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,6 +73,27 @@ public class EmailService {
                 "Hello " + inviteeEmail + ",\n" + fromUser.getName() + " has started a game with RaceToTheBottom and would like you to join." +
                         "\nFollow this link to join:\n" +
                         SERVER_ADDRESS + "/#register?gameId=" + gameId + "&invitee=" + encodedEmail);
+    }
+
+
+    public void notifyInviteeOfGameStart(User fromUser, User inviteeUser){
+        String inviteeEmail = inviteeUser.getEmail();
+        sendMail("RaceToTheBottomInfo@gmail.com",
+                inviteeEmail,
+                fromUser.getName() + " invites you to a game!",
+                "Hello " + inviteeEmail + ",\n" + fromUser.getName() + " has started a game with RaceToTheBottom and would like you to join." +
+                        "\nPlease login at the game site to accept:\n" +
+                        SERVER_ADDRESS);
+    }
+
+    public void notifyTurnReadyForUser(User user, String gameName){
+        sendMail("RaceToTheBottomInfo@gmail.com",
+                user.getEmail(),
+                "Turn ready for " + gameName,
+                "Hello " + user.getName() +"\n"+
+                "Your turn is ready for game \"" + gameName + "\"\n"+
+                "\nPlease login at the game site to take your turn:\n" +
+                        SERVER_ADDRESS);
     }
     
     //Can be removed for final version, assists with using local VM

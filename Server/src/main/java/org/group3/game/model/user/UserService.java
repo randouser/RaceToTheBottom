@@ -135,4 +135,8 @@ public class UserService{
     public void incrementLossById(Integer loserId) {
         userDao.incrementLossById(loserId);
     }
+
+    public void updateSendEmailOnTurn(User user, boolean sendEmailOnTurn) {
+        userDao.updateSendEmailOnTurn(user,sendEmailOnTurn);
+    }
 }

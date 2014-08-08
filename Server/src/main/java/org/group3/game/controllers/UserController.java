@@ -1,10 +1,12 @@
 package org.group3.game.controllers;
 
+import org.group3.game.messageWrappers.RequestUpdateInfoMessage;
 import org.group3.game.model.user.User;
 import org.group3.game.model.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,7 +48,7 @@ public class UserController {
 	@RequestMapping(value="/register",method = RequestMethod.POST)
 	public @ResponseBody LoginMessage registerUser(@RequestParam String name,@RequestParam String email,@RequestParam String password) {
 
-        logger.info("REGISTER POST!");
+        logger.info("Attempting to create user: " + email);
         
         User newUser;
         
@@ -116,6 +118,13 @@ public class UserController {
     }
 
 
+    @MessageMapping("/updateSendEmailOnTurn")
+    public void updateSendEmailOnTurn(RequestUpdateInfoMessage message){
+        User user = userService.getUserByEmailToken(message.getUserEmail(),message.getUserToken());
+        userService.updateSendEmailOnTurn(user,message.isSendEmailOnTurn());
+    }
+
+
 
     public class LoginMessage{
         String message;
@@ -151,6 +160,9 @@ public class UserController {
         private String token;
         private String tokenExpirationDate;
         private boolean isAdmin;
+        private int wins;
+        private int losses;
+        private boolean isSendEmailOnTurn;
 
         public UserWrapper(User user) {
             this.name = user.getName();
@@ -158,6 +170,9 @@ public class UserController {
             this.token = user.getToken();
             this.tokenExpirationDate = user.getTokenExpirationDate().toString();
             this.isAdmin = user.isAdmin();
+            this.wins = user.getWins();
+            this.losses = user.getLosses();
+            this.isSendEmailOnTurn = user.isSendEmailOnTurn();
         }
 
         public String getName() {
@@ -198,6 +213,30 @@ public class UserController {
 
         public void setAdmin(boolean isAdmin) {
             this.isAdmin = isAdmin;
+        }
+
+        public int getWins() {
+            return wins;
+        }
+
+        public void setWins(int wins) {
+            this.wins = wins;
+        }
+
+        public int getLosses() {
+            return losses;
+        }
+
+        public void setLosses(int losses) {
+            this.losses = losses;
+        }
+
+        public boolean isSendEmailOnTurn() {
+            return isSendEmailOnTurn;
+        }
+
+        public void setSendEmailOnTurn(boolean isSendEmailOnTurn) {
+            this.isSendEmailOnTurn = isSendEmailOnTurn;
         }
     }
 }

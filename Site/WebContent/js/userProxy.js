@@ -8,6 +8,7 @@ UserProxy = {
     }
     ,onSuccess:function(data){
         var user = data.user;
+        //important that we don't use 'this' as these functions become closures
         var that = UserProxy;
         that.user = user;
 
@@ -20,6 +21,9 @@ UserProxy = {
 
             that.inviteeCreds.gameId = null;
             that.inviteeCreds.inviteeEmail = null;
+            that.updateUserPanel();
+
+
         }else{
             alert(data.message);
         }
@@ -95,6 +99,20 @@ UserProxy = {
         } else {
             return null;
         }
+    }
+
+    ,updateUserPanel:function(){
+        var user = this.user;
+        jQuery('#userEmailSpan').text(user.email);
+        jQuery('#userNameSpan').text(user.name);
+        jQuery('#userWinsSpan').text(user.wins);
+        jQuery('#userLossesSpan').text(user.losses);
+        jQuery('#emailOnTurnCheck').prop('checked',user.sendEmailOnTurn);
+    }
+
+    ,updateEmailNotification:function(isEnabled){
+        var user = UserProxy.user;
+        StompService.sendMessage('updateSendEmailOnTurn',{sendEmailOnTurn:isEnabled,userEmail:user.email,userToken:user.token});
     }
 
 };

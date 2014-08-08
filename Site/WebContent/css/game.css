@@ -297,3 +297,17 @@ h2{
 #widgetWrapper{
     position:relative;
 }
+
+
+#userPanel > div{
+    display: inline-block;
+    margin-left:10px;
+}
+
+#userPanel{
+    background-color: white;
+}
+
+.userInfo{
+    font-style:italic;
+}

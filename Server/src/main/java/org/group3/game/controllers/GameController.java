@@ -163,7 +163,9 @@ public class GameController {
              
              gMessage = gameService.createGame(user,message.getGameType(), message.getEmailToNotify(),invitee);
              messagingTemplate.convertAndSend("/queue/" + invitee.getToken() + "/invite", new JoinGameMessage(gMessage.getGameId(), message.getEmailToNotify()));
-
+             if(invitee.isSendEmailOnTurn()){
+                 emailService.notifyInviteeOfGameStart(user,invitee);
+             }
 
          }
 
@@ -196,6 +198,9 @@ public class GameController {
 
         //start the turn for the player waiting
         messagingTemplate.convertAndSend("/queue/"+turnMessage.getUserToken()+"/getTurn",turnMessage);
+        if(turnMessage.getUser().isSendEmailOnTurn()){
+            emailService.notifyTurnReadyForUser(turnMessage.getUser(),turnMessage.getGameName());
+        }
 
         //tell the joiner that the game has started if player is not AI
         if(!message.getGameType().equals("single")){
@@ -270,6 +275,9 @@ public class GameController {
         	//Non AI player
         	} else {
                 messagingTemplate.convertAndSend("/queue/"+turnMessage.getUserToken()+"/getTurn",turnMessage);
+                if(turnMessage.getUser().isSendEmailOnTurn()){
+                    emailService.notifyTurnReadyForUser(turnMessage.getUser(),turnMessage.getGameName());
+                }
         	}
 
         //end the game if it's not in progress
@@ -320,9 +328,6 @@ public class GameController {
             messagingTemplate.convertAndSend("/queue/"+user.getToken()+"/lobby",gameMessages);
         }
 
-
-        //TODO request leaderboard can go here somewhere
-
     }
 
     public void endGame(User curUser,TurnMessage turnMessage){
@@ -333,13 +338,18 @@ public class GameController {
         
         messagingTemplate.convertAndSend("/queue/updateLeaderboard", updateLeaderBoard);
 
-        EndGameMessage endMessage = new EndGameMessage(turnMessage);
 
         if(curUser != null){
-            messagingTemplate.convertAndSend("/queue/"+curUser.getToken()+"/message",endMessage);
+            //update the user object from the database with current values
+            curUser = userService.getUserById(curUser.getId());
+
+            messagingTemplate.convertAndSend("/queue/"+curUser.getToken()+"/message",new EndGameMessage(turnMessage,curUser.getWins(),curUser.getLosses()));
         }
         if(turnMessage.getUserToken() != null){
-            messagingTemplate.convertAndSend("/queue/"+turnMessage.getUserToken()+"/message",endMessage);
+            //update the user object from the database with current values
+            User otherUser = userService.getUserById(turnMessage.getUser().getId());
+
+            messagingTemplate.convertAndSend("/queue/"+turnMessage.getUserToken()+"/message",new EndGameMessage(turnMessage,otherUser.getWins(),otherUser.getLosses()));
         }
 
         gameService.deleteGameById(turnMessage.getGameId());

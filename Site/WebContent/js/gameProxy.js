@@ -398,12 +398,17 @@ GameProxy = {
         var gameStage = jQuery('#gamePanel');
         var curGameId = gameStage.data('gameId');
 
+        UserProxy.user.wins = endGameMessage.winsForUser;
+        UserProxy.user.losses = endGameMessage.lossesForUser;
+        UserProxy.updateUserPanel();
+
         if(gameId === curGameId && gameStage.is(':visible')){
             PanelController.goToLobbyPanel();
         }
 
 
     }
+
     ,doesGameExist:function(gameId){
         return gameId && this.games[gameId] != undefined;
     }

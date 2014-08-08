@@ -15,5 +15,6 @@ CREATE TABLE IF NOT EXISTS user(
   admin boolean DEFAULT FALSE,
   registerTime TIMESTAMP DEFAULT 0,
   lastLogin TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  sendEmailOnTurn boolean default false,
   PRIMARY KEY (id)
 );

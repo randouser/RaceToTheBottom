@@ -90,7 +90,7 @@
 
 @media (max-width: 1100px) {
     #mainContentWrapper{
-        padding:0;
+        padding:22px 0 0 0;
     }
 
 }
@@ -110,7 +110,6 @@
 
     #mainContentWrapper{
         max-width:2000px;
-        padding:0;
     }
 
     #opponent{

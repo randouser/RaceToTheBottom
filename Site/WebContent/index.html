@@ -68,10 +68,26 @@
 
 
     <div id="lobbyPanel" class="displayPanel userPanel" style="display:none;background-color:grey;border:1px solid black;">
+
+        <div id="userPanel">
+            <div>
+                <span>Email: </span><span id="userEmailSpan" class="userInfo"></span>
+            </div>
+            <div>
+                <span>Name: </span><span id="userNameSpan" class="userInfo"></span>
+            </div>
+            <div>
+                <span>Score: </span><span>+</span><span id="userWinsSpan" class="userInfo"></span><span class="userInfo"> | </span><span class="userInfo">-</span><span id="userLossesSpan" class="userInfo"></span>
+            </div>
+            <div>
+                <label for="emailOnTurnCheck">Email when a turn is ready</label>
+                <input type="checkbox" id="emailOnTurnCheck" name="emailOnTurnCheck" />
+            </div>
+        </div>
         <div id="gamesInProgressWrapper">
-        <h2>Games In Progress</h2>
-        <table id="gamesInProgressTable" style="width:100%;background-color:white;border:1px solid black;">
-        </table>
+            <h2>Games In Progress</h2>
+            <table id="gamesInProgressTable" style="width:100%;background-color:white;border:1px solid black;">
+            </table>
         </div>
 
         <div id="startAGameWrapper">
@@ -285,13 +301,20 @@
         StompService.sendMessage('admin_removeGameById',{value:value,userEmail:user.email,userToken:user.token});
     });
 
+    jQuery('#emailOnTurnCheck').click(function(){
 
+        if(this.checked){
+            var confirmed = confirm("Are you sure you wish to enable email notification?\The system will email your registered email every time you have a turn ready.");
+            if(confirmed){
+                UserProxy.updateEmailNotification(this.checked);
+            }else{
+                jQuery(this).prop('checked',false);
+            }
+        }else{
+            UserProxy.updateEmailNotification(this.checked);
+        }
 
-
-
-
-
-
+    });
 
 
 

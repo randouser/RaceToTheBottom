@@ -1,5 +1,7 @@
 package org.group3.game.messageWrappers;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.group3.game.model.card.Card;
 import org.group3.game.model.game.District;
 import org.group3.game.model.game.Game;
@@ -11,7 +13,7 @@ import org.group3.game.model.user.User;
 import java.util.ArrayList;
 import java.util.List;
 
-
+@JsonIgnoreProperties({"user","userToken"})
 public class TurnMessage{
     private Integer gameId;
     private String gameName;
@@ -27,11 +29,14 @@ public class TurnMessage{
     private boolean isDebate;
     private List<GameLog> lastTurnLogs;
     private List<District> districts;
-    private String userToken;
     private String winnerEmail;
     private String opponentName;
     private String playerColor;
     private String opponentColor;
+
+    //Ignored by Jackson, for Controller purposes only
+    private User user;
+    private String userToken;
 
 
 
@@ -52,6 +57,7 @@ public class TurnMessage{
         this.opponentName = game.getNonCurrentPlayer().getEmail();
         this.playerColor = game.getCurrentPlayer().getColor();
         this.opponentColor = game.getNonCurrentPlayer().getColor();
+        this.user = user;
 
         this.hand = player.isDebating() ? new ArrayList<Card>() : player.getHand();
 
@@ -211,5 +217,13 @@ public class TurnMessage{
 
     public void setOpponentColor(String opponentColor) {
         this.opponentColor = opponentColor;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

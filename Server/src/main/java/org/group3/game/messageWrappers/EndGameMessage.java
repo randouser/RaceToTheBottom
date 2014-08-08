@@ -9,14 +9,19 @@ public class EndGameMessage {
     private String gameName;
     private int gameId;
     private String type;
+    private int winsForUser;
+    private int lossesForUser;
 
 
 
-    public EndGameMessage(TurnMessage turnMessage){
+    public EndGameMessage(TurnMessage turnMessage,int winsForUser, int lossesForUser){
         this.winnerEmail = turnMessage.getWinnerEmail();
         this.gameName = turnMessage.getGameName();
         this.gameId = turnMessage.getGameId();
         this.type = "gameEnd";
+
+        this.winsForUser = winsForUser;
+        this.lossesForUser = lossesForUser;
 
     }
 
@@ -50,5 +55,21 @@ public class EndGameMessage {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public int getWinsForUser() {
+        return winsForUser;
+    }
+
+    public void setWinsForUser(int winsForUser) {
+        this.winsForUser = winsForUser;
+    }
+
+    public int getLossesForUser() {
+        return lossesForUser;
+    }
+
+    public void setLossesForUser(int lossesForUser) {
+        this.lossesForUser = lossesForUser;
     }
 }

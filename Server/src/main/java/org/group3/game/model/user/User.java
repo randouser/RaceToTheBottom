@@ -17,6 +17,7 @@ public class User{
     boolean isAdmin;
     private Timestamp registerTime;
     private Timestamp lastLogin;
+    private boolean isSendEmailOnTurn;
 
 	public User() {
 	}
@@ -132,5 +133,13 @@ public class User{
 	public void setLastLogin(Timestamp lastLogin) {
 		this.lastLogin = lastLogin;
 	}
+
+    public boolean isSendEmailOnTurn() {
+        return isSendEmailOnTurn;
+    }
+
+    public void setSendEmailOnTurn(boolean sendEmailOnTurn) {
+        this.isSendEmailOnTurn = sendEmailOnTurn;
+    }
 }
 

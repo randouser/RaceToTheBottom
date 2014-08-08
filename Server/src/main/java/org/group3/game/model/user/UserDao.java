@@ -155,4 +155,12 @@ public class UserDao {
         this.jdbcTemplate.update(sql, args);
 
     }
+
+    public void updateSendEmailOnTurn(User user,boolean sendEmailOnTurn) {
+        Object[] args = {sendEmailOnTurn,user.getId()};
+        String sql = "UPDATE user SET sendEmailOnTurn=? WHERE id=?";
+
+        this.jdbcTemplate.update(sql, args);
+
+    }
 }
