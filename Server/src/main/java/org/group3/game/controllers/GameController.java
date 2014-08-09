@@ -198,12 +198,12 @@ public class GameController {
 
         //start the turn for the player waiting
         messagingTemplate.convertAndSend("/queue/"+turnMessage.getUserToken()+"/getTurn",turnMessage);
-        if(turnMessage.getUser().isSendEmailOnTurn()){
+        if(turnMessage.getUser() != null && turnMessage.getUser().isSendEmailOnTurn()){
             emailService.notifyTurnReadyForUser(turnMessage.getUser(),turnMessage.getGameName());
         }
 
         //tell the joiner that the game has started if player is not AI
-        if(!message.getGameType().equals("single")){
+        if(user != null && !message.getGameType().equals("single")){
         	messagingTemplate.convertAndSend("/queue/"+user.getToken()+"/message",new GameMessage(turnMessage.getGameId(),GameMessage.GAME_START,GameMessage.WAIT_TURN,turnMessage.getGameType(),turnMessage.getGameName()));
         }
         
