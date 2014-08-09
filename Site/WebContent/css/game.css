@@ -1,5 +1,6 @@
 body {
     counter-reset: gameCounter;
+    counter-reset: leaderCounter;
 }
 
 #lobbyPanel h2{
@@ -25,10 +26,9 @@ body {
     cursor:pointer;
 }
 
-.gameRow.ready:hover td{
+.gameRow.ready:hover td,.leadShown.active:hover td{
     background-color:deepskyblue;
     color:white;
-
 }
 
 .gameRow.turnReady td{
@@ -44,15 +44,16 @@ body {
     opacity:.8;
 }
 
-
+.leadNumber{
+    counter-increment: leaderCounter;
+}
+.leadNumber:before{
+    content: counter(leaderCounter);
+}
 .leadShown.active{
 	cursor:pointer;
 }
-	
-.leadShown.active:hover{
-	background-color:deepskyblue;
-	color:white;
-}
+
 
 .lobbyPanelContent{
     display: inline-block;

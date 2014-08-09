@@ -50,27 +50,17 @@ GameProxy = {
         this.updateGameRow(gameId,gameName,gameType,state,false,false);
     }
 
-    ,displayLeaderBoard:function(leaderBoardUsers)
-    {
+    ,displayLeaderBoard:function(leaderBoardUsers){
 
     	var leaderBoardTable = jQuery('#leaderBoardTable');
 
-    	//clear leaderboard if it is already there
-    	if (leaderBoardTable.length != 0)
-    		{
-    		
-    			leaderBoardTable.empty();
-    		
-    		}
-    	
+    	//clear table rows excluding the header row
+        leaderBoardTable.find('tr').not('.header').remove();
+
     	var i = 0;
-    	
     	for (; i < leaderBoardUsers.length; i++){
-    		
     		var leadUser = leaderBoardUsers[i];
-    		
-    		this.activateLeaderboardRow(leadUser.id, leadUser.name, leadUser.email, leadUser.wins)
-    		
+    		this.createLeaderboardRow(leadUser.id, leadUser.name, leadUser.email, leadUser.wins)
     	}
     	
     	
@@ -359,26 +349,21 @@ GameProxy = {
 
     }
     
-    ,activateLeaderboardRow:function(userId, userName, userEmail, wins){
-    	 
-    	var that = this;
-    	
-    	var row = jQuery('#leadrow_' + userId);
-    	
-    	//check if user isn't listed
+    ,createLeaderboardRow:function(userId, userName, userEmail, wins){
+        var rowHtml =
+            '<tr id="leadrow_'+userId+'" class="leadShown active ready" title="Click to select '+userEmail+' as a player to invite">'+
+                '<td class="leadNumber"></td>'+
+                '<td class="leadEmail">'+userEmail+'</td>' +
+                '<td class="leadName">'+userName+'</td>' +
+                '<td class="leadWins">'+wins+'</td>' +
+            '</tr>';
 
+        jQuery(rowHtml)
+            .appendTo('#leaderBoardTable')
+            .click(function(){
+                jQuery('#emailToNotifyInput').val(userEmail);
+            });
     		
-    		var newRow = '<tr id="leadrow_'+ userId+'" class ="leadShown active"><td>'+ 'ID: ' + userId+' UserName: ' + userName + ' Email: ' + userEmail + ' Wins: ' + wins+'</td></tr>';
-    		row = jQuery('#leaderBoardTable').append(newRow).find('#leadrow_' + userId);
-    		row
-				.addClass('ready')
-				.click({userId:userId},function(e){
-					jQuery('#emailToNotifyInput').val(userEmail);		
-			
-				})
-    		
-    	
-    	
     }
 
 
