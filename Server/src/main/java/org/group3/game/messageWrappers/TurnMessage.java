@@ -50,7 +50,7 @@ public class TurnMessage{
         this.isInProgress = game.isInProgress();
         this.districtPointer = game.getDistrictPointer();
         this.playerIndex = player.getPlayerIndex();
-        this.isUserTurn = player == game.getCurrentPlayer();
+        this.isUserTurn = (player == game.getCurrentPlayer()) && (game.isInProgress());
         this.gameType = game.getType();
         this.lastTurnLogs = game.getLastTurnLogs(game.getLogNumber()); //this is null on first turn
         this.winnerEmail = game.getWinnerEmail();

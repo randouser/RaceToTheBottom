@@ -39,6 +39,12 @@ body {
 .gameRow.turnReady{
     background-color:transparent;
 }
+
+.gameRow.pending td{
+    opacity:.8;
+}
+
+
 .leadShown.active{
 	cursor:pointer;
 }
