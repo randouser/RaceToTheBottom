@@ -67,7 +67,7 @@
 
 
 
-    <div id="lobbyPanel" class="displayPanel userPanel" style="display:none;background-color:grey;border:1px solid black;">
+    <div id="lobbyPanel" class="displayPanel userPanel" style="display:none;">
 
         <div id="userPanel">
             <div>
@@ -86,12 +86,18 @@
         </div>
         <div id="gamesInProgressWrapper">
             <h2>Games In Progress</h2>
-            <table id="gamesInProgressTable" style="width:100%;background-color:white;border:1px solid black;">
+            <table id="gamesInProgressTable">
+                <tr>
+                    <th class="gameNumber">#</th>
+                    <th class="gameName">Name</th>
+                    <th class="gameType">Type</th>
+                    <th class="gameState">State</th>
+                </tr>
             </table>
         </div>
 
         <div id="startAGameWrapper">
-            <div id="startGamePanel" style="border: 1px solid black;background-color:indianred;">
+            <div id="startGamePanel">
                 <div class="lobbyPanelContent">
                     <h2>Start a Game</h2>
                     <div>

@@ -1,5 +1,10 @@
 GameProxy = {
-     games:{}
+    //game row states
+     WAIT_TURN:'waiting for turn'
+    ,WAIT_ACCEPT:'waiting for accept'
+    ,TURN_READY:'turn ready'
+
+    ,games:{}
     ,preTurnAnimating:false
     ,curTurnCallback:null
 
@@ -26,35 +31,30 @@ GameProxy = {
             game.clear();
         }
         game.userTurn = false;
-
-        var rowMessage = 'waiting for turn';
-        jQuery('#gamerow_' + gameId).children('td').html(gameId + ': '+ game.gameName + ' - '+rowMessage);
+        this.updateGameRow(game.gameId,game.gameName,game.gameType,GameProxy.WAIT_TURN,game.inProgress,game.userTurn);
 
 
         var user = UserProxy.user;
         StompService.sendMessage('takeTurn',{userEmail:user.email,userToken:user.token,gameId:gameId,cardsPlayed:cardsSelected, burnTurn:burnTurn,debateScore:game.debateScore,surrender:surrender});
     }
 
-    ,getGameStart:function(gameId,gameName,rowMessage){
-        var rowM;
+    ,getGameStart:function(gameId,gameName,rowMessage,gameType){
+        var state;
         if(rowMessage === 'waitForTurn'){
-            rowM = "waiting for turn"
+            state = GameProxy.WAIT_TURN;
         }else if (rowMessage === 'waitForAccept'){
-            rowM = "waiting for accept"
+            state = GameProxy.WAIT_ACCEPT;
         }else{
-            rowM = '???';
+            state = '???';
         }
-        //we make it null to indicate that it exists without getting the game state.
-        this.games[gameId] = null;
-        var newRow = '<tr id="gamerow_'+gameId+'" class="gameRow pending"><td>'+gameName+' - '+rowM+'</td></tr>';
-        jQuery('#gamesInProgressTable').append(newRow);
+        this.updateGameRow(gameId,gameName,gameType,state,false,false);
     }
-    
+
     ,displayLeaderBoard:function(leaderBoardUsers)
     {
-    	
+
     	var leaderBoardTable = jQuery('#leaderBoardTable');
-    	
+
     	//clear leaderboard if it is already there
     	if (leaderBoardTable.length != 0)
     		{
@@ -82,7 +82,7 @@ GameProxy = {
             var m = turnMessages[i];
 
             //update DOM table
-            this.activateGameRow(m.gameId, m.gameName, m.userTurn, m.inProgress);
+            this.updateGameRowByTurnMessage(m);
 
             //update games collection
             this.games[m.gameId] = new Game(m);
@@ -122,7 +122,7 @@ GameProxy = {
         //if it's a new game
         if(this.games[turnMessage.gameId] === null){
             game = new Game(turnMessage);
-            this.activateGameRow(game.gameId,turnMessage.gameName,turnMessage.userTurn,turnMessage.inProgress);
+            this.updateGameRowByTurnMessage(turnMessage);
             this.games[game.gameId] = game;
         }
         //if it's an existing game that is currently being played
@@ -134,8 +134,7 @@ GameProxy = {
             game.lastTurnLogs = turnMessage.lastTurnLogs;
             game.userTurn = turnMessage.userTurn;
 
-            var rowMessage = turnMessage.userTurn? 'turn ready': 'waiting for turn';
-            jQuery('#gamerow_' + game.gameId).children('td').html(game.gameId + ': '+ game.gameName + ' - '+rowMessage);
+            this.updateGameRowByTurnMessage(turnMessage);
 
             var curTurnCallback = function(){
                 //round changed, reset cards, resources
@@ -181,14 +180,57 @@ GameProxy = {
         //if it's an existing game that isn't open, we just overwrite it
         else{
             game = new Game(turnMessage);
-            var rowMessage = turnMessage.userTurn? 'turn ready': 'waiting for turn';
-            jQuery('#gamerow_' + game.gameId).children('td').html(game.gameId + ': '+ game.gameName + ' - '+rowMessage);
+            this.updateGameRowByTurnMessage(turnMessage);
             this.games[game.gameId] = game;
         }
 
 
 
     }
+
+    ,updateGameRowByTurnMessage:function(turnMessage){
+        var state = turnMessage.userTurn? GameProxy.TURN_READY: GameProxy.WAIT_TURN;
+        this.updateGameRow(turnMessage.gameId,turnMessage.gameName,turnMessage.gameType,state,turnMessage.inProgress,turnMessage.userTurn);
+    }
+    ,updateGameRow:function(gameId,gameName,gameType,gameState,isInProgress,isTurnReady){
+        var row = jQuery('#gamerow_'+gameId);
+        if(row.length === 0){
+            var rowHtml = '<tr id="gamerow_'+gameId+'" class="gameRow pending" '+gameType+'>'+
+                '<td class="gameListNumber"></td>' +
+                '<td class="gameName">'+gameName+' ('+gameId+')'+'</td>' +
+                '<td class="gameType">'+gameType+'</td>' +
+                '<td class="gameState">'+gameState+'</td>' +
+                '</tr>';
+            row = jQuery(rowHtml);
+            jQuery('#gamesInProgressTable').append(row);
+        }else{
+            var gameTds = row.children('td');
+            gameTds.filter('.gameName').text(gameName);
+            gameTds.filter('.gameType').text(gameType);
+            gameTds.filter('.gameState').text(gameState);
+        }
+
+
+        //the logic is such that we avoid adding click handlers on things that have them
+        if(isInProgress && row.hasClass('pending')){
+            //turn on features
+            row
+                .off('click')
+                .removeClass('pending')
+                .addClass('ready')
+                .click({gameId:gameId},function(e){
+                    PanelController.goToGame(e.data.gameId);
+                })
+
+        } else if(!isInProgress){
+            row.addClass('pending');
+        }
+
+        //make it animate when the turn is ready
+        row.toggleClass('animated rubberBand turnReady',isTurnReady);
+
+    }
+
 
     ,finishLogAnimation:function(){
         console.log('%c finishLogAnimation()', 'color:green;');
@@ -339,33 +381,6 @@ GameProxy = {
     	
     }
 
-    ,activateGameRow:function(gameId,gameName,isUserTurn,isInProgress){
-        var that = this;
-        var rowMessage = !isInProgress? 'waiting for accept': isUserTurn? 'turn ready': 'waiting for turn';
-        var row = jQuery('#gamerow_' + gameId);
-
-        //if it's not there we make a new one
-        if(row.length === 0){
-            var newRow = '<tr id="gamerow_'+ gameId+'" class="gameRow ready"><td>'+ gameName+' - '+rowMessage+'</td></tr>';
-            row = jQuery('#gamesInProgressTable').append(newRow).find('#gamerow_' + gameId);
-        }
-        if(isInProgress){
-            //turn on features
-            row
-                .removeClass('pending')
-                .addClass('ready')
-                .click({gameId:gameId},function(e){
-                    PanelController.goToGame(e.data.gameId);
-                })
-
-        } else{
-            row.addClass('pending');
-        }
-
-        row.children('td').html(gameId + ': '+ gameName + ' - '+rowMessage);
-
-    }
-    
 
 
     ,toggleButtonHandlers:function(enabled){
@@ -515,6 +530,7 @@ function Game(turnMessage){
     this.playerColor = turnMessage.playerColor;
     this.opponentColor = turnMessage.opponentColor;
     this.currentDistrict = null;
+    this.inProgress = turnMessage.inProgress;
 
     this.districtViews = [];
     this.cardViews = [];

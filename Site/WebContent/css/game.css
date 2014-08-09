@@ -1,10 +1,37 @@
+body {
+    counter-reset: gameCounter;
+}
+
+#lobbyPanel h2{
+    margin:0;
+    color:#f7f5f1;
+}
+
+.gameListNumber{
+    counter-increment: gameCounter;
+}
+.gameListNumber:before {
+    content: counter(gameCounter);
+}
+
+
+/*10th game row, but it's 11 here because of the header row*/
+.gameRow:nth-child(11) .gameListNumber{
+    color:red;
+}
+
 .gameRow.ready{
     cursor:pointer;
 }
 
-.gameRow.ready:hover{
+.gameRow.ready:hover td{
     background-color:deepskyblue;
     color:white;
+
+}
+
+.gameRow.turnReady td{
+    background-color:goldenrod;
 }
 
 .leadShown.active{
@@ -22,12 +49,35 @@
     width: 100%;
     max-width: 500px;
 }
+#lobbyPanel{
+    background-color:rgb(17, 44, 121);
+    border:1px solid black;
+}
+
+#startGamePanel{
+    background-color:#C21F31;
+    border: 1px solid black;
+}
 
 
 
-.lobbyPanelContent button, .lobbyPanelContent input{
+.lobbyPanelContent button{
     height:30px;
     margin-bottom:5px;
+    line-height:normal;
+    vertical-align:top;
+}
+.lobbyPanelContent input{
+    height:24px;
+    margin-bottom:5px;
+    line-height:normal;
+    vertical-align:top;
+}
+
+.lobbyPanelContent::-moz-focus-inner,
+.input::-moz-focus-inner {
+    border: 0;
+    padding: 0;
 }
 
 #loginTop{
@@ -310,4 +360,12 @@ h2{
 
 .userInfo{
     font-style:italic;
+}
+
+
+#gamesInProgressTable{
+    width:100%;
+    background-color:white;
+    border:1px solid black;
+    font-size:17px;
 }

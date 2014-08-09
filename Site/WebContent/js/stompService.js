@@ -51,7 +51,7 @@ StompService = {
                 var gameMessage = JSON.parse(frame.body);
                 switch(gameMessage.type){
                     case 'gameStart':
-                        GameProxy.getGameStart(gameMessage.gameId,gameMessage.gameName,gameMessage.message);
+                        GameProxy.getGameStart(gameMessage.gameId,gameMessage.gameName,gameMessage.message,gameMessage.gameType);
                         break;
                     case 'error':
                         alert(gameMessage.message);
