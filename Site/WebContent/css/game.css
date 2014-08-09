@@ -20,6 +20,7 @@ body {
     color:red;
 }
 
+
 .gameRow.ready{
     cursor:pointer;
 }
@@ -34,6 +35,10 @@ body {
     background-color:goldenrod;
 }
 
+/*fixes an animation distortion when the turnReady rows animate*/
+.gameRow.turnReady{
+    background-color:transparent;
+}
 .leadShown.active{
 	cursor:pointer;
 }
