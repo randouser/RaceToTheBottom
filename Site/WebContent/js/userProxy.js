@@ -25,6 +25,8 @@ UserProxy = {
 
 
         }else{
+            //we clear out the user on any user error
+            that.clearUser();
             alert(data.message);
         }
     }
@@ -78,7 +80,7 @@ UserProxy = {
     }
 
     ,logout:function(){
-        document.cookie = 'user' + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        this.clearUser();
         window.location.hash = '';
         var callback = function(){
             PanelController.reloadPage();
@@ -113,6 +115,11 @@ UserProxy = {
     ,updateEmailNotification:function(isEnabled){
         var user = UserProxy.user;
         StompService.sendMessage('updateSendEmailOnTurn',{sendEmailOnTurn:isEnabled,userEmail:user.email,userToken:user.token});
+    }
+
+    ,clearUser:function(){
+        document.cookie = 'user' + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        UserProxy.user = null;
     }
 
 };
