@@ -38,7 +38,7 @@
                     <legend>Remove User by Email</legend>
                     <label>
                         User Email:
-                        <input id="adminRemoveUserByEmailInput" type="text" />
+                        <input id="adminRemoveUserByEmailInput" type="text" maxlength="100" />
                     </label>
                     <button id="adminRemoveUserByEmailButton">submit</button>
                 </fieldset>
@@ -46,7 +46,7 @@
                     <legend>Remove Game by ID</legend>
                     <label>
                         Game ID:
-                        <input id="adminRemoveGameByIdInput" type="text" />
+                        <input id="adminRemoveGameByIdInput" type="text" maxlength="20" />
                     </label>
                     <button id="adminRemoveGameByIdButton">submit</button>
                 </fieldset>
@@ -62,9 +62,9 @@
             <form id="loginUserForm" >
                 <h2>Login</h2>
                 <label for="userEmailLogin">Email</label>
-                <input id="userEmailLogin" name="email" type="text"   placeholder="email" />
+                <input id="userEmailLogin" name="email" type="text" maxlength="100"   placeholder="email" />
                 <label for="userPassLogin">Password</label>
-                <input id="userPassLogin" name="password" type="password" placeholder="password" />
+                <input id="userPassLogin" name="password" type="password" placeholder="password" maxlength="64"/>
 
             </form>
             <div>
@@ -84,11 +84,11 @@
             <form id="registerUserForm" >
                 <h2>Register User</h2>
                 <label for="userEmail">Email*</label>
-                <input id="userEmail" name="email" type="text"  placeholder="email" />
+                <input id="userEmail" name="email" type="text" maxlength="100"  placeholder="email" />
                 <label for="userPass">Password*</label>
                 <input id="userPass" name="password" type="password" placeholder="password" />
                 <label for="userName">NickName*</label>
-                <input id="userName" name="name" type="text" placeholder="NickName" />
+                <input id="userName" name="name" type="text" maxlength="32" placeholder="NickName" />
             </form>
             <button id="registerUserSubmitButton" class="userSubmitButton">Submit</button>
         </div>
@@ -135,10 +135,10 @@
                         <button id="startGameSoloButton">Single Player</button>
                     </div>
                     <div>
-                        <button id="startGameButton">Invite a Player &gt;</button><input style="width:150px" id="emailToNotifyInput" name="emailToNotify" type="text" placeholder="Player email">
+                        <button id="startGameButton">Invite a Player &gt;</button><input style="width:150px" id="emailToNotifyInput" name="emailToNotify" type="text" maxlength="100" placeholder="Player email">
                     </div>
                     <div>
-                        <button id="startGameNewPlayerButton">Invite a new Player &gt;</button><input id="newEmailToNotifyInput" name="newEmailToNotify" type="text" placeholder="New player email">
+                        <button id="startGameNewPlayerButton">Invite a new Player &gt;</button><input id="newEmailToNotifyInput" name="newEmailToNotify" type="text" maxlength="100" placeholder="New player email">
                     </div>
 
                 </div>
