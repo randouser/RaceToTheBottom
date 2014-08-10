@@ -179,7 +179,14 @@ GameProxy = {
     }
 
     ,updateGameRowByTurnMessage:function(turnMessage){
-        var state = turnMessage.userTurn? GameProxy.TURN_READY: GameProxy.WAIT_TURN;
+        var state;
+        if(turnMessage.userTurn){
+            state = GameProxy.TURN_READY;
+        }else if(turnMessage.inProgress){
+            state = GameProxy.WAIT_TURN
+        }else{
+            state = GameProxy.WAIT_ACCEPT;
+        }
         this.updateGameRow(turnMessage.gameId,turnMessage.gameName,turnMessage.gameType,state,turnMessage.inProgress,turnMessage.userTurn);
     }
     ,updateGameRow:function(gameId,gameName,gameType,gameState,isInProgress,isTurnReady){
