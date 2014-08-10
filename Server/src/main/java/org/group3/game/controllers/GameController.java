@@ -240,6 +240,47 @@ public class GameController {
     	messagingTemplate.convertAndSend("/queue/"+playerOne.getToken()+"/message", new GameMessage(message.getGameId(), GameMessage.GAME_REJECT, "User " + message.getUserEmail() + " rejected game invite.",message.getGameType(),""));
     	
     }
+    
+    @MessageMapping("/cancelInvite")
+    public void cancelInvite(StartGameMessage message) throws Exception
+    {
+    	
+    	User user = null;
+    	
+    	if (message.getGameType().equals("single")){
+    		//will never happen
+    		throw new IllegalArgumentException("Cannot cancel an invite to the AI");
+    	} else {
+    		
+    		user = userService.getUserByEmailToken(message.getUserEmail(), message.getUserToken());
+    		
+    		if (user == null)
+    			{
+    			
+    				throw new IllegalArgumentException("There is no user with these credentials");
+    			
+    			}
+    		
+    	}
+    	
+    	User playerOne = gameService.getPlayerOneByGame(message.getGameId());
+    	
+    	User playerTwo = gameService.getPlayerTwoByGame(message.getGameId());
+    	
+    	gameService.deleteGameById(message.getGameId());
+    	
+    	messagingTemplate.convertAndSend("/queue/"+playerOne.getToken()+"/message", new GameMessage(message.getGameId(), GameMessage.GAME_REJECT, "", message.getGameType(),""));
+    	
+    	//check if player two even signed up, if game type is newplayer
+    	if ( (!message.getGameType().equals("newPlayer")) || (playerTwo != null)  )
+    	{
+    		
+    		messagingTemplate.convertAndSend("/queue"+playerTwo.getToken()+"/message", new GameMessage(message.getGameId(), GameMessage.GAME_REJECT, "", message.getGameType(), ""));
+    		
+    	}
+
+    	
+    }
 
 
     @MessageMapping("/takeTurn")
