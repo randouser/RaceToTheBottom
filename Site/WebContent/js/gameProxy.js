@@ -543,6 +543,7 @@ function DistrictView(district,index,isCurDistrict){
 function Game(turnMessage){
     var that = this;
     this.gameId = turnMessage.gameId;
+    this.gameType = turnMessage.gameType;
     this.gameName = turnMessage.gameName;
     this.hand = turnMessage.hand;
     this.maxWorkers = turnMessage.maxWorkers;
@@ -804,7 +805,11 @@ function Game(turnMessage){
         jQuery('#playerName').text(UserProxy.user.name);
 
         jQuery("#currentPlayerImage").attr('src','images/player_'+ this.playerColor + '.png');
-        jQuery("#opponentPlayerImage").attr('src','images/player_'+ this.opponentColor + '.png');
+        if(this.gameType === 'single'){
+            jQuery("#opponentPlayerImage").attr('src','images/politibot.png');
+        }else{
+            jQuery("#opponentPlayerImage").attr('src','images/player_'+ this.opponentColor + '.png');
+        }
     }
 
 
