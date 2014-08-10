@@ -86,15 +86,14 @@ GameProxy = {
     	
     	var row = jQuery('#gamerow_' + gameId);
     	
-    	if (row.length == 0)
+    	if (row.length != 0)
     		{
-    		return
-    		}
-    	else{
     		
-    		row.remove();
-        	delete that.games[gameId];
-    	}
+    			row.remove();
+    			
+    			that.games.splice(gameId, 1);
+    		
+    		}
 
     	
     }
