@@ -8,6 +8,7 @@ public class Card {
     private Integer id;
     private String type;
     private String name;
+    private String tag;
     private String bodyText;
     private String subtext;
     private int moneyCost;
@@ -111,7 +112,15 @@ public class Card {
     	
     }
 
-    @Override 
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
+    @Override
     public boolean equals(Object obj){
         return (obj instanceof Card) && (this.id.equals(((Card)obj).id));
     }
