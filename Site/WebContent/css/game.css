@@ -44,6 +44,12 @@ body {
     opacity:.8;
 }
 
+.gameRow.pending:hover td{
+	
+	cursor:pointer;
+	
+}
+
 .leadNumber{
     counter-increment: leaderCounter;
 }

@@ -214,6 +214,42 @@ GameProxy = {
 
         } else if(!isInProgress){
             row.addClass('pending');
+            
+            var GameTds = row.children('td');
+            
+            var msgGameType = GameTds.filter('.gameType').text();
+            
+            if (GameTds.filter('.gameState').text() == GameProxy.WAIT_ACCEPT)
+            	{
+            	
+        
+            	
+            	//Game is not in the game array at this point...
+            	//and all the messagewrappers this scope would have
+            	//access to only have a concatened "game name"
+            	//with the player's emails...
+            	//so the emailToNotify in the StartGameMessage is null
+            	
+            		row
+            			.click({gameId:gameId},function(e){
+            				
+            				var r = confirm("Cancel invite?");
+            				
+            				if (r == true){
+	            				var user = UserProxy.user;
+	            				StompService.sendMessage('cancelInvite', {
+	            					userEmail:user.email
+	                        		,userToken:user.token
+	                        		,gameType:msgGameType
+	                        		,gameId:gameId
+	                        		,emailToNotify:null
+	            				});
+            				} else{}
+            				
+            				
+            			});
+            	
+            	}
         }
 
         //make it animate when the turn is ready
