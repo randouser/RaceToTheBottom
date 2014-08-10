@@ -27,10 +27,38 @@
 <noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript! Websocket relies on Javascript being enabled. Please enable
     Javascript and reload this page!</h2></noscript>
 <div id="mainContentWrapper" style="text-align:center">
-    <button id="logoutButton" style="position:fixed;top:0;left:0;display:none;">Log Out</button>
-    <div class="loginHide" style="display:none;"><span>&nbsp;</span></div>
+
+    <div id="topControlPanel" style="text-align:left;">
+        <button id="logoutButton" style="display:none;">Log Out</button>
+        <div id="adminPanelWrapper" class="userPanel" style="display:none;">
+            <button id="adminButton" >Admin Panel</button>
+            <div id="adminPanel" style="display:none;">
+                <h2>Admin Panel</h2>
+                <fieldset>
+                    <legend>Remove User by Email</legend>
+                    <label>
+                        User Email:
+                        <input id="adminRemoveUserByEmailInput" type="text" />
+                    </label>
+                    <button id="adminRemoveUserByEmailButton">submit</button>
+                </fieldset>
+                <fieldset style="margin-top:1em;">
+                    <legend>Remove Game by ID</legend>
+                    <label>
+                        Game ID:
+                        <input id="adminRemoveGameByIdInput" type="text" />
+                    </label>
+                    <button id="adminRemoveGameByIdButton">submit</button>
+                </fieldset>
+            </div>
+        </div>
+
+    </div>
+
+
+
     <div id="loginPanel" class="displayPanel nonUserPanel">
-        <div id="loginTop" style="border: 1px solid black;background-color:cornflowerblue;">
+        <div id="loginTop">
             <form id="loginUserForm" >
                 <h2>Login</h2>
                 <label for="userEmailLogin">Email</label>
@@ -40,7 +68,7 @@
 
             </form>
             <div>
-                <button id="loginSubmitButton" style="width: 100px;height: 30px;font-size: 15px;">Login</button>
+                <button id="loginSubmitButton" class="userSubmitButton">Login</button>
             </div>
         </div>
         <div id="loginBottom">
@@ -50,18 +78,21 @@
     </div>
 
 
-    <div id="registerPanel" class="displayPanel nonUserPanel" style="border: 1px solid black;display:none;background-color:cornsilk;">
-        <button id="backToLoginButton">Back to Login Screen</button>
-        <form id="registerUserForm" >
-            <h2>Register User</h2>
-            <label for="userEmail">Email</label>
-            <input id="userEmail" name="email" type="text"   placeholder="email" />
-            <label for="userPass">Password</label>
-            <input id="userPass" name="password" type="password" placeholder="password" />
-            <label for="userName">NickName</label>
-            <input id="userName" name="name" type="text" placeholder="NickName" />
-        </form>
-        <button id="registerUserSubmitButton">Send Info</button>
+    <div id="registerPanel" class="displayPanel nonUserPanel" style="display:none;">
+        <button id="backToLoginButton" class="userSubmitButton">Back to Login Screen</button>
+        <div id="registerTop">
+            <form id="registerUserForm" >
+                <h2>Register User</h2>
+                <label for="userEmail">Email*</label>
+                <input id="userEmail" name="email" type="text"  placeholder="email" />
+                <label for="userPass">Password*</label>
+                <input id="userPass" name="password" type="password" placeholder="password" />
+                <label for="userName">NickName*</label>
+                <input id="userName" name="name" type="text" placeholder="NickName" />
+            </form>
+            <button id="registerUserSubmitButton" class="userSubmitButton">Submit</button>
+        </div>
+
     </div>
 
 
@@ -204,31 +235,7 @@
 
     </div>
 
-    <div id="adminPanelWrapper" class="userPanel">
 
-        <button id="adminButton" >Admin Panel</button>
-        <div id="adminPanel" style="display:none;background-color: rgb(139, 147, 255);border: 1px solid grey;padding: 1em;box-shadow: 4px 4px 5px rgba(0, 0, 0, 0.5);">
-           <h2>Admin Panel</h2>
-            <fieldset>
-                <legend>Remove User by Email</legend>
-                <label>
-                    User Email:
-                    <input id="adminRemoveUserByEmailInput" type="text" />
-                </label>
-                <button id="adminRemoveUserByEmailButton">submit</button>
-            </fieldset>
-            <fieldset style="margin-top:1em;">
-                <legend>Remove Game by ID</legend>
-                <label>
-                    Game ID:
-                    <input id="adminRemoveGameByIdInput" type="text" />
-                </label>
-                <button id="adminRemoveGameByIdButton">submit</button>
-            </fieldset>
-
-
-        </div>
-    </div>
 
 </div>
 

@@ -26,6 +26,7 @@ PanelController = {
         if(!UserProxy.user){
             defaultPanel = '#loginPanel';
             jQuery('#logoutButton').hide();
+            jQuery('#adminPanelWrapper').hide();
             panelEle = panels.filter('.nonUserPanel').filter('#'+panelId+'Panel');
 
         }else{
@@ -81,6 +82,7 @@ PanelController = {
     }
     ,reloadPage:function(){
         jQuery('#logoutButton').hide();
+        jQuery('#adminPanelWrapper').hide();
         window.location.reload(true);
     }
     ,loadHash:function(hash){

@@ -109,8 +109,8 @@ body {
     font-size:20px;
 }
 
-#registerAsNewPlayerButton:hover{
-    color:red;
+button:hover{
+    color:deepskyblue;
 }
 
 
@@ -128,13 +128,18 @@ h2{
     font-size: 15px;
 }
 
+#loginTop{
+    border: 1px solid black;
+    background-color:#C21F31;
+}
+
 
 #mainContentWrapper{
     max-width:2000px;
     padding:2em;
 }
 
-#loginPanel {
+#loginPanel, #registerPanel {
     font-size:2em;
     max-width: 1041px;
     display: inline-block;
@@ -142,15 +147,29 @@ h2{
 }
 
 
-#loginPanel input, #loginPanel label{
+#loginPanel input, #loginPanel label,#registerPanel input, #registerPanel label{
     display: inline-block;
     width: 100%;
     max-width: 500px;
-    height: 20px;
+    height: 37px;
     margin-bottom:5px
 
 }
+#loginPanel input, #registerPanel input{
+    font-size:20px;
+}
 
+#registerTop{
+    background-color:#112c79;
+    color:#f7f5f1;
+    padding: .5em;
+    border:1px solid black;
+}
+
+.userSubmitButton{
+    padding:5px;
+    font-size: inherit;
+}
 
 #gameStageMain{
     position:relative;
@@ -160,12 +179,17 @@ h2{
 }
 
 #adminPanelWrapper{
-    position:fixed;
-    top:0;
-    left:100px;
-    display:none;
+    display:inline-block;
     text-align:left;
-    z-index:1000;
+}
+
+#adminPanel{
+    position:absolute;
+    z-index:10000;
+    background-color: rgb(139, 147, 255);
+    border: 1px solid grey;
+    padding: 1em;
+    box-shadow: 4px 4px 5px rgba(0, 0, 0, 0.5);
 }
 
 #waitingScreen{
