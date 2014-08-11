@@ -7,6 +7,10 @@
         font-size:13px;
     }
 
+    #leaderBoardTable td,#gamesInProgressTable td{
+        font-size:14px;
+    }
+
     #opponent{
         position: absolute;
         width: inherit;
