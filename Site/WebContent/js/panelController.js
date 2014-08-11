@@ -26,12 +26,15 @@ PanelController = {
         if(!UserProxy.user){
             defaultPanel = '#loginPanel';
             jQuery('#logoutButton').hide();
+            jQuery('#tutorialButton').hide();
             jQuery('#adminPanelWrapper').hide();
             panelEle = panels.filter('.nonUserPanel').filter('#'+panelId+'Panel');
 
         }else{
             defaultPanel = '#lobbyPanel';
             jQuery('#logoutButton').show();
+            jQuery('#tutorialButton').show();
+
             if(UserProxy.user.admin === true){
                 jQuery('#adminPanelWrapper').show();
             }
@@ -82,6 +85,7 @@ PanelController = {
     }
     ,reloadPage:function(){
         jQuery('#logoutButton').hide();
+        jQuery('#tutorialButton').hide();
         jQuery('#adminPanelWrapper').hide();
         window.location.reload(true);
     }

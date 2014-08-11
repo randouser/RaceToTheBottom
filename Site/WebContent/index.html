@@ -30,6 +30,7 @@
 
     <div id="topControlPanel" style="text-align:left;">
         <button id="logoutButton" style="display:none;">Log Out</button>
+        <button id="tutorialButton" style="display:none;">Tutorial</button>
         <div id="adminPanelWrapper" class="userPanel" style="display:none;">
             <button id="adminButton" >Admin Panel</button>
             <div id="adminPanel" style="display:none;">
@@ -319,6 +320,11 @@
         var user = UserProxy.user;
         StompService.sendMessage('admin_removeGameById',{value:value,userEmail:user.email,userToken:user.token});
     });
+
+    jQuery('#tutorialButton').click(function(){
+        window.open('tutorial.html','_blank');
+    });
+
 
     jQuery('#emailOnTurnCheck').click(function(){
 
