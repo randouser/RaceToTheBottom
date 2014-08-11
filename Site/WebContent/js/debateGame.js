@@ -24,7 +24,7 @@ var DebateGame = {
         this.scoreElement.innerHTML = this.score;
 
         this.isDone = false;
-        this.obstTotal = 1;
+        this.obstTotal = 5;
         this.debater = new Debater(this.debaterElement);
 
         jQuery(this.scrollWrapper).show();

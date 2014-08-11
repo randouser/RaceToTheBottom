@@ -243,7 +243,6 @@ h2{
 #scrollWrapper{
     background-color:lightgrey;
     text-align:center;
-    display:table;
     height:346px;
     width:787px;
     position: absolute;
@@ -260,10 +259,10 @@ h2{
     display: inline-block;
     border-bottom:1px solid black;
     cursor:pointer;
+    margin-top:70px;
 
 }
 #scrollCell{
-    display:table-cell;
     vertical-align:middle;
 
 }
@@ -287,6 +286,7 @@ h2{
 }
 #debater img{
     width:50px;
+    vertical-align: bottom;
 }
 
 .obstacle{
