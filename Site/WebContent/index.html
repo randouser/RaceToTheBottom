@@ -249,8 +249,17 @@
 
 
     jQuery('#registerUserSubmitButton').click(function(){
-        var formString = jQuery('#registerUserForm').serialize();
-        UserProxy.registerUser(formString);
+        var that = jQuery(this);
+        if(!that.prop('disabled')){
+            var formString = jQuery('#registerUserForm').serialize();
+            UserProxy.registerUser(formString);
+        }
+        that.prop('disabled',true);
+        setTimeout(function(){
+            that.prop('disabled',false);
+        },1000);
+
+
     });
 
     jQuery('#loginSubmitButton').click(function(){
