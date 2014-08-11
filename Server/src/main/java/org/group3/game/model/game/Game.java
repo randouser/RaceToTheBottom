@@ -114,21 +114,43 @@ public class Game{
         //check if cards can be played
          if(curPlayer.canPlayCards(cards) || burnTurn){
              //deal damage //TODO right now just focus on simple damage, worry about complicated stuff later
-             int damage = 0;
+             int totalCardDamage = 0;
              District curDistrict = districts.get(districtPointer);
 
 
              if (!burnTurn){
+                 Random rand = new Random();
+                 int curTurn = curDistrict.getTurn() + 1;
                  for(Card card : cards) {
-                     damage += card.getMaxDamage();
+                     int cardDamage;
+
+                     //cards that only do damage as a multiplier of the round
+                     if(card.getMaxDamage() == 0){
+                        cardDamage = curTurn * card.getMultiplier();
+
+                     //cards that have multiplier and damage do weighted damage against district turn
+                     }else if(card.getMultiplier() > 1){
+                        int diff;
+                        diff = curTurn <= card.getMinDamage() ? 0 : curTurn - card.getMinDamage();
+
+                        cardDamage = card.getMinDamage() + diff;
+                        //no greater than max damage
+                        if(cardDamage > card.getMaxDamage()) {cardDamage = card.getMaxDamage();}
+
+                     //normal card damage
+                     }else{
+                         cardDamage = rand.nextInt((card.getMaxDamage() - card.getMinDamage()) + 1) + card.getMinDamage();
+                     }
+
+                     totalCardDamage+= cardDamage;
                  }
                  curPlayer.removeCardsFromHand(cards);
 
                  //calculate damage/score for current district
-                 curDistrict.increaseScoreForPlayer(curPlayer.getPlayerIndex(), damage);
+                 curDistrict.increaseScoreForPlayer(curPlayer.getPlayerIndex(), totalCardDamage);
 
                  //Add new CardsLog entry in list
-                 turnLog.add(new CardsLog(cards, curPlayer, otherPlayer, districtPointer, curDistrict, damage));
+                 turnLog.add(new CardsLog(cards, curPlayer, otherPlayer, districtPointer, curDistrict, totalCardDamage));
                  curPlayer.setLastAction(Player.PLAY_CARDS);
              }
              else{

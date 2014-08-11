@@ -47,9 +47,9 @@ INSERT INTO card (type, name, tag, bodyText, subtext,moneyCost,workerCost,minDam
 VALUES ('negative', 'NEGATIVE ONLINE ADS','internet_ads_neg', '-2 to -5','opponentsux.net',2,2,2,5,1,2);
 
 INSERT INTO card (type, name, tag, bodyText, subtext,moneyCost,workerCost,minDamage,maxDamage,multiplier,weight)
-VALUES ('negative', 'PLANT A SPY','plant_spy', '-3 to -10','Deals more damage in later rounds',5,2,3,10,1,6);
+VALUES ('negative', 'PLANT A SPY','plant_spy', '-3 to -10','Deals more damage in later rounds',5,2,3,10,2,6);
 
 INSERT INTO card (type, name, tag, bodyText, subtext,moneyCost,workerCost,minDamage,maxDamage,multiplier,weight)
-VALUES ('negative', 'DIG UP OLD DIRT','dig_up_dirt', '-2x Turn','Deals twice the turn in damage',5,3,1,1,2,9);
+VALUES ('negative', 'DIG UP OLD DIRT','dig_up_dirt', '-2x Turn','Deals twice the turn in damage',5,3,0,0,2,9);
 
 
