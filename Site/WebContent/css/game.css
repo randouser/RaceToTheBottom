@@ -1,6 +1,5 @@
 body {
-    counter-reset: gameCounter;
-    counter-reset: leaderCounter;
+
 }
 
 #lobbyPanel h2{
@@ -8,12 +7,6 @@ body {
     color:#f7f5f1;
 }
 
-.gameListNumber{
-    counter-increment: gameCounter;
-}
-.gameListNumber:before {
-    content: counter(gameCounter);
-}
 
 
 /*10th game row, but it's 11 here because of the header row*/
@@ -50,15 +43,7 @@ body {
 	
 }
 
-.leadNumber{
-    counter-increment: leaderCounter;
-}
-.leadNumber:before{
-    content: counter(leaderCounter);
-}
-.leadShown.active{
-	cursor:pointer;
-}
+
 
 
 .lobbyPanelContent{
@@ -390,6 +375,9 @@ h2{
     position:relative;
 }
 
+#widgetWrapper button{
+    margin: 0;
+}
 
 #userPanel > div{
     display: inline-block;
@@ -410,4 +398,28 @@ h2{
     background-color:white;
     border:1px solid black;
     font-size:17px;
+
+    counter-reset: gameCounter;
+}
+
+#leaderBoardTable{
+    counter-reset: leaderCounter;
+}
+
+.gameListNumber{
+    counter-increment: gameCounter;
+}
+.gameListNumber:before {
+    content: counter(gameCounter);
+}
+
+
+.leadNumber{
+    counter-increment: leaderCounter;
+}
+.leadNumber:before{
+    content: counter(leaderCounter);
+}
+.leadShown.active{
+    cursor:pointer;
 }
