@@ -91,7 +91,11 @@ GameProxy = {
     		
     			row.remove();
     			
-    			that.games.splice(gameId, 1);
+    			if (that.games[gameId] != null)
+    				{
+    			
+    					that.games.splice(gameId, 1);
+    				}
     		
     		}
 
