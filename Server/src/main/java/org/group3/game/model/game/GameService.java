@@ -31,7 +31,6 @@ public class GameService{
 
     
     public GameMessage createGame(User user, String type, String inviteeEmail, User invitee) {
-        //TODO we ignore type for now for the most part
 
         //make the decks
         List<Card> deck1 = cardService.getRandomDeck(60);
@@ -44,8 +43,8 @@ public class GameService{
 
         //make the districts
         List<District> districts = new ArrayList<>();
-        districts.add(new District("p1 home",60,40));
-        districts.add(new District("p2 home",40,60));
+        districts.add(new District("Blue home",60,40));
+        districts.add(new District("Red home",40,60));
         districts.add(new District("neutral",50,50));
         districts.add(new District("neutral",50,50));
         districts.add(new District("neutral",50,50));
