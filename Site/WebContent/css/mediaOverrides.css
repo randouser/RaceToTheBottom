@@ -3,6 +3,10 @@
 
 /* ============= Small size ============= */
 @media (max-width: 640px) {
+    #moneyPool, #workerPool{
+        font-size:13px;
+    }
+
     #opponent{
         position: absolute;
         width: inherit;
